@@ -1,0 +1,43 @@
+# Supabase Configuration
+# This file contains the configuration for your Supabase project
+
+# Project Settings
+project_id = "your-project-ref"
+project_url = "https://your-project-ref.supabase.co"
+anon_key = "your-anon-key"
+service_role_key = "your-service-role-key"
+
+# Database Settings
+db_host = "db.your-project-ref.supabase.co"
+db_port = 5432
+db_name = "postgres"
+db_user = "postgres"
+db_password = "your-db-password"
+
+# API Settings
+api_url = "https://your-project-ref.supabase.co/rest/v1"
+auth_url = "https://your-project-ref.supabase.co/auth/v1"
+storage_url = "https://your-project-ref.supabase.co/storage/v1"
+
+# Edge Functions
+functions_url = "https://your-project-ref.supabase.co/functions/v1"
+
+# Storage Buckets
+buckets = ["avatars", "documents", "templates"]
+
+# Security Settings
+jwt_secret = "your-jwt-secret"
+jwt_expiry = 3600
+
+# Email Settings
+smtp_host = "your-smtp-host"
+smtp_port = 587
+smtp_user = "your-smtp-user"
+smtp_password = "your-smtp-password"
+
+# Webhook Settings
+webhook_secret = "your-webhook-secret"
+
+# Rate Limiting
+rate_limit_requests = 1000
+rate_limit_window = 3600

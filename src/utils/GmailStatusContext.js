@@ -19,6 +19,11 @@ export const GmailStatusProvider = ({ children }) => {
     
     try {
       const res = await fetch('/api/user/gmail-status', { credentials: 'include' });
+      
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+      }
+      
       const data = await res.json();
       setIsGmailConnected(data.connected);
       setGmailEmail(data.email || '');

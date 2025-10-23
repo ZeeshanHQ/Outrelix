@@ -18,14 +18,13 @@ import {
   EyeIcon,
   EyeSlashIcon
 } from '@heroicons/react/24/outline';
-import { auth, googleProvider } from '../firebase';
-import { signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
+import { auth, db } from '../supabase';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import OnboardingModal from '../components/OnboardingModal';
 import WelcomeModal from '../components/WelcomeModal';
+import OTPVerificationModal from '../components/OTPVerificationModal';
 import Footer from '../components/Footer';
-import { supabase } from '../supabase';
 
 // FeatureCard component
 const FeatureCard = ({ icon: Icon, title, description, delay }) => (
@@ -226,88 +225,49 @@ const SignupModal = ({ isOpen, onClose, onSignupSuccess, onEmailVerified, pendin
   const [name, setName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [passwordError, setPasswordError] = useState("");
+  // OTP verification states
+  const [showOTPModal, setShowOTPModal] = useState(false);
+  const [pendingEmail, setPendingEmail] = useState("");
+
+  const handleOTPVerificationSuccess = () => {
+    setShowOTPModal(false);
+    setPendingEmail("");
+    onSignupSuccess(name, email);
+    navigate('/dashboard');
+  };
 
   const handleGoogleSignIn = async () => {
     setLoading(true);
     try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const user = result.user;
-      const userName = user.displayName || user.name || (user.email ? user.email.split('@')[0] : '');
-      const userEmail = user.email;
-      // Save/update user in Supabase
-      await supabase.from('users').upsert({
-        id: user.uid,
-        email: user.email,
-        name: user.displayName,
-        avatar_url: user.photoURL,
-        email_platform: 'google',
-        last_login: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      }, { onConflict: 'id' });
-      // ... set localStorage, etc ...
-      const { country: detectedCountry, country_name: detectedCountryName, timezone } = await getCountryAndTimezone();
-      const finalCountry = (selectedCountry || detectedCountry || 'PK').toUpperCase();
-      const finalCountryName = detectedCountryName || 'Pakistan';
-      // Always call /login after successful sign-in
-      const res = await fetch('http://localhost:5000/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
-          email: userEmail,
-          name: userName,
-          country: finalCountry,
-          country_name: finalCountryName,
-          timezone
-        })
-      });
-      const data = await res.json();
-      if (data.is_new_user) {
-        setIsNewUser(true);
-        setOnboardingUserName(userName);
-        setShowOnboardingModal(true);
-      } else {
-        setIsNewUser(false);
-        setShowWelcomeModal(true);
-        // Optionally, redirect to dashboard after welcome modal
+      const { data, error } = await auth.signInWithGoogle();
+      
+      if (error) {
+        throw error;
       }
-      // Fetch user profile from backend and update localStorage
-      try {
-        const meRes = await fetch('http://localhost:5000/me', { credentials: 'include' });
-        if (meRes.ok) {
-          let userToStore = {
-            name: result.user.displayName || result.user.name || userName,
-            displayName: result.user.displayName || result.user.name || userName,
-        email: result.user.email,
-            photoURL: result.user.photoURL || (result.user.reloadUserInfo && result.user.reloadUserInfo.photoUrl) || '',
-            provider: 'google',
-            country: undefined,
-            country_name: undefined,
-            timezone: undefined
-          };
-          if (meRes.ok) {
-            const me = await meRes.json();
-            userToStore = {
-              ...userToStore,
-              name: me.name || userToStore.name,
-              displayName: me.name || userToStore.displayName,
-              email: me.email || userToStore.email,
-              photoURL: me.photoURL || userToStore.photoURL,
-              country: me.country,
-              country_name: me.country_name,
-              timezone: me.timezone
-            };
-          }
-          localStorage.setItem('user', JSON.stringify(userToStore));
-          localStorage.setItem('isAuthenticated', 'true');
-          window.dispatchEvent(new Event('user-updated'));
-        }
-      } catch (meError) {
-        console.warn('[Google Sign-in] Failed to fetch user profile:', meError);
-      }
-      // ... rest of code ...
+      
+      // The user will be redirected to dashboard after successful authentication
+      // Supabase will handle the OAuth flow
+      
     } catch (error) {
-      // ... error handling ...
+      console.error('Google sign-in error:', error);
+      let errorMessage = 'Google sign-in failed. Please try again.';
+      
+      if (error.message?.includes('popup')) {
+        errorMessage = 'Sign-in was cancelled. Please try again.';
+      } else if (error.message?.includes('network')) {
+        errorMessage = 'Network error. Please check your connection and try again.';
+      }
+      
+      toast.error(errorMessage, {
+        position: 'top-center',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'colored',
+      });
     } finally {
       setLoading(false);
     }
@@ -366,7 +326,7 @@ const SignupModal = ({ isOpen, onClose, onSignupSuccess, onEmailVerified, pendin
     try {
       let result;
       if (isLogin) {
-        result = await signInWithEmailAndPassword(auth, email, password);
+        result = await auth.signIn(email, password);
         localStorage.setItem('isNewUser', 'false');
         if (!result.user.emailVerified) {
           setEmailNotVerified(true);
@@ -438,7 +398,7 @@ const SignupModal = ({ isOpen, onClose, onSignupSuccess, onEmailVerified, pendin
         }
         // No /login call here; will be handled after verification
         // Fetch user profile from backend and update localStorage
-        const meRes = await fetch('http://localhost:5000/me', { credentials: 'include' });
+        const meRes = await fetch('/me', { credentials: 'include' });
         if (meRes.ok) {
           const me = await meRes.json();
           localStorage.setItem('user', JSON.stringify({
@@ -455,12 +415,25 @@ const SignupModal = ({ isOpen, onClose, onSignupSuccess, onEmailVerified, pendin
         }
         return;
       } else {
-        result = await createUserWithEmailAndPassword(auth, email, password);
+        result = await auth.signUp(email, password, { full_name: name });
         localStorage.setItem('isNewUser', 'true');
-        await sendEmailVerification(result.user);
-        setVerificationSent(true);
-        setEmailNotVerified(true);
-        toast.success('Account created! Please check your email for verification.', {
+        
+        // Send OTP for email verification
+        try {
+          const otpResponse = await fetch('/api/otp/send', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+              email: email,
+              purpose: 'email_verification'
+            })
+          });
+          
+          if (otpResponse.ok) {
+            setPendingEmail(email);
+            setShowOTPModal(true);
+            toast.success('Verification code sent to your email!', {
           position: 'top-center',
           autoClose: 5000,
           hideProgressBar: false,
@@ -470,21 +443,22 @@ const SignupModal = ({ isOpen, onClose, onSignupSuccess, onEmailVerified, pendin
           progress: undefined,
           theme: 'colored',
         });
-        onSignupSuccess(name, email);
-        // No /login call here; will be handled after verification
-        // Get country and timezone
-        // const { country: detectedCountry, timezone } = await getCountryAndTimezone();
-        // const finalCountry = selectedCountry || detectedCountry;
-        // Store in backend (optional, since user is not verified yet)
-        // await fetch('http://localhost:5000/login', {
-        //   method: 'POST',
-        //   headers: {
-        //     'Content-Type': 'application/json',
-        //   },
-        //   credentials: 'include',
-        //   body: JSON.stringify({ email, name, country: finalCountry, timezone })
-        // });
-        return;
+          } else {
+            throw new Error('Failed to send verification code');
+          }
+        } catch (otpError) {
+          console.error('OTP send error:', otpError);
+          toast.error('Account created but failed to send verification code. Please try logging in.', {
+            position: 'top-center',
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'colored',
+          });
+        }
       }
     } catch (error) {
       console.error('Email/password auth error:', error);
@@ -2481,6 +2455,12 @@ const Landing = () => {
           open={showOnboardingModal}
           userName={onboardingUserName}
           onClose={handleOnboardingComplete}
+        />
+        <OTPVerificationModal
+          isOpen={showOTPModal}
+          onClose={() => setShowOTPModal(false)}
+          email={pendingEmail}
+          onVerificationSuccess={handleOTPVerificationSuccess}
         />
         <ToastContainer />
         {/* Footer - properly separated and full width */}

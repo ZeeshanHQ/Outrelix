@@ -37,6 +37,11 @@ load_dotenv()
 # DEEPSEEK_API_KEY = "sk-fe9702a172be481fb9d0b86781702685"
 # DEEPSEEK_API_URL = "https://api.deepseek.com/v1/chat/completions"
 
+# Resend API configuration for OTP emails
+RESEND_API_KEY = "re_CDQcfX8S_KLKwPtn9gzgTjyqNXw47GqUD"
+RESEND_DOMAIN = "cavexa.online"
+SENDER_EMAIL = "noreply@cavexa.online"
+
 # -------------------- SUPABASE SETUP --------------------
 SUPABASE_URL = "https://bfoggljxtwoloxthtocy.supabase.co"
 SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJmb2dnbGp4dHdvbG94dGh0b2N5Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0OTkwMzYxNiwiZXhwIjoyMDY1NDc5NjE2fQ.tb8-UDuye8roMeCwW0YqgjBbodo3x4Bwe_o0JM87kkM"
@@ -477,6 +482,181 @@ async def gmail_status_refresh(request: Request):
 @app.get('/test')
 async def test():
     return {"status": "ok"}
+
+# =====================================================
+# OTP VERIFICATION ENDPOINTS
+# =====================================================
+
+class OTPRequest(BaseModel):
+    email: str
+    purpose: str = "email_verification"
+
+class OTPVerifyRequest(BaseModel):
+    email: str
+    otp_code: str
+    purpose: str = "email_verification"
+
+@app.post('/api/otp/send')
+async def send_otp(request: OTPRequest):
+    """Send OTP to user's email using Resend API"""
+    try:
+        # Generate OTP using Supabase function
+        otp_result = supabase.rpc('create_otp', {
+            'p_email': request.email,
+            'p_purpose': request.purpose,
+            'p_expiry_minutes': 10
+        }).execute()
+        
+        if not otp_result.data:
+            return JSONResponse({'error': 'Failed to generate OTP'}, status_code=500)
+        
+        otp_code = otp_result.data['otp_code']
+        
+        # Send email using Resend API
+        email_data = {
+            "from": SENDER_EMAIL,
+            "to": [request.email],
+            "subject": "Outrelix - Email Verification Code",
+            "html": f"""
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #3b82f6;">Outrelix Email Verification</h2>
+                <p>Your verification code is:</p>
+                <div style="background-color: #f3f4f6; padding: 20px; text-align: center; margin: 20px 0;">
+                    <h1 style="color: #1f2937; font-size: 32px; margin: 0; letter-spacing: 5px;">{otp_code}</h1>
+                </div>
+                <p>This code will expire in 10 minutes.</p>
+                <p>If you didn't request this code, please ignore this email.</p>
+                <hr style="margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;">
+                <p style="color: #6b7280; font-size: 14px;">This email was sent by Outrelix</p>
+            </div>
+            """
+        }
+        
+        headers = {
+            "Authorization": f"Bearer {RESEND_API_KEY}",
+            "Content-Type": "application/json"
+        }
+        
+        response = requests.post(
+            "https://api.resend.com/emails",
+            headers=headers,
+            json=email_data
+        )
+        
+        if response.status_code == 200:
+            return JSONResponse({
+                'message': 'OTP sent successfully',
+                'expires_in_minutes': 10
+            })
+        else:
+            print(f"Resend API error: {response.status_code} - {response.text}")
+            return JSONResponse({'error': 'Failed to send email'}, status_code=500)
+            
+    except Exception as e:
+        print(f"Error sending OTP: {e}")
+        return JSONResponse({'error': 'Internal server error'}, status_code=500)
+
+@app.post('/api/otp/verify')
+async def verify_otp(request: OTPVerifyRequest):
+    """Verify OTP code"""
+    try:
+        # Validate OTP using Supabase function
+        validation_result = supabase.rpc('validate_otp', {
+            'p_email': request.email,
+            'p_otp_code': request.otp_code,
+            'p_purpose': request.purpose
+        }).execute()
+        
+        if not validation_result.data:
+            return JSONResponse({'error': 'Failed to validate OTP'}, status_code=500)
+        
+        result = validation_result.data
+        
+        if result['valid']:
+            # If email verification, update user profile
+            if request.purpose == 'email_verification':
+                # Update user's email_verified status in profiles table
+                supabase.table('profiles').update({
+                    'email_verified': True,
+                    'updated_at': 'NOW()'
+                }).eq('email', request.email).execute()
+            
+            return JSONResponse({
+                'valid': True,
+                'message': result['message']
+            })
+        else:
+            return JSONResponse({
+                'valid': False,
+                'message': result['message']
+            }, status_code=400)
+            
+    except Exception as e:
+        print(f"Error verifying OTP: {e}")
+        return JSONResponse({'error': 'Internal server error'}, status_code=500)
+
+@app.post('/api/otp/resend')
+async def resend_otp(request: OTPRequest):
+    """Resend OTP to user's email"""
+    try:
+        # Clean up old OTPs for this email
+        supabase.table('otp_verifications').delete().eq('email', request.email).eq('purpose', request.purpose).execute()
+        
+        # Generate new OTP
+        otp_result = supabase.rpc('create_otp', {
+            'p_email': request.email,
+            'p_purpose': request.purpose,
+            'p_expiry_minutes': 10
+        }).execute()
+        
+        if not otp_result.data:
+            return JSONResponse({'error': 'Failed to generate OTP'}, status_code=500)
+        
+        otp_code = otp_result.data['otp_code']
+        
+        # Send email using Resend API
+        email_data = {
+            "from": SENDER_EMAIL,
+            "to": [request.email],
+            "subject": "Outrelix - New Verification Code",
+            "html": f"""
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #3b82f6;">Outrelix - New Verification Code</h2>
+                <p>Here's your new verification code:</p>
+                <div style="background-color: #f3f4f6; padding: 20px; text-align: center; margin: 20px 0;">
+                    <h1 style="color: #1f2937; font-size: 32px; margin: 0; letter-spacing: 5px;">{otp_code}</h1>
+                </div>
+                <p>This code will expire in 10 minutes.</p>
+                <p>If you didn't request this code, please ignore this email.</p>
+                <hr style="margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;">
+                <p style="color: #6b7280; font-size: 14px;">This email was sent by Outrelix</p>
+            </div>
+            """
+        }
+        
+        headers = {
+            "Authorization": f"Bearer {RESEND_API_KEY}",
+            "Content-Type": "application/json"
+        }
+        
+        response = requests.post(
+            "https://api.resend.com/emails",
+            headers=headers,
+            json=email_data
+        )
+        
+        if response.status_code == 200:
+            return JSONResponse({
+                'message': 'New OTP sent successfully',
+                'expires_in_minutes': 10
+            })
+        else:
+            print(f"Resend API error: {response.status_code} - {response.text}")
+            return JSONResponse({'error': 'Failed to send email'}, status_code=500)
+            
+    except Exception as e:
+        print(f"Error resending OTP: {e}")
+        return JSONResponse({'error': 'Internal server error'}, status_code=500)
 
 def update_gmail_token_rest(user_id, token_json, email):
     url = f"{SUPABASE_REST_URL}?id=eq.{user_id}"
