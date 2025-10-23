@@ -208,7 +208,7 @@ function setLoginCalled(email) {
   localStorage.setItem('loginCalled:' + email, 'true');
 }
 
-const SignupModal = ({ isOpen, onClose, onSignupSuccess, onEmailVerified, pendingOnboardingUserName, setShowOnboardingModal, setShowWelcomeModal, setIsNewUser, setOnboardingUserName, selectedCountry, setSelectedCountry, hasProcessedVerification, setHasProcessedVerification }) => {
+const SignupModal = ({ isOpen, onClose, onSignupSuccess, onEmailVerified, pendingOnboardingUserName, setShowOnboardingModal, setShowWelcomeModal, setIsNewUser, setOnboardingUserName, selectedCountry, setSelectedCountry, hasProcessedVerification, setHasProcessedVerification, showOTPModal, setShowOTPModal, pendingEmail, setPendingEmail }) => {
   const { t } = useTranslation();
   const [isLogin, setIsLogin] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -225,16 +225,6 @@ const SignupModal = ({ isOpen, onClose, onSignupSuccess, onEmailVerified, pendin
   const [name, setName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [passwordError, setPasswordError] = useState("");
-  // OTP verification states
-  const [showOTPModal, setShowOTPModal] = useState(false);
-  const [pendingEmail, setPendingEmail] = useState("");
-
-  const handleOTPVerificationSuccess = () => {
-    setShowOTPModal(false);
-    setPendingEmail("");
-    onSignupSuccess(name, email);
-    navigate('/dashboard');
-  };
 
   const handleGoogleSignIn = async () => {
     setLoading(true);
@@ -973,6 +963,16 @@ const Landing = () => {
   const [hasProcessedVerification, setHasProcessedVerification] = useState(false);
   // In the Landing component, add this state at the top:
   const [selectedCountry, setSelectedCountry] = useState("");
+  // OTP verification states
+  const [showOTPModal, setShowOTPModal] = useState(false);
+  const [pendingEmail, setPendingEmail] = useState("");
+
+  const handleOTPVerificationSuccess = () => {
+    setShowOTPModal(false);
+    setPendingEmail("");
+    // Handle successful OTP verification
+    navigate('/dashboard');
+  };
 
   // Check if user is new or existing
   const checkIfUserIsNew = (email) => {
@@ -2446,6 +2446,10 @@ const Landing = () => {
           setSelectedCountry={setSelectedCountry}
           hasProcessedVerification={hasProcessedVerification}
           setHasProcessedVerification={setHasProcessedVerification}
+          showOTPModal={showOTPModal}
+          setShowOTPModal={setShowOTPModal}
+          pendingEmail={pendingEmail}
+          setPendingEmail={setPendingEmail}
         />
         <WelcomeModal
           isOpen={showWelcomeModal}
