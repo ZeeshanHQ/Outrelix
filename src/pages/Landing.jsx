@@ -1555,7 +1555,7 @@ const Landing = () => {
                     <img src="/logos/salesforce.png" alt="Salesforce" className="h-40 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
                   </div>
                   <div className="flex items-center justify-center w-48 h-22 opacity-75 hover:opacity-100 transition-all duration-300 hover:scale-110 -ml-6">
-                    <img src="/logos/hubspot.png" alt="HubSpot" className="h-16 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
+                    <img src="/logos/HubSpot.png" alt="HubSpot" className="h-16 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
                   </div>
                   <div className="flex items-center justify-center w-40 h-20 opacity-75 hover:opacity-100 transition-all duration-300 hover:scale-110">
                     <img src="/logos/google.png" alt="Google" className="h-12 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
@@ -1597,7 +1597,7 @@ const Landing = () => {
                     <img src="/logos/salesforce.png" alt="Salesforce" className="h-40 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
                   </div>
                   <div className="flex items-center justify-center w-48 h-22 opacity-75 hover:opacity-100 transition-all duration-300 hover:scale-110 -ml-6">
-                    <img src="/logos/hubspot.png" alt="HubSpot" className="h-16 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
+                    <img src="/logos/HubSpot.png" alt="HubSpot" className="h-16 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
                   </div>
                   <div className="flex items-center justify-center w-40 h-20 opacity-75 hover:opacity-100 transition-all duration-300 hover:scale-110">
                     <img src="/logos/google.png" alt="Google" className="h-12 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
@@ -1639,7 +1639,7 @@ const Landing = () => {
                     <img src="/logos/salesforce.png" alt="Salesforce" className="h-40 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
                   </div>
                   <div className="flex items-center justify-center w-48 h-22 opacity-75 hover:opacity-100 transition-all duration-300 hover:scale-110 -ml-6">
-                    <img src="/logos/hubspot.png" alt="HubSpot" className="h-16 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
+                    <img src="/logos/HubSpot.png" alt="HubSpot" className="h-16 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
                   </div>
                   <div className="flex items-center justify-center w-40 h-20 opacity-75 hover:opacity-100 transition-all duration-300 hover:scale-110">
                     <img src="/logos/google.png" alt="Google" className="h-12 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
@@ -1681,7 +1681,7 @@ const Landing = () => {
                     <img src="/logos/salesforce.png" alt="Salesforce" className="h-40 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
                   </div>
                   <div className="flex items-center justify-center w-48 h-22 opacity-75 hover:opacity-100 transition-all duration-300 hover:scale-110 -ml-6">
-                    <img src="/logos/hubspot.png" alt="HubSpot" className="h-16 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
+                    <img src="/logos/HubSpot.png" alt="HubSpot" className="h-16 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
                   </div>
                   <div className="flex items-center justify-center w-40 h-20 opacity-75 hover:opacity-100 transition-all duration-300 hover:scale-110">
                     <img src="/logos/google.png" alt="Google" className="h-12 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />

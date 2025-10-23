@@ -28,7 +28,10 @@ export const GmailStatusProvider = ({ children }) => {
       setIsGmailConnected(data.connected);
       setGmailEmail(data.email || '');
     } catch (e) {
-      console.error('Error checking Gmail status:', e);
+      // Silently handle backend not available - don't log errors in production
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Backend not available, Gmail status check skipped');
+      }
       setIsGmailConnected(false);
       setGmailEmail('');
     } finally {
