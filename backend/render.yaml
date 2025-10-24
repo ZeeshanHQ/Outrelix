@@ -3,8 +3,9 @@ services:
     name: outrelix-backend
     env: python
     plan: free
+    runtime: python-3.11
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn main_api:app --bind 0.0.0.0:$PORT
+    startCommand: uvicorn main_api:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: SUPABASE_URL
         value: https://bfoggljxtwoloxthtocy.supabase.co
