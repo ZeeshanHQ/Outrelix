@@ -12,7 +12,7 @@ from config import BATCH_SIZE, MAX_BATCHES
 from google_auth_oauthlib.flow import Flow
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
-from supabase import create_client, Client
+# Removed supabase client import to avoid dependency conflicts
 import json
 import os
 import requests
@@ -45,7 +45,50 @@ SENDER_EMAIL = "noreply@cavexa.online"
 # -------------------- SUPABASE SETUP --------------------
 SUPABASE_URL = "https://bfoggljxtwoloxthtocy.supabase.co"
 SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJmb2dnbGp4dHdvbG94dGh0b2N5Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0OTkwMzYxNiwiZXhwIjoyMDY1NDc5NjE2fQ.tb8-UDuye8roMeCwW0YqgjBbodo3x4Bwe_o0JM87kkM"
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+# Removed supabase client initialization - using direct HTTP requests instead
+
+# Helper function for Supabase HTTP requests
+def supabase_request(method, table, data=None, params=None, user_id=None):
+    """Make HTTP requests to Supabase REST API"""
+    url = f"{SUPABASE_URL}/rest/v1/{table}"
+    headers = {
+        "apikey": SUPABASE_KEY,
+        "Authorization": f"Bearer {SUPABASE_KEY}",
+        "Content-Type": "application/json",
+        "Prefer": "return=representation"
+    }
+    
+    if params:
+        url += "?" + "&".join([f"{k}=eq.{v}" for k, v in params.items()])
+    
+    if method == "GET":
+        response = requests.get(url, headers=headers)
+    elif method == "POST":
+        response = requests.post(url, headers=headers, json=data)
+    elif method == "PATCH":
+        response = requests.patch(url, headers=headers, json=data)
+    elif method == "DELETE":
+        response = requests.delete(url, headers=headers)
+    
+    if response.status_code >= 400:
+        raise Exception(f"Supabase request failed: {response.status_code} - {response.text}")
+    
+    return response.json() if response.content else None
+
+def supabase_rpc(function_name, params):
+    """Call Supabase RPC functions"""
+    url = f"{SUPABASE_URL}/rest/v1/rpc/{function_name}"
+    headers = {
+        "apikey": SUPABASE_KEY,
+        "Authorization": f"Bearer {SUPABASE_KEY}",
+        "Content-Type": "application/json"
+    }
+    
+    response = requests.post(url, headers=headers, json=params)
+    if response.status_code >= 400:
+        raise Exception(f"Supabase RPC failed: {response.status_code} - {response.text}")
+    
+    return response.json() if response.content else None
 
 logging.basicConfig(
     level=logging.INFO,
@@ -186,10 +229,10 @@ async def auth_gmail_callback(request: Request):
         "scopes": credentials.scopes
     }
     # Save Gmail token and Gmail address
-    supabase.table("users").update({
+    supabase_request("PATCH", "users", {
         "gmail_token": token_json,
         "gmail_email": email
-    }).eq("id", user_id).execute()
+    }, params={"id": user_id})
     return HTMLResponse("""
         <script>
           if (window.opener) {
@@ -204,8 +247,10 @@ async def auth_gmail_callback(request: Request):
 
 # -------------------- HELPER: GET GMAIL SERVICE FOR USER --------------------
 def get_gmail_service_for_user(user_id):
-    user = supabase.table("users").select("gmail_token").eq("id", user_id).single().execute()
-    token_json = user.data["gmail_token"]
+    user_data = supabase_request("GET", "users", params={"id": user_id})
+    if not user_data or len(user_data) == 0:
+        raise Exception("User not found")
+    token_json = user_data[0]["gmail_token"]
     creds = Credentials(
         token=token_json["token"],
         refresh_token=token_json["refresh_token"],
@@ -433,8 +478,10 @@ async def me(request: Request):
     user_id = request.session.get('user_id')
     if not user_id:
         return JSONResponse({'error': 'Not logged in'}, status_code=401)
-    user = supabase.table('users').select('id, email, name, country, country_name, timezone').eq('id', user_id).single().execute()
-    return JSONResponse(user.data)
+    user_data = supabase_request("GET", "users", params={"id": user_id})
+    if not user_data or len(user_data) == 0:
+        return JSONResponse({'error': 'User not found'}, status_code=404)
+    return JSONResponse(user_data[0])
 
 @app.get('/api/user/gmail-status')
 async def gmail_status(request: Request):
@@ -442,11 +489,11 @@ async def gmail_status(request: Request):
     if not user_id:
         return JSONResponse({'connected': False, 'email': None})
     try:
-        user = supabase.table('users').select('gmail_status, gmail_email').eq('id', user_id).single().execute()
-        if not user.data:
+        user_data = supabase_request("GET", "users", params={"id": user_id})
+        if not user_data or len(user_data) == 0:
             return JSONResponse({'connected': False, 'email': None})
-        status = user.data.get('gmail_status')
-        email = user.data.get('gmail_email')
+        status = user_data[0].get('gmail_status')
+        email = user_data[0].get('gmail_email')
         return JSONResponse({'connected': bool(status), 'email': email})
     except Exception as e:
         print(f"[ERROR] /api/user/gmail-status: {e}")
@@ -457,9 +504,9 @@ async def gmail_status_refresh(request: Request):
     user_id = request.session.get('user_id')
     if not user_id:
         return JSONResponse({'connected': False, 'email': None})
-    user = supabase.table('users').select('gmail_token, gmail_email').eq('id', user_id).single().execute()
-    token_json = user.data.get('gmail_token') if user.data else None
-    email = user.data.get('gmail_email') if user.data else None
+    user_data = supabase_request("GET", "users", params={"id": user_id})
+    token_json = user_data[0].get('gmail_token') if user_data and len(user_data) > 0 else None
+    email = user_data[0].get('gmail_email') if user_data and len(user_data) > 0 else None
     status = False
     if token_json:
         try:
@@ -476,7 +523,7 @@ async def gmail_status_refresh(request: Request):
             status = True
         except Exception:
             status = False
-    supabase.table('users').update({'gmail_status': status}).eq('id', user_id).execute()
+    supabase_request("PATCH", "users", {'gmail_status': status}, params={"id": user_id})
     return JSONResponse({'connected': bool(status), 'email': email})
 
 @app.get('/test')
@@ -501,16 +548,16 @@ async def send_otp(request: OTPRequest):
     """Send OTP to user's email using Resend API"""
     try:
         # Generate OTP using Supabase function
-        otp_result = supabase.rpc('create_otp', {
+        otp_result = supabase_rpc('create_otp', {
             'p_email': request.email,
             'p_purpose': request.purpose,
             'p_expiry_minutes': 10
-        }).execute()
+        })
         
-        if not otp_result.data:
+        if not otp_result:
             return JSONResponse({'error': 'Failed to generate OTP'}, status_code=500)
         
-        otp_code = otp_result.data['otp_code']
+        otp_code = otp_result['otp_code']
         
         # Send email using Resend API
         email_data = {
@@ -561,25 +608,25 @@ async def verify_otp(request: OTPVerifyRequest):
     """Verify OTP code"""
     try:
         # Validate OTP using Supabase function
-        validation_result = supabase.rpc('validate_otp', {
+        validation_result = supabase_rpc('validate_otp', {
             'p_email': request.email,
             'p_otp_code': request.otp_code,
             'p_purpose': request.purpose
-        }).execute()
+        })
         
-        if not validation_result.data:
+        if not validation_result:
             return JSONResponse({'error': 'Failed to validate OTP'}, status_code=500)
         
-        result = validation_result.data
+        result = validation_result
         
         if result['valid']:
             # If email verification, update user profile
             if request.purpose == 'email_verification':
                 # Update user's email_verified status in profiles table
-                supabase.table('profiles').update({
+                supabase_request("PATCH", "profiles", {
                     'email_verified': True,
                     'updated_at': 'NOW()'
-                }).eq('email', request.email).execute()
+                }, params={"email": request.email})
             
             return JSONResponse({
                 'valid': True,
