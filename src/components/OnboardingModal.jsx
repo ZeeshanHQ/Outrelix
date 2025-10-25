@@ -235,7 +235,7 @@ const OnboardingModal = ({ open, onClose, userName }) => {
               }}></div>
               {/* Outrelix logo watermark */}
               <div className="absolute inset-0 flex items-center justify-center">
-                <img src="/logo.svg" alt="Outrelix Logo" className="w-[420px] h-[420px] opacity-10 select-none" style={{ filter: 'blur(1px)' }} />
+                <img src="/outrelix.png" alt="Outrelix Logo" className="w-[420px] h-[420px] opacity-10 select-none" style={{ filter: 'blur(1px)' }} />
               </div>
               {/* Animated orbs and sparkles */}
               <div className="absolute top-10 left-20 w-32 h-32 bg-blue-400/30 rounded-full blur-2xl animate-pulse" style={{ animationDuration: '7s' }}></div>
