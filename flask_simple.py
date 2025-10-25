@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import os
 import requests
 import json
@@ -7,6 +8,7 @@ import random
 import string
 
 app = Flask(__name__)
+CORS(app, origins=['https://outrelix.vercel.app', 'http://localhost:3000'])
 
 # Environment variables
 SUPABASE_URL = os.environ.get('SUPABASE_URL', 'https://bfoggljxtwoloxthtocy.supabase.co')
@@ -43,10 +45,12 @@ def health():
 def get_user():
     """Get current user profile"""
     try:
+        # Get user info from request headers or session
+        # For now, return mock data - in production, get from Supabase auth
         return jsonify({
             "id": "user_123",
-            "name": "Test User",
-            "email": "test@example.com",
+            "name": "Sam Gya",  # This should come from Supabase auth
+            "email": "gyasam76@gmail.com",  # This should come from Supabase auth
             "created_at": datetime.now().isoformat()
         })
     except Exception as e:
