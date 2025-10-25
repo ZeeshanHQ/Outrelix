@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import BACKEND_URL from '../config/backend';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PlusIcon, DocumentDuplicateIcon, LockClosedIcon, ChevronDownIcon, CheckCircleIcon, ExclamationTriangleIcon, ClockIcon } from '@heroicons/react/24/outline';
 import { EnvelopeIcon, BriefcaseIcon } from '@heroicons/react/24/outline';
@@ -142,7 +143,7 @@ const Campaigns = () => {
     try {
       console.log('Creating campaign with data:', { campaignName, campaignGoal, emails, industry, emailSource });
       
-      const res = await fetch('/api/campaign/start', {
+      const res = await fetch(`${BACKEND_URL}/api/campaign/start`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

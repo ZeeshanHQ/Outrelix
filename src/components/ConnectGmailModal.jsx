@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Dialog } from '@headlessui/react';
 import { CheckCircleIcon, XMarkIcon, EnvelopeIcon } from '@heroicons/react/24/outline';
 import { useGmailStatus } from '../utils/GmailStatusContext';
+import BACKEND_URL from '../config/backend';
 
 const ConnectGmailModal = ({ open, onClose, onConnected, gmailEmail: initialGmailEmail, onSeeCampaign, onGmailConnected }) => {
   const { refreshGmailStatus } = useGmailStatus();
@@ -23,7 +24,7 @@ const ConnectGmailModal = ({ open, onClose, onConnected, gmailEmail: initialGmai
     
     const checkGmailStatus = async () => {
       try {
-        const res = await fetch('/api/user/gmail-status', { credentials: 'include' });
+        const res = await fetch(`${BACKEND_URL}/api/user/gmail-status`, { credentials: 'include' });
         const data = await res.json();
         if (data.connected && data.email) {
           setGmailEmail(data.email);
@@ -61,7 +62,7 @@ const ConnectGmailModal = ({ open, onClose, onConnected, gmailEmail: initialGmai
         // Immediately close modal and fetch Gmail from backend
         let email = '';
         try {
-          const res = await fetch('/api/user/gmail-status', { credentials: 'include' });
+          const res = await fetch(`${BACKEND_URL}/api/user/gmail-status`, { credentials: 'include' });
           const data = await res.json();
           if (data.connected && data.email) {
             email = data.email;

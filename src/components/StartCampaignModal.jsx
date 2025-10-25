@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import BACKEND_URL from '../config/backend';
 import { Dialog } from '@headlessui/react';
 import { XMarkIcon, SparklesIcon, CheckCircleIcon, LockClosedIcon, ChevronDownIcon, ChevronUpIcon, PencilSquareIcon, ClockIcon } from '@heroicons/react/24/outline';
 import ConnectGmailModal from './ConnectGmailModal';
@@ -51,7 +52,7 @@ const StartCampaignModal = ({ open, onClose, industry = '', onStart, isLoading, 
     if (!open) return;
     async function fetchStatus() {
       try {
-        const res = await fetch('/api/user/gmail-status', { credentials: 'include' });
+        const res = await fetch(`${BACKEND_URL}/api/user/gmail-status`, { credentials: 'include' });
         const data = await res.json();
         setGmailEmail(data.email || '');
       } catch (e) {

@@ -18,6 +18,7 @@ import {
   EyeIcon,
   EyeSlashIcon
 } from '@heroicons/react/24/outline';
+import BACKEND_URL from '../config/backend';
 import { auth, db } from '../supabase';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -388,7 +389,7 @@ const SignupModal = ({ isOpen, onClose, onSignupSuccess, onEmailVerified, pendin
         }
         // No /login call here; will be handled after verification
         // Fetch user profile from backend and update localStorage
-        const meRes = await fetch(`${process.env.REACT_APP_BACKEND_URL || 'https://outrelix-backend.onrender.com'}/me`, { credentials: 'include' });
+        const meRes = await fetch(`${BACKEND_URL}/me`, { credentials: 'include' });
         if (meRes.ok) {
           const me = await meRes.json();
           localStorage.setItem('user', JSON.stringify({
@@ -410,7 +411,7 @@ const SignupModal = ({ isOpen, onClose, onSignupSuccess, onEmailVerified, pendin
         
         // Send OTP for email verification
         try {
-          const otpResponse = await fetch(`${process.env.REACT_APP_BACKEND_URL || 'https://outrelix-backend.onrender.com'}/api/otp/send`, {
+          const otpResponse = await fetch(`${BACKEND_URL}/api/otp/send`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
@@ -1224,7 +1225,7 @@ const Landing = () => {
     // Send onboarding answers to backend
     try {
       console.log("POSTING onboarding", onboardingData);
-      await fetch(`${process.env.REACT_APP_BACKEND_URL || 'https://outrelix-backend.onrender.com'}/api/user/onboarding`, {
+      await fetch(`${BACKEND_URL}/api/user/onboarding`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

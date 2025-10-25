@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import BACKEND_URL from '../config/backend';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Line } from 'react-chartjs-2';
 import { toast } from 'react-toastify';
@@ -169,7 +170,7 @@ const Dashboard = () => {
 
   const loadIndustries = async () => {
     try {
-      const response = await fetch('/api/industries');
+      const response = await fetch(`${BACKEND_URL}/api/industries`);
 
       // Check if the response status is OK (status in the range 200-299)
       if (!response.ok) {
