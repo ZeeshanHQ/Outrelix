@@ -1552,20 +1552,20 @@ const Landing = () => {
                 {/* First set of logos */}
                 <div className="flex items-center space-x-20 min-w-max">
                   <div className="flex items-center justify-center w-72 h-44 opacity-75 hover:opacity-100 transition-all duration-300 hover:scale-110">
-                    <img src="/logos/salesforce.png`} alt="Salesforce" className="h-40 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
+                    <img src="/logos/salesforce.png" alt="Salesforce" className="h-40 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
                   </div>
                   <div className="flex items-center justify-center w-48 h-22 opacity-75 hover:opacity-100 transition-all duration-300 hover:scale-110 -ml-6">
-                    <img src="/logos/HubSpot.png`} alt="HubSpot" className="h-16 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
+                    <img src="/logos/HubSpot.png" alt="HubSpot" className="h-16 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
                   </div>
                   <div className="flex items-center justify-center w-40 h-20 opacity-75 hover:opacity-100 transition-all duration-300 hover:scale-110">
-                    <img src="/logos/google.png`} alt="Google" className="h-12 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
+                    <img src="/logos/google.png" alt="Google" className="h-12 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
                   </div>
                   <div className="flex items-center justify-center w-40 h-20 opacity-75 hover:opacity-100 transition-all duration-300 hover:scale-110">
-                    <img src="/logos/mailchimp.png`} alt="Mailchimp" className="h-10 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
+                    <img src="/logos/mailchimp.png" alt="Mailchimp" className="h-10 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
                   </div>
                   <div className="flex items-center justify-center w-40 h-20 opacity-75 hover:opacity-100 transition-all duration-300 hover:scale-110">
                     <img 
-                      src="/logos/linkedin.png`} 
+                      src="/logos/linkedin.png" 
                       alt="LinkedIn" 
                       className="h-8 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" 
                       onError={(e) => {
@@ -1584,30 +1584,30 @@ const Landing = () => {
                     />
                   </div>
                   <div className="flex items-center justify-center w-48 h-24 opacity-75 hover:opacity-100 transition-all duration-300 hover:scale-110">
-                    <img src="/logos/zoom.png`} alt="Zoom" className="h-16 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
+                    <img src="/logos/zoom.png" alt="Zoom" className="h-16 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
                   </div>
                   <div className="flex items-center justify-center w-32 h-16 opacity-60 hover:opacity-100 transition-all duration-300 hover:scale-110">
-                    <img src="/logos/slack.png`} alt="Slack" className="h-8 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
+                    <img src="/logos/slack.png" alt="Slack" className="h-8 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
                   </div>
                 </div>
                 
                 {/* Duplicate set for seamless loop */}
                 <div className="flex items-center space-x-20 min-w-max">
                   <div className="flex items-center justify-center w-72 h-44 opacity-75 hover:opacity-100 transition-all duration-300 hover:scale-110">
-                    <img src="/logos/salesforce.png`} alt="Salesforce" className="h-40 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
+                    <img src="/logos/salesforce.png" alt="Salesforce" className="h-40 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
                   </div>
                   <div className="flex items-center justify-center w-48 h-22 opacity-75 hover:opacity-100 transition-all duration-300 hover:scale-110 -ml-6">
-                    <img src="/logos/HubSpot.png`} alt="HubSpot" className="h-16 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
+                    <img src="/logos/HubSpot.png" alt="HubSpot" className="h-16 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
                   </div>
                   <div className="flex items-center justify-center w-40 h-20 opacity-75 hover:opacity-100 transition-all duration-300 hover:scale-110">
-                    <img src="/logos/google.png`} alt="Google" className="h-12 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
+                    <img src="/logos/google.png" alt="Google" className="h-12 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
                   </div>
                   <div className="flex items-center justify-center w-40 h-20 opacity-75 hover:opacity-100 transition-all duration-300 hover:scale-110">
-                    <img src="/logos/mailchimp.png`} alt="Mailchimp" className="h-10 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
+                    <img src="/logos/mailchimp.png" alt="Mailchimp" className="h-10 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
                   </div>
                   <div className="flex items-center justify-center w-40 h-20 opacity-75 hover:opacity-100 transition-all duration-300 hover:scale-110">
                     <img 
-                      src="/logos/linkedin.png`} 
+                      src="/logos/linkedin.png" 
                       alt="LinkedIn" 
                       className="h-8 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" 
                       onError={(e) => {
@@ -1626,30 +1626,30 @@ const Landing = () => {
                     />
                   </div>
                   <div className="flex items-center justify-center w-48 h-24 opacity-75 hover:opacity-100 transition-all duration-300 hover:scale-110">
-                    <img src="/logos/zoom.png`} alt="Zoom" className="h-16 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
+                    <img src="/logos/zoom.png" alt="Zoom" className="h-16 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
                   </div>
                   <div className="flex items-center justify-center w-32 h-16 opacity-60 hover:opacity-100 transition-all duration-300 hover:scale-110">
-                    <img src="/logos/slack.png`} alt="Slack" className="h-8 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
+                    <img src="/logos/slack.png" alt="Slack" className="h-8 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
                   </div>
                 </div>
                 
                 {/* Third duplicate set for smoother loop */}
                 <div className="flex items-center space-x-20 min-w-max">
                   <div className="flex items-center justify-center w-72 h-44 opacity-75 hover:opacity-100 transition-all duration-300 hover:scale-110">
-                    <img src="/logos/salesforce.png`} alt="Salesforce" className="h-40 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
+                    <img src="/logos/salesforce.png" alt="Salesforce" className="h-40 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
                   </div>
                   <div className="flex items-center justify-center w-48 h-22 opacity-75 hover:opacity-100 transition-all duration-300 hover:scale-110 -ml-6">
-                    <img src="/logos/HubSpot.png`} alt="HubSpot" className="h-16 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
+                    <img src="/logos/HubSpot.png" alt="HubSpot" className="h-16 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
                   </div>
                   <div className="flex items-center justify-center w-40 h-20 opacity-75 hover:opacity-100 transition-all duration-300 hover:scale-110">
-                    <img src="/logos/google.png`} alt="Google" className="h-12 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
+                    <img src="/logos/google.png" alt="Google" className="h-12 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
                   </div>
                   <div className="flex items-center justify-center w-40 h-20 opacity-75 hover:opacity-100 transition-all duration-300 hover:scale-110">
-                    <img src="/logos/mailchimp.png`} alt="Mailchimp" className="h-10 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
+                    <img src="/logos/mailchimp.png" alt="Mailchimp" className="h-10 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
                   </div>
                   <div className="flex items-center justify-center w-40 h-20 opacity-75 hover:opacity-100 transition-all duration-300 hover:scale-110">
                     <img 
-                      src="/logos/linkedin.png`} 
+                      src="/logos/linkedin.png" 
                       alt="LinkedIn" 
                       className="h-8 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" 
                       onError={(e) => {
@@ -1668,30 +1668,30 @@ const Landing = () => {
                     />
                   </div>
                   <div className="flex items-center justify-center w-48 h-24 opacity-75 hover:opacity-100 transition-all duration-300 hover:scale-110">
-                    <img src="/logos/zoom.png`} alt="Zoom" className="h-16 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
+                    <img src="/logos/zoom.png" alt="Zoom" className="h-16 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
                   </div>
                   <div className="flex items-center justify-center w-32 h-16 opacity-60 hover:opacity-100 transition-all duration-300 hover:scale-110">
-                    <img src="/logos/slack.png`} alt="Slack" className="h-8 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
+                    <img src="/logos/slack.png" alt="Slack" className="h-8 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
                   </div>
                 </div>
                 
                 {/* Fourth duplicate set for completely seamless loop */}
                 <div className="flex items-center space-x-20 min-w-max">
                   <div className="flex items-center justify-center w-72 h-44 opacity-75 hover:opacity-100 transition-all duration-300 hover:scale-110">
-                    <img src="/logos/salesforce.png`} alt="Salesforce" className="h-40 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
+                    <img src="/logos/salesforce.png" alt="Salesforce" className="h-40 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
                   </div>
                   <div className="flex items-center justify-center w-48 h-22 opacity-75 hover:opacity-100 transition-all duration-300 hover:scale-110 -ml-6">
-                    <img src="/logos/HubSpot.png`} alt="HubSpot" className="h-16 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
+                    <img src="/logos/HubSpot.png" alt="HubSpot" className="h-16 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
                   </div>
                   <div className="flex items-center justify-center w-40 h-20 opacity-75 hover:opacity-100 transition-all duration-300 hover:scale-110">
-                    <img src="/logos/google.png`} alt="Google" className="h-12 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
+                    <img src="/logos/google.png" alt="Google" className="h-12 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
                   </div>
                   <div className="flex items-center justify-center w-40 h-20 opacity-75 hover:opacity-100 transition-all duration-300 hover:scale-110">
-                    <img src="/logos/mailchimp.png`} alt="Mailchimp" className="h-10 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
+                    <img src="/logos/mailchimp.png" alt="Mailchimp" className="h-10 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
                   </div>
                   <div className="flex items-center justify-center w-40 h-20 opacity-75 hover:opacity-100 transition-all duration-300 hover:scale-110">
                     <img 
-                      src="/logos/linkedin.png`} 
+                      src="/logos/linkedin.png" 
                       alt="LinkedIn" 
                       className="h-8 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" 
                       onError={(e) => {
@@ -1710,10 +1710,10 @@ const Landing = () => {
                     />
                   </div>
                   <div className="flex items-center justify-center w-48 h-24 opacity-75 hover:opacity-100 transition-all duration-300 hover:scale-110">
-                    <img src="/logos/zoom.png`} alt="Zoom" className="h-16 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
+                    <img src="/logos/zoom.png" alt="Zoom" className="h-16 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
                   </div>
                   <div className="flex items-center justify-center w-32 h-16 opacity-60 hover:opacity-100 transition-all duration-300 hover:scale-110">
-                    <img src="/logos/slack.png`} alt="Slack" className="h-8 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
+                    <img src="/logos/slack.png" alt="Slack" className="h-8 w-auto object-contain filter drop-shadow-sm dark:brightness-0 dark:invert" />
                   </div>
                 </div>
               </div>
