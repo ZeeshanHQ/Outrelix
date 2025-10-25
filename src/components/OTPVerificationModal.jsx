@@ -62,7 +62,7 @@ const OTPVerificationModal = ({
     setAttempts(prev => prev + 1);
 
     try {
-      const response = await fetch('/api/otp/verify', {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL || 'https://outrelix-backend.onrender.com'}/api/otp/verify`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -122,7 +122,7 @@ const OTPVerificationModal = ({
     setIsResending(true);
     
     try {
-      const response = await fetch('/api/otp/resend', {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL || 'https://outrelix-backend.onrender.com'}/api/otp/resend`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

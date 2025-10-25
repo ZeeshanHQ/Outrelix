@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import BACKEND_URL from '../config/backend';
 
 const GmailStatusContext = createContext();
 
@@ -18,7 +19,7 @@ export const GmailStatusProvider = ({ children }) => {
     }
     
     try {
-      const res = await fetch('/api/user/gmail-status', { credentials: 'include' });
+      const res = await fetch(`${BACKEND_URL}/api/user/gmail-status`, { credentials: 'include' });
       
       if (!res.ok) {
         throw new Error(`HTTP ${res.status}: ${res.statusText}`);
