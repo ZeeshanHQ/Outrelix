@@ -1,5 +1,5 @@
 // Backend health check and wake-up system
-import BACKEND_URL from './backend';
+import BACKEND_URL from '../config/backend';
 
 class BackendManager {
   constructor() {
