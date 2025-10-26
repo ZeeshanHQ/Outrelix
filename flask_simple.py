@@ -38,7 +38,11 @@ def home():
 
 @app.route('/health')
 def health():
-    return jsonify({"status": "healthy"})
+    """Health check endpoint for backend wake-up system"""
+    return jsonify({
+        "status": "online",
+        "message": "Backend is awake and ready"
+    })
 
 # User management endpoints
 @app.route('/me', methods=['GET'])
