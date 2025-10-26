@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import BACKEND_URL from '../config/backend';
+import backendManager from '../utils/BackendManager';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Line } from 'react-chartjs-2';
 import { toast } from 'react-toastify';
@@ -93,6 +94,8 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { isGmailConnected, gmailEmail, refreshGmailStatus } = useGmailStatus();
   const [selectedIndustry, setSelectedIndustry] = useState('');
+  const [isBackendLoading, setIsBackendLoading] = useState(false);
+  const [backendStatus, setBackendStatus] = useState({ isOnline: true, isSleeping: false });
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem('user');
     return savedUser ? JSON.parse(savedUser) : null;
@@ -170,7 +173,10 @@ const Dashboard = () => {
 
   const loadIndustries = async () => {
     try {
-      const response = await fetch(`${BACKEND_URL}/api/industries`);
+      setIsBackendLoading(true);
+      console.log('🔄 Loading industries...');
+      
+      const response = await backendManager.fetchWithWakeUp(`${BACKEND_URL}/api/industries`);
 
       // Check if the response status is OK (status in the range 200-299)
       if (!response.ok) {
@@ -179,10 +185,19 @@ const Dashboard = () => {
       }
 
       const data = await response.json();
-      setIndustries(data);
+      console.log('✅ Industries loaded successfully:', data);
+      setIndustries(data.industries || data);
+      setBackendStatus({ isOnline: true, isSleeping: false });
     } catch (error) {
-      console.error('Error loading industries:', error);
-      setError('Failed to load industries: ' + error.message); // Include error message
+      console.error('❌ Error loading industries:', error);
+      setBackendStatus({ isOnline: false, isSleeping: true });
+      setError('Backend is sleeping, waking up... Please wait a moment.');
+      toast.error('Backend is sleeping, waking up... Please wait a moment.', {
+        position: 'top-center',
+        autoClose: 5000,
+      });
+    } finally {
+      setIsBackendLoading(false);
     }
   };
 
@@ -487,6 +502,29 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen w-full font-poppins relative">
+      {/* Backend Status Indicator */}
+      {isBackendLoading && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="fixed top-4 right-4 z-50 bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2"
+        >
+          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+          <span>Waking up backend...</span>
+        </motion.div>
+      )}
+
+      {backendStatus.isSleeping && !isBackendLoading && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="fixed top-4 right-4 z-50 bg-yellow-500 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2"
+        >
+          <div className="animate-pulse rounded-full h-4 w-4 bg-white"></div>
+          <span>Backend sleeping...</span>
+        </motion.div>
+      )}
+
       {/* Fixed full-screen background gradient */}
       <div className="fixed inset-0 w-full h-full z-0 bg-gradient-to-br from-[#e3e9fa] via-[#c7d2fe] to-[#f3e8ff] dark:from-[#0a183d] dark:via-[#1a237e] dark:to-[#4b006e]" aria-hidden="true"></div>
       {/* Scrollable content */}
