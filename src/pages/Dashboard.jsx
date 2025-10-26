@@ -40,6 +40,7 @@ import Footer from '../components/Footer';
 import { Dialog } from '@headlessui/react';
 import ConnectGmailModal from '../components/ConnectGmailModal';
 import { useGmailStatus } from '../utils/GmailStatusContext';
+import Analyzer from '../components/Analyzer';
 
 // Register ChartJS components
 ChartJS.register(
@@ -96,6 +97,8 @@ const Dashboard = () => {
   const [selectedIndustry, setSelectedIndustry] = useState('');
   const [isBackendLoading, setIsBackendLoading] = useState(false);
   const [backendStatus, setBackendStatus] = useState({ isOnline: true, isSleeping: false });
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('dashboard');
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem('user');
     return savedUser ? JSON.parse(savedUser) : null;
@@ -525,12 +528,74 @@ const Dashboard = () => {
         </motion.div>
       )}
 
+      {/* Sidebar */}
+      <motion.div
+        initial={{ x: -300 }}
+        animate={{ x: sidebarOpen ? 0 : -300 }}
+        className="fixed left-0 top-0 h-full w-64 bg-white dark:bg-gray-800 shadow-xl z-40 border-r border-gray-200 dark:border-gray-700"
+      >
+        <div className="p-6">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Navigation</h2>
+          <nav className="space-y-2">
+            <button
+              onClick={() => { setActiveTab('dashboard'); setSidebarOpen(false); }}
+              className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${
+                activeTab === 'dashboard' 
+                  ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' 
+                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+              }`}
+            >
+              📊 Dashboard
+            </button>
+            <button
+              onClick={() => { setActiveTab('analyzer'); setSidebarOpen(false); }}
+              className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${
+                activeTab === 'analyzer' 
+                  ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' 
+                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+              }`}
+            >
+              🔍 Website Analyzer
+            </button>
+            <button
+              onClick={() => navigate('/campaigns')}
+              className="w-full text-left px-4 py-3 rounded-lg transition-colors text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+            >
+              📧 Campaigns
+            </button>
+            <button
+              onClick={() => navigate('/analytics')}
+              className="w-full text-left px-4 py-3 rounded-lg transition-colors text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+            >
+              📈 Analytics
+            </button>
+          </nav>
+        </div>
+      </motion.div>
+
+      {/* Sidebar Toggle Button */}
+      <button
+        onClick={() => setSidebarOpen(!sidebarOpen)}
+        className="fixed top-4 left-4 z-50 p-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700"
+      >
+        <svg className="w-6 h-6 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+
       {/* Fixed full-screen background gradient */}
       <div className="fixed inset-0 w-full h-full z-0 bg-gradient-to-br from-[#e3e9fa] via-[#c7d2fe] to-[#f3e8ff] dark:from-[#0a183d] dark:via-[#1a237e] dark:to-[#4b006e]" aria-hidden="true"></div>
       {/* Scrollable content */}
       <div className="relative min-h-screen w-full flex flex-col px-0 z-10 bg-transparent">
-      {/* Animated Welcome Message */}
-      <div className="flex flex-col items-center justify-center pt-8 pb-2">
+        {/* Conditional Content Based on Active Tab */}
+        {activeTab === 'analyzer' ? (
+          <div className="pt-20">
+            <Analyzer />
+          </div>
+        ) : (
+          <>
+            {/* Animated Welcome Message */}
+            <div className="flex flex-col items-center justify-center pt-8 pb-2">
         <motion.div
           initial={{ opacity: 0, scale: 0.7, y: 40 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -740,8 +805,9 @@ const Dashboard = () => {
         </div>
       )}
       <div className="mt-auto">
-        <Footer />
-        </div>
+            <Footer />
+          </>
+        )}
       </div>
     </div>
   );
