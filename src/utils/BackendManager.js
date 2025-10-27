@@ -10,7 +10,7 @@ class BackendManager {
   }
 
   // Check if backend is sleeping (returns HTML instead of JSON)
-  isBackendSleeping(response) {
+  checkIfBackendSleeping(response) {
     const contentType = response.headers.get('content-type');
     return contentType && contentType.includes('text/html');
   }
@@ -66,7 +66,7 @@ class BackendManager {
       });
 
       // Check if backend is sleeping
-      if (this.isBackendSleeping(response)) {
+      if (this.checkIfBackendSleeping(response)) {
         console.log('😴 Backend is sleeping, waking up...');
         const wokeUp = await this.wakeUpBackend();
         
@@ -113,7 +113,7 @@ class BackendManager {
       const response = await fetch(`${BACKEND_URL}/health`);
       return {
         isOnline: response.ok,
-        isSleeping: this.isBackendSleeping(response)
+        isSleeping: this.checkIfBackendSleeping(response)
       };
     } catch (error) {
       return {
