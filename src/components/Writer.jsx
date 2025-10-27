@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-toastify';
 import supabase, { analyzerApi } from '../lib/supabaseClient';
+import { Smartphone, Mail, Megaphone, Search, Package, FileText, Share2, Newspaper, PenTool, RefreshCw } from 'lucide-react';
 
 const Writer = ({ onGenerationComplete }) => {
   const [mode, setMode] = useState('write'); // 'write' or 'rewrite'
@@ -15,14 +16,14 @@ const Writer = ({ onGenerationComplete }) => {
   const [sessions, setSessions] = useState([]);
 
   const contentTypes = [
-    { value: 'app_description', label: 'App Description', icon: '📱' },
-    { value: 'cold_email', label: 'Cold Email', icon: '📧' },
-    { value: 'ad_copy', label: 'Ad Copy', icon: '📢' },
-    { value: 'seo_post', label: 'SEO Post', icon: '🔍' },
-    { value: 'product_description', label: 'Product Description', icon: '🛍️' },
-    { value: 'blog_post', label: 'Blog Post', icon: '📝' },
-    { value: 'social_media', label: 'Social Media', icon: '📱' },
-    { value: 'press_release', label: 'Press Release', icon: '📰' },
+    { value: 'app_description', label: 'App Description', icon: Smartphone },
+    { value: 'cold_email', label: 'Cold Email', icon: Mail },
+    { value: 'ad_copy', label: 'Ad Copy', icon: Megaphone },
+    { value: 'seo_post', label: 'SEO Post', icon: Search },
+    { value: 'product_description', label: 'Product Description', icon: Package },
+    { value: 'blog_post', label: 'Blog Post', icon: FileText },
+    { value: 'social_media', label: 'Social Media', icon: Share2 },
+    { value: 'press_release', label: 'Press Release', icon: Newspaper },
   ];
 
   const prompts = {
@@ -373,11 +374,22 @@ This rewritten version maintains your original message while making it more effe
     <div className="w-full max-w-6xl mx-auto p-6">
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8">
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-            ✍️ Smart Writer & Rewriter
-          </h2>
-          <div className="text-sm text-gray-500 dark:text-gray-400">
-            {dailyCount}/{dailyLimit} generations today
+          <div className="flex items-center gap-3">
+            <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl">
+              <PenTool className="w-8 h-8 text-white" />
+            </div>
+            <div>
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+                Smart Writer & Rewriter
+              </h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400">AI-powered content generation</p>
+            </div>
+          </div>
+          <div className="text-right">
+            <div className="text-2xl font-bold text-gray-900 dark:text-white">
+              {dailyCount}/{dailyLimit}
+            </div>
+            <div className="text-sm text-gray-500 dark:text-gray-400">generations today</div>
           </div>
         </div>
 
@@ -389,23 +401,25 @@ This rewritten version maintains your original message while making it more effe
           <div className="flex gap-4">
             <button
               onClick={() => setMode('write')}
-              className={`px-6 py-3 rounded-lg font-medium transition-all ${
+              className={`px-6 py-3 rounded-lg font-medium transition-all flex items-center gap-2 ${
                 mode === 'write'
                   ? 'bg-blue-600 text-white shadow-lg'
                   : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
               }`}
             >
-              ✍️ Write New
+              <PenTool className="w-5 h-5" />
+              Write New
             </button>
             <button
               onClick={() => setMode('rewrite')}
-              className={`px-6 py-3 rounded-lg font-medium transition-all ${
+              className={`px-6 py-3 rounded-lg font-medium transition-all flex items-center gap-2 ${
                 mode === 'rewrite'
                   ? 'bg-blue-600 text-white shadow-lg'
                   : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
               }`}
             >
-              🔁 Rewrite Existing
+              <RefreshCw className="w-5 h-5" />
+              Rewrite Existing
             </button>
           </div>
         </div>
@@ -416,20 +430,23 @@ This rewritten version maintains your original message while making it more effe
             Content Type
           </label>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {contentTypes.map((type) => (
-              <button
-                key={type.value}
-                onClick={() => setContentType(type.value)}
-                className={`p-3 rounded-lg text-sm font-medium transition-all ${
-                  contentType === type.value
-                    ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-2 border-blue-500'
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 border-2 border-transparent'
-                }`}
-              >
-                <div className="text-lg mb-1">{type.icon}</div>
-                {type.label}
-              </button>
-            ))}
+            {contentTypes.map((type) => {
+              const IconComponent = type.icon;
+              return (
+                <button
+                  key={type.value}
+                  onClick={() => setContentType(type.value)}
+                  className={`p-4 rounded-lg text-sm font-medium transition-all flex flex-col items-center gap-2 ${
+                    contentType === type.value
+                      ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-2 border-blue-500'
+                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 border-2 border-transparent'
+                  }`}
+                >
+                  <IconComponent className="w-6 h-6" />
+                  <span>{type.label}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
 
@@ -460,7 +477,7 @@ This rewritten version maintains your original message while making it more effe
             disabled={isGenerating || (mode === 'rewrite' && !inputText.trim()) || dailyCount >= dailyLimit}
             className="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:from-blue-700 hover:to-purple-700 transition-all shadow-lg"
           >
-            {isGenerating ? 'Generating...' : mode === 'write' ? '✍️ Generate Content' : '🔁 Rewrite Text'}
+            {isGenerating ? 'Generating...' : mode === 'write' ? 'Generate Content' : 'Rewrite Text'}
           </motion.button>
         </div>
 
@@ -492,21 +509,21 @@ This rewritten version maintains your original message while making it more effe
             >
               <div className="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-                    📝 Generated Content
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                    Generated Content
                   </h3>
                   <div className="flex gap-2">
                     <button
                       onClick={() => copyToClipboard(outputText)}
                       className="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors"
                     >
-                      📋 Copy
+                      Copy
                     </button>
                     <button
                       onClick={clearAll}
                       className="px-4 py-2 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors"
                     >
-                      🗑️ Clear
+                      Clear
                     </button>
                   </div>
                 </div>
@@ -524,41 +541,46 @@ This rewritten version maintains your original message while making it more effe
         {sessions.length > 0 && (
           <div className="mt-8">
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-              📚 Recent Sessions
+              Recent Sessions
             </h3>
             <div className="space-y-3">
-              {sessions.slice(0, 5).map((session) => (
-                <div
-                  key={session.id}
-                  className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors cursor-pointer"
-                  onClick={() => {
-                    setMode(session.mode);
-                    setContentType(session.content_type);
-                    setInputText(session.input_text);
-                    setOutputText(session.output_text);
-                  }}
-                >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="font-medium text-gray-900 dark:text-white">
-                        {contentTypes.find(t => t.value === session.content_type)?.icon} {contentTypes.find(t => t.value === session.content_type)?.label}
+              {sessions.slice(0, 5).map((session) => {
+                const contentTypeData = contentTypes.find(t => t.value === session.content_type);
+                const IconComponent = contentTypeData?.icon || FileText;
+                return (
+                  <div
+                    key={session.id}
+                    className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors cursor-pointer"
+                    onClick={() => {
+                      setMode(session.mode);
+                      setContentType(session.content_type);
+                      setInputText(session.input_text);
+                      setOutputText(session.output_text);
+                    }}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="font-medium text-gray-900 dark:text-white flex items-center gap-2">
+                          <IconComponent className="w-4 h-4" />
+                          {contentTypeData?.label || session.content_type}
+                        </div>
+                        <div className="text-sm text-gray-500 dark:text-gray-400">
+                          {session.mode === 'write' ? 'Generated' : 'Rewritten'} • {session.word_count} words • {new Date(session.created_at).toLocaleDateString()}
+                        </div>
                       </div>
-                      <div className="text-sm text-gray-500 dark:text-gray-400">
-                        {session.mode === 'write' ? '✍️ Generated' : '🔁 Rewritten'} • {session.word_count} words • {new Date(session.created_at).toLocaleDateString()}
-                      </div>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          copyToClipboard(session.output_text);
+                        }}
+                        className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded text-sm hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors"
+                      >
+                        Copy
+                      </button>
                     </div>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        copyToClipboard(session.output_text);
-                      }}
-                      className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded text-sm hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors"
-                    >
-                      Copy
-                    </button>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}
