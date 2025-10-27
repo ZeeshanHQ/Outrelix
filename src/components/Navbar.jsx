@@ -108,7 +108,17 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20 py-2">
           {/* Logo */}
-          <Link to="/" className="flex items-center h-full mr-6 pl-2">
+          <button 
+            onClick={() => {
+              // Smart navigation: go to dashboard if on dashboard routes, otherwise go to landing
+              if (isDashboardRoute) {
+                navigate('/dashboard');
+              } else {
+                navigate('/');
+              }
+            }}
+            className="flex items-center h-full mr-6 pl-2 focus:outline-none"
+          >
             <img 
               src="/outrelix-light.png" 
               alt="Outrelix Logo" 
@@ -121,7 +131,7 @@ const Navbar = () => {
               className="h-36 w-auto object-contain drop-shadow-sm hidden dark:block" 
               onError={e => { e.target.onerror = null; e.target.src = '/outrelix-light.png'; }}
             />
-          </Link>
+          </button>
 
           {/* Navigation Links */}
           <div className="hidden md:flex items-center space-x-8 flex-1 justify-center">
