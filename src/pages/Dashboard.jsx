@@ -766,6 +766,8 @@ const Dashboard = () => {
           ))}
         </div>
       </motion.div>
+          </>
+        )}
       <ConnectGmailModal
         open={showConnectGmailModal}
         onClose={() => setShowConnectGmailModal(false)}
@@ -804,10 +806,9 @@ const Dashboard = () => {
           {formError}
         </div>
       )}
-      <div className="mt-auto">
-            <Footer />
-          </>
-        )}
+        <div className="mt-auto">
+          <Footer />
+        </div>
       </div>
     </div>
   );
