@@ -458,9 +458,29 @@ const Dashboard = () => {
   ];
 
   useEffect(() => {
-    const handleUserUpdate = () => {
+    const handleUserUpdate = async () => {
       const savedUser = localStorage.getItem('user');
-      setUser(savedUser ? JSON.parse(savedUser) : null);
+      if (savedUser) {
+        setUser(JSON.parse(savedUser));
+      } else {
+        // If no user in localStorage, try to fetch from Supabase
+        try {
+          const { supabase } = await import('../supabase');
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session?.user) {
+            const userObj = {
+              name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'User',
+              displayName: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'User',
+              email: session.user.email,
+              photoURL: session.user.user_metadata?.avatar_url,
+            };
+            localStorage.setItem('user', JSON.stringify(userObj));
+            setUser(userObj);
+          }
+        } catch (err) {
+          console.error('Failed to fetch user from Supabase:', err);
+        }
+      }
     };
     window.addEventListener('user-updated', handleUserUpdate);
     window.addEventListener('storage', handleUserUpdate);
@@ -505,83 +525,83 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen w-full font-poppins relative">
-      {/* Backend Status Indicator */}
-      {isBackendLoading && (
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="fixed top-4 right-4 z-50 bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2"
-        >
-          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-          <span>Waking up backend...</span>
-        </motion.div>
-      )}
-
-      {backendStatus.isSleeping && !isBackendLoading && (
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="fixed top-4 right-4 z-50 bg-yellow-500 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2"
-        >
-          <div className="animate-pulse rounded-full h-4 w-4 bg-white"></div>
-          <span>Backend sleeping...</span>
-        </motion.div>
-      )}
+      {/* Sidebar Toggle Button */}
+      <button
+        onClick={() => setSidebarOpen(!sidebarOpen)}
+        className="fixed bottom-20 left-6 z-50 p-3 bg-white dark:bg-gray-800 rounded-full shadow-xl border border-gray-200 dark:border-gray-700 hover:shadow-2xl transition-all"
+      >
+        <svg className="w-6 h-6 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
 
       {/* Sidebar */}
       <motion.div
-        initial={{ x: -300 }}
-        animate={{ x: sidebarOpen ? 0 : -300 }}
-        className="fixed left-0 top-0 h-full w-64 bg-white dark:bg-gray-800 shadow-xl z-40 border-r border-gray-200 dark:border-gray-700"
+        initial={{ x: -320 }}
+        animate={{ x: sidebarOpen ? 0 : -320 }}
+        transition={{ type: "spring", stiffness: 400, damping: 40 }}
+        className="fixed left-0 bottom-0 h-[60vh] w-72 bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl shadow-2xl z-40 border-r border-gray-200/50 dark:border-gray-700/50 rounded-t-3xl"
       >
-        <div className="p-6">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Navigation</h2>
-          <nav className="space-y-2">
+        <div className="p-6 h-full flex flex-col">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Navigation</h2>
+            <button
+              onClick={() => setSidebarOpen(false)}
+              className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          <nav className="space-y-3 flex-1">
             <button
               onClick={() => { setActiveTab('dashboard'); setSidebarOpen(false); }}
-              className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
                 activeTab === 'dashboard' 
-                  ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' 
+                  ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg' 
                   : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
               }`}
             >
-              📊 Dashboard
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+              </svg>
+              <span className="font-semibold">Dashboard</span>
             </button>
             <button
               onClick={() => { setActiveTab('analyzer'); setSidebarOpen(false); }}
-              className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
                 activeTab === 'analyzer' 
-                  ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' 
+                  ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg' 
                   : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
               }`}
             >
-              🔍 Website Analyzer
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <span className="font-semibold">Website Analyzer</span>
             </button>
             <button
               onClick={() => navigate('/campaigns')}
-              className="w-full text-left px-4 py-3 rounded-lg transition-colors text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
             >
-              📧 Campaigns
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+              <span className="font-semibold">Campaigns</span>
             </button>
             <button
               onClick={() => navigate('/analytics')}
-              className="w-full text-left px-4 py-3 rounded-lg transition-colors text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
             >
-              📈 Analytics
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              <span className="font-semibold">Analytics</span>
             </button>
           </nav>
         </div>
       </motion.div>
-
-      {/* Sidebar Toggle Button */}
-      <button
-        onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="fixed top-4 left-4 z-50 p-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700"
-      >
-        <svg className="w-6 h-6 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
-      </button>
 
       {/* Fixed full-screen background gradient */}
       <div className="fixed inset-0 w-full h-full z-0 bg-gradient-to-br from-[#e3e9fa] via-[#c7d2fe] to-[#f3e8ff] dark:from-[#0a183d] dark:via-[#1a237e] dark:to-[#4b006e]" aria-hidden="true"></div>
