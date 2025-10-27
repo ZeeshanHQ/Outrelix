@@ -194,11 +194,8 @@ const Dashboard = () => {
     } catch (error) {
       console.error('❌ Error loading industries:', error);
       setBackendStatus({ isOnline: false, isSleeping: true });
-      setError('Backend is sleeping, waking up... Please wait a moment.');
-      toast.error('Backend is sleeping, waking up... Please wait a moment.', {
-        position: 'top-center',
-        autoClose: 5000,
-      });
+      // Silently handle backend issues - don't show user-facing errors
+      setError(null);
     } finally {
       setIsBackendLoading(false);
     }
@@ -528,7 +525,7 @@ const Dashboard = () => {
       {/* Sidebar Toggle Button */}
       <button
         onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="fixed bottom-20 left-6 z-50 p-3 bg-white dark:bg-gray-800 rounded-full shadow-xl border border-gray-200 dark:border-gray-700 hover:shadow-2xl transition-all"
+        className="fixed top-6 left-6 z-50 p-3 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 hover:shadow-2xl transition-all"
       >
         <svg className="w-6 h-6 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
