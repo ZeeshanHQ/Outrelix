@@ -21,6 +21,7 @@ import FAQ from './pages/FAQ';
 import PricingPayment from './pages/PricingPayment';
 import PricingPage from './pages/PricingPage';
 import AnalyzePage from './pages/Analyze';
+import WriterPage from './pages/WriterPage';
 import { GmailStatusProvider } from './utils/GmailStatusContext';
 
 const App = () => {
@@ -59,6 +60,7 @@ const App = () => {
                 <Route path="/" element={<Landing />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/analyze" element={<AnalyzePage />} />
+                <Route path="/writer" element={<WriterPage />} />
                 <Route path="/campaigns" element={<Campaigns />} />
                 <Route path="/campaigns/:jobId" element={<Campaigns />} />
                 <Route path="/analytics" element={<Analytics />} />
