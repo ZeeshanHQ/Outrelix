@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-toastify';
-import { analyzerApi } from '../lib/supabaseClient';
+import supabase, { analyzerApi } from '../lib/supabaseClient';
 
 const Analyzer = ({ onAnalysisComplete }) => {
   const [url, setUrl] = useState('');

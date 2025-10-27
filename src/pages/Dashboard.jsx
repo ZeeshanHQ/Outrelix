@@ -534,10 +534,10 @@ const Dashboard = () => {
 
       {/* Sidebar */}
       <motion.div
-        initial={{ x: -320 }}
-        animate={{ x: sidebarOpen ? 0 : -320 }}
+        initial={{ x: -320, y: 0 }}
+        animate={{ x: sidebarOpen ? 0 : -320, y: 0 }}
         transition={{ type: "spring", stiffness: 400, damping: 40 }}
-        className="fixed left-0 bottom-0 h-[60vh] w-72 bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl shadow-2xl z-40 border-r border-gray-200/50 dark:border-gray-700/50 rounded-t-3xl"
+        className="fixed left-0 top-24 h-[60vh] w-72 bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl shadow-2xl z-40 border-r border-gray-200/50 dark:border-gray-700/50 rounded-r-3xl"
       >
         <div className="p-6 h-full flex flex-col">
           <div className="flex items-center justify-between mb-8">
