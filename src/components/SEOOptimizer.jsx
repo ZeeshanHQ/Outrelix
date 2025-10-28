@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-toastify';
-import supabase, { aiApi } from '../lib/supabaseClient';
+import supabase, { aiApi, supabaseUrl, supabaseAnonKey } from '../lib/supabaseClient';
 import { Search, FileText, Globe, Copy, Trash2, Eye, Settings, Target, Zap } from 'lucide-react';
 
 const SEOOptimizer = ({ onOptimizationComplete }) => {
@@ -84,12 +84,12 @@ const SEOOptimizer = ({ onOptimizationComplete }) => {
       
       if (inputMode === 'url') {
         setProgress('Fetching page content...');
-        // Use the existing fetch_page Edge Function
-        const response = await fetch(`${process.env.REACT_APP_SUPABASE_URL}/functions/v1/fetch_page`, {
+        // Use the Supabase Edge Function (project URL from shared client)
+        const response = await fetch(`${supabaseUrl}/functions/v1/fetch_page`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${process.env.REACT_APP_SUPABASE_ANON_KEY}`
+            'Authorization': `Bearer ${supabaseAnonKey}`
           },
           body: JSON.stringify({ url })
         });

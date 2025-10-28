@@ -1,3 +1,65 @@
+import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
+
+serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response(null, { status: 204, headers: corsHeaders() });
+  }
+
+  try {
+    const { url } = await req.json();
+    if (!url || typeof url !== "string") {
+      return json({ error: "url required" }, 400);
+    }
+
+    const resp = await fetch(url, {
+      redirect: "follow",
+      headers: {
+        "user-agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0 Safari/537.36",
+        "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+      },
+    });
+
+    const html = await resp.text();
+    const text = extractText(html);
+    return json({ text, status: resp.status });
+  } catch (e) {
+    return json({ error: "fetch_failed", message: String(e) }, 500);
+  }
+});
+
+function extractText(html: string): string {
+  try {
+    const noScript = html.replace(/<script[\s\S]*?<\/script>/gi, " ").replace(/<style[\s\S]*?<\/style>/gi, " ");
+    const bodyMatch = noScript.match(/<body[\s\S]*?<\/body>/i);
+    const inBody = bodyMatch ? bodyMatch[0] : noScript;
+    const text = inBody
+      .replace(/<[^>]+>/g, " ")
+      .replace(/&nbsp;/g, " ")
+      .replace(/&amp;/g, "&")
+      .replace(/\s+/g, " ")
+      .trim();
+    return text.slice(0, 50000);
+  } catch {
+    return html.slice(0, 20000);
+  }
+}
+
+function json(body: unknown, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { ...corsHeaders(), "Content-Type": "application/json" },
+  });
+}
+
+function corsHeaders() {
+  return {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+  };
+}
+
 // Supabase Edge Function: Fetch Page Content
 // This function fetches HTML from a URL and extracts visible text to avoid CORS issues
 
