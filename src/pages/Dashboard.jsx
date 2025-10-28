@@ -600,8 +600,13 @@ const Dashboard = () => {
               onClick={() => navigate('/brand-generator')}
               className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 2l2.09 6.26L20 9l-5 3.64L16.18 20 12 16.9 7.82 20 9 12.64 4 9l5.91-.74L12 2z" />
+              {/* Lucide Palette icon */}
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+                <path d="M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0Z"/>
+                <path d="M10 8h.01"/>
+                <path d="M15 8h.01"/>
+                <path d="M12 6h.01"/>
+                <path d="M11 12a4 4 0 0 0 4 4h1a2 2 0 0 0 2-2c0-1.1-.9-2-2-2h-1"/>
               </svg>
               <span className="font-semibold">Brand Generator</span>
             </button>

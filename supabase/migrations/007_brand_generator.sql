@@ -17,15 +17,18 @@ create table if not exists brand_generations (
 -- RLS
 alter table brand_generations enable row level security;
 
-create policy if not exists "Users select their own brands"
+drop policy if exists "Users select their own brands" on brand_generations;
+create policy "Users select their own brands"
   on brand_generations for select
   using (auth.uid() = user_id);
 
-create policy if not exists "Users insert their own brands"
+drop policy if exists "Users insert their own brands" on brand_generations;
+create policy "Users insert their own brands"
   on brand_generations for insert
   with check (auth.uid() = user_id);
 
-create policy if not exists "Users delete their own brands"
+drop policy if exists "Users delete their own brands" on brand_generations;
+create policy "Users delete their own brands"
   on brand_generations for delete
   using (auth.uid() = user_id);
 
@@ -39,15 +42,18 @@ create table if not exists brand_settings (
 
 alter table brand_settings enable row level security;
 
-create policy if not exists "Users select their own brand settings"
+drop policy if exists "Users select their own brand settings" on brand_settings;
+create policy "Users select their own brand settings"
   on brand_settings for select
   using (auth.uid() = user_id);
 
-create policy if not exists "Users insert their own brand settings"
+drop policy if exists "Users insert their own brand settings" on brand_settings;
+create policy "Users insert their own brand settings"
   on brand_settings for insert
   with check (auth.uid() = user_id);
 
-create policy if not exists "Users update their own brand settings"
+drop policy if exists "Users update their own brand settings" on brand_settings;
+create policy "Users update their own brand settings"
   on brand_settings for update
   using (auth.uid() = user_id)
   with check (auth.uid() = user_id);

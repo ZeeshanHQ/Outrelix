@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-toastify';
-import supabase, { analyzerApi } from '../lib/supabaseClient';
+import supabase, { analyzerApi, aiApi } from '../lib/supabaseClient';
 import { Smartphone, Mail, Megaphone, Search, Package, FileText, Share2, Newspaper, PenTool, RefreshCw } from 'lucide-react';
 
 const Writer = ({ onGenerationComplete }) => {
@@ -119,9 +119,21 @@ const Writer = ({ onGenerationComplete }) => {
     setProgress('Generating content...');
 
     try {
-      // Simulate Chrome's built-in AI Writer/Rewriter API
-      // In a real implementation, you'd call the actual Chrome API
-      const generatedText = await simulateAIWriter(mode, contentType, inputText);
+      // Try real AI first via Supabase Edge Function (OpenRouter), then fallback
+      let generatedText = '';
+      try {
+        const prompt = mode === 'write'
+          ? `You are an expert marketing writer. Generate ${contentType} content. Keep it clear, engaging, and actionable.`
+          : `You are an expert marketing editor. Rewrite the provided ${contentType} to improve clarity, tone, and conversion while preserving meaning.`;
+
+        const messages = [
+          { role: 'system', content: 'You produce concise, high-quality marketing copy with clear structure.' },
+          { role: 'user', content: mode === 'write' ? `${prompt}\n\nConstraints:\n- Use headings and bullets where helpful\n- Keep it ready to paste\n\nNotes: ${inputText || '(no extra notes)'}` : `${prompt}\n\nText to rewrite:\n${inputText}` }
+        ];
+        generatedText = await aiApi.complete(messages, { temperature: 0.7, max_tokens: 800 });
+      } catch (e) {
+        generatedText = await simulateAIWriter(mode, contentType, inputText);
+      }
       
       setOutputText(generatedText);
       setProgress('Saving to history...');

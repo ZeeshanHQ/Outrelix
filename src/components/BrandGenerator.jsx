@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-toastify';
-import supabase from '../lib/supabaseClient';
+import supabase, { aiApi } from '../lib/supabaseClient';
 import { Palette, Sparkles, Copy, Globe, FileText, RefreshCw } from 'lucide-react';
 
 const BrandGenerator = () => {
@@ -82,9 +82,33 @@ const BrandGenerator = () => {
     setProgress('Generating brand identity...');
     try {
       let generated;
-      // Chrome AI API fallback idea (not available in most environments)
-      // if (window.chrome?.ai?.prompt) { ... }
-      generated = await simulateAIBrand(brandName, businessType);
+      try {
+        const bn = brandName || 'Outrelix';
+        const bt = businessType || 'AI-powered email marketing platform';
+        const messages = [
+          { role: 'system', content: 'You are a brand strategist and web copywriter.' },
+          { role: 'user', content: `Create a brand identity and hero section HTML for brand "${bn}" in the ${bt} space.
+Return strict JSON with: brandName, tagline, colorPalette (array of 3 hex), tone, heroSection (HTML string), features (array of 3-5 strings).` }
+        ];
+        const content = await aiApi.complete(messages, { temperature: 0.7, max_tokens: 700 });
+        let parsed;
+        try { parsed = JSON.parse(content); } catch { parsed = null; }
+        if (parsed && parsed.brandName) {
+          generated = {
+            brandName: parsed.brandName,
+            tagline: parsed.tagline || '—',
+            colorPalette: Array.isArray(parsed.colorPalette) ? parsed.colorPalette : ['#4f46e5', '#06b6d4', '#facc15'],
+            tone: parsed.tone || '—',
+            heroSection: parsed.heroSection || `<h1>${bn}</h1>`,
+            features: Array.isArray(parsed.features) ? parsed.features : ['AI content', 'SEO insights', 'One‑click assets'],
+          };
+        } else {
+          // non-JSON response: wrap as fallback
+          generated = await simulateAIBrand(bn, bt);
+        }
+      } catch (e) {
+        generated = await simulateAIBrand(brandName, businessType);
+      }
 
       setResults(generated);
       setProgress('Saving to history...');

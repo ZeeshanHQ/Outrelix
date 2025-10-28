@@ -6,6 +6,28 @@ const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYm
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
+// OpenRouter via Supabase Edge Function (secure server-side key)
+export const aiApi = {
+  async complete(messages, opts = {}) {
+    const url = `${supabaseUrl}/functions/v1/ai_complete`;
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${supabaseAnonKey}`,
+      },
+      body: JSON.stringify({
+        messages,
+        model: 'meta-llama/llama-3.3-8b-instruct:free',
+        ...opts,
+      }),
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json?.error || 'AI request failed');
+    return json.content || '';
+  }
+};
+
 // Analyzer helper functions
 export const analyzerApi = {
   // Fetch page content via Edge Function
