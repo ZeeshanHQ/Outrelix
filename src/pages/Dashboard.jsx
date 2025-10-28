@@ -597,6 +597,15 @@ const Dashboard = () => {
               <span className="font-semibold">SEO Optimizer</span>
             </button>
             <button
+              onClick={() => navigate('/brand-generator')}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 2l2.09 6.26L20 9l-5 3.64L16.18 20 12 16.9 7.82 20 9 12.64 4 9l5.91-.74L12 2z" />
+              </svg>
+              <span className="font-semibold">Brand Generator</span>
+            </button>
+            <button
               onClick={() => navigate('/campaigns')}
               className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
             >

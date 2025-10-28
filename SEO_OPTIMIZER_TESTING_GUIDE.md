@@ -294,3 +294,28 @@ const simulateAISEO = async (content) => {
 ---
 
 **Happy Testing! 🚀**
+
+---
+
+# 🎨 Brand Generator Testing Guide
+
+## What is the Brand Generator?
+Creates a brand identity and a mock landing page hero section using simulated AI (with Chrome AI API fallback in the future).
+
+## How to Test
+1. Run migration `supabase/migrations/007_brand_generator.sql` in Supabase SQL editor
+2. Open `/brand-generator` from the sidebar or go to the route directly
+3. Enter a Brand Name (e.g., "Outrelix") and/or Business Type (e.g., "AI-powered email marketing platform")
+4. Click "Generate Brand"
+
+## Expected Results
+- Brand Identity card: name, tagline, tone, color swatches
+- Landing Page Preview card: rendered hero HTML + Copy HTML button
+- Feature Highlights card: list + Copy All button
+- Recent Generations: last 5 saved items
+- Daily limit: 10 generations/day
+
+## Notes
+- Uses `simulateAIBrand()` fallback today (no paid API required)
+- Saves to `brand_generations` with RLS enabled
+
