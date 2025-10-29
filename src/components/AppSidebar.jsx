@@ -26,9 +26,9 @@ const AppSidebar = () => {
       {!open && (
         <button
           aria-label="Open navigation"
-          onMouseDown={(e)=>e.stopPropagation()}
+          onMouseDown={(e)=>{ e.stopPropagation(); e.preventDefault(); }}
           onClick={(e) => { e.stopPropagation(); setOpen(true); }}
-          className="fixed top-20 left-6 z-[60] p-3 rounded-2xl shadow-xl border bg-white/90 dark:bg-gray-800/90 border-gray-200 dark:border-gray-700 hover:shadow-2xl transition-all hover:-translate-y-0.5 backdrop-blur"
+          className="fixed top-28 left-6 z-[80] p-3 rounded-2xl shadow-xl border bg-white/90 dark:bg-gray-800/90 border-gray-200 dark:border-gray-700 hover:shadow-2xl transition-all hover:-translate-y-0.5 backdrop-blur pointer-events-auto"
         >
           <PanelsTopLeft className="w-6 h-6 text-gray-700 dark:text-gray-300" />
         </button>
@@ -39,7 +39,7 @@ const AppSidebar = () => {
         initial={{ x: -320 }}
         animate={{ x: open ? 0 : -320 }}
         transition={{ type: 'spring', stiffness: 400, damping: 40 }}
-        className="fixed left-0 top-20 h-[calc(100vh-5rem)] w-72 bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl shadow-2xl z-[55] border-r border-gray-200/50 dark:border-gray-700/50 rounded-r-3xl overflow-y-auto"
+        className="fixed left-0 top-24 h-[calc(100vh-6rem)] w-72 bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl shadow-2xl z-[70] border-r border-gray-200/50 dark:border-gray-700/50 rounded-r-3xl overflow-y-auto"
       >
         <div className="p-6 pb-4 sticky top-0 bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl z-10">
           <div className="flex items-center justify-between">

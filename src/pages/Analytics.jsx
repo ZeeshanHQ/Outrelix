@@ -39,11 +39,13 @@ const Analytics = () => {
         since.setHours(0,0,0,0);
 
         // Fetch all feature rows
-        const [anRes, seoRes, wrRes, brRes] = await Promise.all([
+        const [anRes, seoRes, wrRes, brRes, sendRes, evRes] = await Promise.all([
           supabase.from('analyzer_results').select('id, created_at').eq('user_id', user.id).gte('created_at', since.toISOString()),
           supabase.from('seo_optimizations').select('id, created_at').eq('user_id', user.id).gte('created_at', since.toISOString()),
           supabase.from('writer_sessions').select('id, created_at').eq('user_id', user.id).gte('created_at', since.toISOString()),
           supabase.from('brand_generations').select('id, created_at').eq('user_id', user.id).gte('created_at', since.toISOString()),
+          supabase.from('email_sends').select('id, created_at').eq('user_id', user.id).gte('created_at', since.toISOString()),
+          supabase.from('email_events').select('event_type, type, created_at, user_id').eq('user_id', user.id).gte('created_at', since.toISOString()),
         ]);
 
         const byDay = {};
@@ -53,7 +55,7 @@ const Analytics = () => {
           d.setDate(since.getDate()+i);
           const key = d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
           days.push(key);
-          byDay[key] = { analyzer: 0, seo: 0, writer: 0, brand: 0 };
+          byDay[key] = { analyzer: 0, seo: 0, writer: 0, brand: 0, sends: 0, opens: 0, clicks: 0, replies: 0 };
         }
 
         const bump = (arr, field) => {
@@ -68,13 +70,30 @@ const Analytics = () => {
         bump(seoRes.data, 'seo');
         bump(wrRes.data, 'writer');
         bump(brRes.data, 'brand');
+        bump(sendRes.data, 'sends');
 
-        setTotals({
+        // Map events; support either 'event_type' or 'type'
+        (evRes.data||[]).forEach((e)=>{
+          const kind = (e.event_type || e.type || '').toLowerCase();
+          const d = new Date(e.created_at);
+          const key = d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+          if (!byDay[key]) return;
+          if (kind.includes('open')) byDay[key].opens += 1;
+          else if (kind.includes('click')) byDay[key].clicks += 1;
+          else if (kind.includes('reply') || kind.includes('respond')) byDay[key].replies += 1;
+        });
+
+        const totalsLocal = {
           analyzer: anRes.data?.length || 0,
           seo: seoRes.data?.length || 0,
           writer: wrRes.data?.length || 0,
           brand: brRes.data?.length || 0,
-        });
+          sends: sendRes.data?.length || 0,
+          opens: (evRes.data||[]).filter(e=>((e.event_type||e.type||'').toLowerCase().includes('open'))).length,
+          clicks: (evRes.data||[]).filter(e=>((e.event_type||e.type||'').toLowerCase().includes('click'))).length,
+          replies: (evRes.data||[]).filter(e=>((e.event_type||e.type||'').toLowerCase().includes('reply')|| (e.event_type||e.type||'').toLowerCase().includes('respond'))).length,
+        };
+        setTotals(totalsLocal);
 
         setSeries(days.map((key)=>({ date: key, ...byDay[key] })));
       } finally {
@@ -118,6 +137,10 @@ const Analytics = () => {
             { key: 'seo', label: 'SEO Optimizations', value: totals.seo },
             { key: 'writer', label: 'Writer Sessions', value: totals.writer },
             { key: 'brand', label: 'Brand Generations', value: totals.brand },
+            { key: 'sends', label: 'Emails Sent', value: totals.sends || 0 },
+            { key: 'opens', label: 'Opens', value: totals.opens || 0 },
+            { key: 'clicks', label: 'Clicks', value: totals.clicks || 0 },
+            { key: 'replies', label: 'Replies', value: totals.replies || 0 },
           ].map((m, i) => (
             <motion.div key={m.key} initial={{opacity:0, y:20}} animate={{opacity:1, y:0}} transition={{delay:i*0.05}} className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6">
               <div className="text-sm text-gray-500 mb-1">{m.label}</div>
@@ -144,6 +167,10 @@ const Analytics = () => {
             <Line type="monotone" dataKey="seo" stroke="#22c55e" strokeWidth={3} dot={{ r: 2 }} />
             <Line type="monotone" dataKey="writer" stroke="#a855f7" strokeWidth={3} dot={{ r: 2 }} />
             <Line type="monotone" dataKey="brand" stroke="#f59e0b" strokeWidth={3} dot={{ r: 2 }} />
+            <Line type="monotone" dataKey="sends" stroke="#0ea5e9" strokeWidth={2} dot={false} />
+            <Line type="monotone" dataKey="opens" stroke="#10b981" strokeWidth={2} dot={false} />
+            <Line type="monotone" dataKey="clicks" stroke="#8b5cf6" strokeWidth={2} dot={false} />
+            <Line type="monotone" dataKey="replies" stroke="#ef4444" strokeWidth={2} dot={false} />
           </LineChart>
         </ResponsiveContainer>
       </div>
