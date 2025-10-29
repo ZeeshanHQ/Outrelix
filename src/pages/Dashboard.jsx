@@ -41,6 +41,7 @@ import { Dialog } from '@headlessui/react';
 import ConnectGmailModal from '../components/ConnectGmailModal';
 import { useGmailStatus } from '../utils/GmailStatusContext';
 import Analyzer from '../components/Analyzer';
+import AppSidebar from '../components/AppSidebar';
 
 // Register ChartJS components
 ChartJS.register(
@@ -522,10 +523,11 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen w-full font-poppins relative">
+      <AppSidebar />
       {/* Sidebar Toggle Button */}
       <button
         onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="fixed top-16 left-6 z-50 p-3 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 hover:shadow-2xl transition-all"
+        className="hidden fixed top-16 left-6 z-50 p-3 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 hover:shadow-2xl transition-all"
       >
         <svg className="w-6 h-6 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -537,7 +539,7 @@ const Dashboard = () => {
         initial={{ x: -320, y: 0 }}
         animate={{ x: sidebarOpen ? 0 : -320, y: 0 }}
         transition={{ type: "spring", stiffness: 400, damping: 40 }}
-        className="fixed left-0 top-20 h-[calc(100vh-5rem)] w-72 bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl shadow-2xl z-40 border-r border-gray-200/50 dark:border-gray-700/50 rounded-r-3xl overflow-y-auto pb-6"
+        className="hidden fixed left-0 top-20 h-[calc(100vh-5rem)] w-72 bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl shadow-2xl z-40 border-r border-gray-200/50 dark:border-gray-700/50 rounded-r-3xl overflow-y-auto pb-6"
       >
         <div className="p-6 h-full flex flex-col">
           <div className="flex items-center justify-between mb-8">

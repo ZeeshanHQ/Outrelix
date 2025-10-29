@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { LayoutGrid, Search, PenTool, Settings as Cog, Palette, Mail, BarChart3 } from 'lucide-react';
+import { LayoutGrid, Search, PenTool, Settings as Cog, Palette, Mail, BarChart3, PanelsTopLeft } from 'lucide-react';
 
 const navItems = [
   { key: 'dashboard', label: 'Dashboard', icon: LayoutGrid, to: '/dashboard' },
@@ -24,12 +24,11 @@ const AppSidebar = () => {
     <>
       {/* Toggle button - slightly lower */}
       <button
+        aria-label="Open navigation"
         onClick={() => setOpen(!open)}
-        className="fixed top-16 left-6 z-[60] p-3 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 hover:shadow-2xl transition-all"
+        className="fixed top-16 left-6 z-[60] p-3 rounded-2xl shadow-xl border bg-white/90 dark:bg-gray-800/90 border-gray-200 dark:border-gray-700 hover:shadow-2xl transition-all hover:-translate-y-0.5 backdrop-blur"
       >
-        <svg className="w-6 h-6 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
+        <PanelsTopLeft className="w-6 h-6 text-gray-700 dark:text-gray-300" />
       </button>
 
       {/* Drawer */}
