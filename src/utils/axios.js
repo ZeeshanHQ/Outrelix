@@ -2,7 +2,8 @@ import axios from 'axios';
 import BACKEND_URL from '../config/backend';
 
 // Configure axios defaults
-axios.defaults.withCredentials = true;
+// Default: no credentials to avoid CORS preflight issues unless explicitly needed
+axios.defaults.withCredentials = false;
 axios.defaults.baseURL = BACKEND_URL;
 
 // Add request interceptor for debugging
