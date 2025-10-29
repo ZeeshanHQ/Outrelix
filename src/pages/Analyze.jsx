@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Analyzer from '../components/Analyzer';
+import AppSidebar from '../components/AppSidebar';
 import { analyzerApi } from '../lib/supabaseClient';
 import { toast } from 'react-toastify';
 
@@ -53,6 +54,7 @@ const AnalyzePage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
+      <AppSidebar />
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <motion.div
