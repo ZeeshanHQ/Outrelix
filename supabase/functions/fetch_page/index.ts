@@ -16,20 +16,59 @@ function json(body: unknown, status = 200): Response {
 }
 
 function extractText(html: string): { title: string; description: string; keywords: string[]; text: string } {
-  const stripped = html
+  // Remove scripts/styles early
+  let working = html
     .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, " ")
     .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, " ");
 
-  const titleMatch = stripped.match(/<title[^>]*>([^<]+)<\/title>/i);
-  const title = titleMatch ? titleMatch[1].trim() : "";
+  // Prefer <main> if present; else fall back to <body>
+  const mainMatch = working.match(/<main[\s\S]*?<\/main>/i);
+  const bodyMatch = working.match(/<body[\s\S]*?<\/body>/i);
+  working = mainMatch ? mainMatch[0] : (bodyMatch ? bodyMatch[0] : working);
 
-  const descriptionMatch = stripped.match(/<meta\s+name=["']description["']\s+content=["']([^"']+)["']/i);
-  const description = descriptionMatch ? descriptionMatch[1] : "";
+  // Strip common chrome: header/nav/footer/asides
+  working = working
+    .replace(/<header[\s\S]*?<\/header>/gi, " ")
+    .replace(/<nav[\s\S]*?<\/nav>/gi, " ")
+    .replace(/<footer[\s\S]*?<\/footer>/gi, " ")
+    .replace(/<aside[\s\S]*?<\/aside>/gi, " ");
 
-  const keywordsMatch = stripped.match(/<meta\s+name=["']keywords["']\s+content=["']([^"']+)["']/i);
+  // Remove large link clouds (locale/store links) heuristically: long sequences of <a>
+  working = working.replace(/(<a[^>]*>[^<]*<\/a>\s*){8,}/gi, " ");
+
+  // Extract title/meta
+  const titleMatch = html.match(/<title[^>]*>([^<]+)<\/title>/i);
+  const ogTitleMatch = html.match(/<meta\s+property=["']og:title["']\s+content=["']([^"']+)["']/i);
+  const title = (ogTitleMatch?.[1] || titleMatch?.[1] || "").trim();
+
+  const ogDescMatch = html.match(/<meta\s+property=["']og:description["']\s+content=["']([^"']+)["']/i);
+  const descriptionMatch = html.match(/<meta\s+name=["']description["']\s+content=["']([^"']+)["']/i);
+  const description = (ogDescMatch?.[1] || descriptionMatch?.[1] || "").trim();
+
+  const keywordsMatch = html.match(/<meta\s+name=["']keywords["']\s+content=["']([^"']+)["']/i);
   const keywords = keywordsMatch ? keywordsMatch[1].split(",").map((k) => k.trim()) : [];
 
-  const text = stripped.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+  // Convert to visible text
+  let text = working
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  // Deduplicate repeated segments (very rough): collapse repeated 3+ word phrases
+  const seen = new Set<string>();
+  text = text
+    .split(/(?<=[\.\!\?])\s+/)
+    .filter((s) => {
+      const key = s.toLowerCase().slice(0, 80);
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .join(" ");
+
+  // Cap length
+  if (text.length > 50000) text = text.slice(0, 50000);
+
   return { title, description, keywords, text };
 }
 
