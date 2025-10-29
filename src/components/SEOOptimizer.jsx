@@ -114,27 +114,21 @@ const SEOOptimizer = ({ onOptimizationComplete }) => {
           { role: 'user', content: `Optimize this content for SEO. Return JSON with keys: optimizedContent, metaTitle, metaDescription, keywords (array). Content:\n\n${contentToAnalyze}`}
         ];
         const content = await aiApi.complete(messages, { temperature: 0.5, max_tokens: 900 });
-        // Attempt to parse JSON first; if it is plain text, wrap it
-        try {
-          const parsed = JSON.parse(content);
-          seoResults = {
-            optimizedContent: parsed.optimizedContent || contentToAnalyze,
-            metaTitle: parsed.metaTitle || generateMetaTitle(contentToAnalyze),
-            metaDescription: parsed.metaDescription || generateMetaDescription(contentToAnalyze),
-            keywords: Array.isArray(parsed.keywords) ? parsed.keywords : [],
-            wordCount: (parsed.optimizedContent || contentToAnalyze).split(' ').length,
-            seoScore: Math.floor(Math.random() * 30) + 70,
-          };
-        } catch {
-          seoResults = {
-            optimizedContent: content || contentToAnalyze,
-            metaTitle: generateMetaTitle(content || contentToAnalyze),
-            metaDescription: generateMetaDescription(content || contentToAnalyze),
-            keywords: [],
-            wordCount: (content || contentToAnalyze).split(' ').length,
-            seoScore: Math.floor(Math.random() * 30) + 70,
-          };
-        }
+        // Attempt to extract JSON object even if wrapped in prose
+        const parsed = safeParseAiJson(content);
+        const finalOptimized = parsed?.optimizedContent || content || contentToAnalyze;
+        const finalTitle = parsed?.metaTitle || generateMetaTitle(finalOptimized);
+        const finalDescription = parsed?.metaDescription || generateMetaDescription(finalOptimized);
+        const finalKeywords = Array.isArray(parsed?.keywords) ? parsed.keywords : [];
+
+        seoResults = {
+          optimizedContent: finalOptimized,
+          metaTitle: finalTitle,
+          metaDescription: finalDescription,
+          keywords: finalKeywords,
+          wordCount: (finalOptimized).split(' ').length,
+          seoScore: calculateSeoScore(finalOptimized, finalTitle, finalDescription, finalKeywords),
+        };
       } catch (e) {
         seoResults = await simulateAISEO(contentToAnalyze);
       }
@@ -188,6 +182,36 @@ const SEOOptimizer = ({ onOptimizationComplete }) => {
     } finally {
       setIsOptimizing(false);
     }
+  };
+
+  // Extracts a JSON object from AI text, even if wrapped in prose
+  const safeParseAiJson = (text) => {
+    if (!text) return null;
+    // First, try strict JSON
+    try { return JSON.parse(text); } catch {}
+    // Fallback: find the first {...} block
+    const match = text.match(/\{[\s\S]*\}/);
+    if (match) {
+      try { return JSON.parse(match[0]); } catch {}
+    }
+    return null;
+  };
+
+  const calculateSeoScore = (optimized, title, description, keywords) => {
+    let score = 0;
+    const wc = optimized ? optimized.split(/\s+/).filter(Boolean).length : 0;
+    // Word count > 200
+    if (wc >= 200) score += 25; else if (wc >= 120) score += 15; else score += 8;
+    // Title length 30-60
+    const tl = title?.length || 0;
+    if (tl >= 30 && tl <= 60) score += 25; else if (tl >= 20 && tl <= 70) score += 15; else score += 5;
+    // Description length 120-160
+    const dl = description?.length || 0;
+    if (dl >= 120 && dl <= 160) score += 25; else if (dl >= 80 && dl <= 180) score += 15; else score += 5;
+    // Keywords count 3-10
+    const kc = Array.isArray(keywords) ? keywords.length : 0;
+    if (kc >= 3 && kc <= 10) score += 25; else if (kc >= 1) score += 15;
+    return Math.min(100, Math.max(0, Math.round(score)));
   };
 
   const simulateAISEO = async (content) => {
