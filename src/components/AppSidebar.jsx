@@ -23,14 +23,16 @@ const AppSidebar = () => {
   return (
     <>
       {/* Toggle button - slightly lower */}
-      <button
-        aria-label="Open navigation"
-        onMouseDown={(e)=>e.stopPropagation()}
-        onClick={(e) => { e.stopPropagation(); setOpen(!open); }}
-        className="fixed top-20 left-6 z-[60] p-3 rounded-2xl shadow-xl border bg-white/90 dark:bg-gray-800/90 border-gray-200 dark:border-gray-700 hover:shadow-2xl transition-all hover:-translate-y-0.5 backdrop-blur"
-      >
-        <PanelsTopLeft className="w-6 h-6 text-gray-700 dark:text-gray-300" />
-      </button>
+      {!open && (
+        <button
+          aria-label="Open navigation"
+          onMouseDown={(e)=>e.stopPropagation()}
+          onClick={(e) => { e.stopPropagation(); setOpen(true); }}
+          className="fixed top-20 left-6 z-[60] p-3 rounded-2xl shadow-xl border bg-white/90 dark:bg-gray-800/90 border-gray-200 dark:border-gray-700 hover:shadow-2xl transition-all hover:-translate-y-0.5 backdrop-blur"
+        >
+          <PanelsTopLeft className="w-6 h-6 text-gray-700 dark:text-gray-300" />
+        </button>
+      )}
 
       {/* Drawer */}
       <motion.div

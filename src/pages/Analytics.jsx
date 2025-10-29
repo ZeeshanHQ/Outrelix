@@ -104,6 +104,13 @@ const Analytics = () => {
           <button className={`px-4 py-2 rounded-lg font-semibold text-sm ${dateRange==='custom' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200'} transition-all`} onClick={()=>setDateRange('custom')}><CalendarIcon className="w-4 h-4 inline-block mr-1" />Custom</button>
         </div>
       </div>
+      {/* Loading */}
+      {loading && (
+        <div className="fixed inset-0 z-20 flex items-center justify-center pointer-events-none">
+          <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+      )}
+
       {/* Metric Cards (real data) */}
         <div className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 w-full">
           {[
@@ -115,8 +122,8 @@ const Analytics = () => {
             <motion.div key={m.key} initial={{opacity:0, y:20}} animate={{opacity:1, y:0}} transition={{delay:i*0.05}} className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6">
               <div className="text-sm text-gray-500 mb-1">{m.label}</div>
               <div className="text-3xl font-extrabold">{m.value}</div>
-            </motion.div>
-          ))}
+          </motion.div>
+        ))}
       </div>
       {/* Interactive Graph Section */}
         <div className="max-w-5xl mx-auto bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 mb-8 w-full">
@@ -150,8 +157,8 @@ const Analytics = () => {
                 <span>SEO: {d.seo}</span>
                 <span>Writer: {d.writer}</span>
                 <span>Brand: {d.brand}</span>
-              </div>
-            </div>
+                            </div>
+                          </div>
           ))}
         </div>
       </div>
