@@ -25,8 +25,9 @@ const AppSidebar = () => {
       {/* Toggle button - slightly lower */}
       <button
         aria-label="Open navigation"
-        onClick={() => setOpen(!open)}
-        className="fixed top-16 left-6 z-[60] p-3 rounded-2xl shadow-xl border bg-white/90 dark:bg-gray-800/90 border-gray-200 dark:border-gray-700 hover:shadow-2xl transition-all hover:-translate-y-0.5 backdrop-blur"
+        onMouseDown={(e)=>e.stopPropagation()}
+        onClick={(e) => { e.stopPropagation(); setOpen(!open); }}
+        className="fixed top-20 left-6 z-[60] p-3 rounded-2xl shadow-xl border bg-white/90 dark:bg-gray-800/90 border-gray-200 dark:border-gray-700 hover:shadow-2xl transition-all hover:-translate-y-0.5 backdrop-blur"
       >
         <PanelsTopLeft className="w-6 h-6 text-gray-700 dark:text-gray-300" />
       </button>
@@ -41,10 +42,8 @@ const AppSidebar = () => {
         <div className="p-6 pb-4 sticky top-0 bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl z-10">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Navigation</h2>
-            <button onClick={() => setOpen(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
+            <button aria-label="Close navigation" onClick={() => setOpen(false)} className="text-gray-600 dark:text-gray-300 hover:opacity-80 transition-opacity">
+              <PanelsTopLeft className="w-6 h-6" />
             </button>
           </div>
         </div>
@@ -65,6 +64,11 @@ const AppSidebar = () => {
             </button>
           ))}
         </nav>
+        {/* Hide scrollbar visually */}
+        <style>{`
+          .overflow-y-auto { scrollbar-width: none; }
+          .overflow-y-auto::-webkit-scrollbar { display: none; }
+        `}</style>
       </motion.div>
     </>
   );
