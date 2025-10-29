@@ -1,10 +1,9 @@
 import axios from 'axios';
+import BACKEND_URL from '../config/backend';
 
 // Configure axios defaults
 axios.defaults.withCredentials = true;
-axios.defaults.baseURL = process.env.NODE_ENV === 'production' 
-  ? 'https://your-production-domain.com' 
-  : 'http://localhost:5000';
+axios.defaults.baseURL = BACKEND_URL;
 
 // Add request interceptor for debugging
 axios.interceptors.request.use(
