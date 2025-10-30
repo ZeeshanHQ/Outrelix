@@ -238,6 +238,88 @@ def get_industries():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+# --- Campaign endpoints with Supabase integration (REAL DB, no mock) ---
+def get_supabase_headers():
+    assert SUPABASE_KEY, "SUPABASE_KEY env var required"
+    return {
+        "apikey": SUPABASE_KEY,
+        "Authorization": f"Bearer {SUPABASE_KEY}",
+        "Content-Type": "application/json",
+        "Prefer": "return=representation"
+    }
+
+@app.route("/api/campaigns", methods=["GET"])
+def get_campaigns():
+    """Get all campaigns (optionally filter by user_id)"""
+    user_id = request.args.get('user_id')  # pass ?user_id=...
+    url = f"{SUPABASE_URL}/rest/v1/campaigns"
+    params = []
+    if user_id:
+        params.append(f"user_id=eq.{user_id}")
+    if params:
+        url += "?" + "&".join(params)
+    r = requests.get(url, headers=get_supabase_headers())
+    if r.status_code == 200:
+        return jsonify({"campaigns": r.json()})
+    return jsonify({"error": "Failed to fetch", "detail": r.text}), r.status_code
+
+@app.route('/api/campaigns/<campaign_id>', methods=['GET'])
+def get_campaign_by_id(campaign_id):
+    """Get a single campaign by ID"""
+    url = f"{SUPABASE_URL}/rest/v1/campaigns?id=eq.{campaign_id}"
+    r = requests.get(url, headers=get_supabase_headers())
+    if r.status_code == 200:
+        rows = r.json()
+        if rows:
+            return jsonify(rows[0])
+        return jsonify({"error": "Not found"}), 404
+    return jsonify({"error": "Failed to fetch", "detail": r.text}), r.status_code
+
+@app.route('/api/campaigns', methods=['POST'])
+def create_campaign():
+    """Create a new campaign in Supabase"""
+    data = request.get_json()
+    required = {"user_id", "name", "industry"}
+    if not data or not required.issubset(data):
+        return jsonify({"error": "Missing user_id, name, or industry"}), 400
+    payload = {
+        "user_id": data["user_id"],
+        "name": data["name"],
+        "industry": data.get("industry"),
+        "csv_uploaded": bool(data.get("csv_uploaded", False)),
+        "status": data.get("status", "draft"),
+        "emails_sent": data.get("emails_sent", 0),
+        "positive_replies": data.get("positive_replies", 0),
+        "created_at": datetime.utcnow().isoformat()
+    }
+    # include additional user fields if desired!
+    r = requests.post(f"{SUPABASE_URL}/rest/v1/campaigns", headers=get_supabase_headers(), json=payload)
+    if r.status_code in (200, 201):
+        return jsonify(r.json()[0]), 201
+    return jsonify({"error": f"Create failed: {r.text}"}), r.status_code
+
+@app.route('/api/campaigns/<campaign_id>', methods=['PATCH'])
+def update_campaign(campaign_id):
+    """Update campaign fields"""
+    data = request.get_json()
+    # Data can contain any updatable column
+    url = f"{SUPABASE_URL}/rest/v1/campaigns?id=eq.{campaign_id}"
+    r = requests.patch(url, headers=get_supabase_headers(), json=data)
+    if r.status_code in (200, 204):
+        # GET updated state
+        r_get = requests.get(url, headers=get_supabase_headers())
+        return jsonify(r_get.json()[0])
+    return jsonify({"error": f"Patch failed: {r.text}"}), r.status_code
+
+@app.route('/api/campaigns/<campaign_id>', methods=['DELETE'])
+def delete_campaign(campaign_id):
+    """Delete a campaign by id from Supabase"""
+    url = f"{SUPABASE_URL}/rest/v1/campaigns?id=eq.{campaign_id}"
+    r = requests.delete(url, headers=get_supabase_headers())
+    if r.status_code in (200, 204):
+        return jsonify({"deleted": True})
+    return jsonify({"error": f"Delete failed: {r.text}"}), r.status_code
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 8000))
     app.run(host='0.0.0.0', port=port)
