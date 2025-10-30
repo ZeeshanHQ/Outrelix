@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, redirect, Response
 from flask_cors import CORS
 import os
 import requests
@@ -6,6 +6,9 @@ import json
 from datetime import datetime, timedelta
 import random
 import string
+from google_auth_oauthlib.flow import Flow
+from googleapiclient.discovery import build
+from google.oauth2.credentials import Credentials
 
 app = Flask(__name__)
 CORS(app, origins=['https://outrelix.vercel.app', 'http://localhost:3000'])
@@ -16,6 +19,17 @@ SUPABASE_KEY = os.environ.get('SUPABASE_KEY')
 RESEND_API_KEY = os.environ.get('RESEND_API_KEY')
 RESEND_DOMAIN = os.environ.get('RESEND_DOMAIN', 'cavexa.online')
 SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'noreply@cavexa.online')
+
+# Google OAuth (use env vars instead of local file)
+GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
+GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET')
+GMAIL_REDIRECT_URI = os.environ.get('GMAIL_REDIRECT_URI', 'https://outrelix-backend.onrender.com/auth/gmail/callback')
+GMAIL_SCOPES = [
+    'https://www.googleapis.com/auth/gmail.readonly',
+    'https://www.googleapis.com/auth/gmail.send',
+    'https://www.googleapis.com/auth/userinfo.email',
+    'openid'
+]
 
 @app.route('/')
 def home():
@@ -90,6 +104,68 @@ def gmail_status():
             "email": "",
             "error": str(e)
         })
+
+@app.route('/auth/gmail')
+def auth_gmail():
+    """Start Gmail OAuth flow using Google client credentials from env."""
+    if not GOOGLE_CLIENT_ID or not GOOGLE_CLIENT_SECRET:
+        return Response("Google OAuth env vars missing", status=500)
+    flow = Flow.from_client_config({
+        "web": {
+            "client_id": GOOGLE_CLIENT_ID,
+            "client_secret": GOOGLE_CLIENT_SECRET,
+            "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+            "token_uri": "https://oauth2.googleapis.com/token",
+            "redirect_uris": [GMAIL_REDIRECT_URI]
+        }
+    }, scopes=GMAIL_SCOPES, redirect_uri=GMAIL_REDIRECT_URI)
+
+    authorization_url, state = flow.authorization_url(
+        access_type='offline', include_granted_scopes='true', prompt='consent'
+    )
+    # We skip persisting state for simplicity under deadline
+    return redirect(authorization_url)
+
+@app.route('/auth/gmail/callback')
+def auth_gmail_callback():
+    if not GOOGLE_CLIENT_ID or not GOOGLE_CLIENT_SECRET:
+        return Response("Google OAuth env vars missing", status=500)
+    try:
+        flow = Flow.from_client_config({
+            "web": {
+                "client_id": GOOGLE_CLIENT_ID,
+                "client_secret": GOOGLE_CLIENT_SECRET,
+                "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                "token_uri": "https://oauth2.googleapis.com/token",
+                "redirect_uris": [GMAIL_REDIRECT_URI]
+            }
+        }, scopes=GMAIL_SCOPES, redirect_uri=GMAIL_REDIRECT_URI)
+
+        flow.fetch_token(authorization_response=request.url)
+        credentials = flow.credentials
+
+        # Fetch user email to confirm connection
+        service = build('gmail', 'v1', credentials=credentials)
+        profile = service.users().getProfile(userId='me').execute()
+        email = profile.get('emailAddress')
+
+        # For hackathon deadline: do not persist tokens; simply notify frontend
+        return Response(
+            """
+            <script>
+              if (window.opener) {
+                window.opener.postMessage({ gmailConnected: true, email: "%s" }, "*");
+                window.close();
+              } else {
+                window.location = 'https://outrelix.vercel.app/dashboard?gmail_connected=true';
+              }
+            </script>
+            <p>You can close this window.</p>
+            """ % (email or ''),
+            mimetype='text/html'
+        )
+    except Exception as e:
+        return Response(f"Gmail callback error: {e}", status=500)
 
 # OTP verification system
 @app.route('/api/otp/send', methods=['POST'])
