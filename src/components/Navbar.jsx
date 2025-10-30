@@ -31,6 +31,10 @@ const Navbar = () => {
   // Determine if we are on a dashboard-related route
   const isDashboardRoute = [
     '/dashboard',
+    '/analyze',
+    '/writer',
+    '/seo-optimizer',
+    '/brand-generator',
     '/campaigns',
     '/analytics',
     '/settings',

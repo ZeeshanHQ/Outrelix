@@ -49,7 +49,7 @@ const ConnectGmailModal = ({ open, onClose, onConnected, gmailEmail: initialGmai
 
   const handleConnectGmail = () => {
     setIsConnecting(true);
-    const popup = window.open('http://localhost:5000/auth/gmail', 'Connect Gmail', 'width=500,height=700');
+    const popup = window.open(`${BACKEND_URL}/auth/gmail`, 'Connect Gmail', 'width=500,height=700');
     if (!popup) {
       alert('Popup blocked! Please allow popups for this site.');
       setIsConnecting(false);
