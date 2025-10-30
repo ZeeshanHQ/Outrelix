@@ -185,7 +185,7 @@ async def auth_gmail(request: Request):
         flow = Flow.from_client_secrets_file(
             CLIENT_SECRETS_FILE,
             scopes=SCOPES,
-            redirect_uri='http://localhost:5000/auth/gmail/callback'
+            redirect_uri='https://outrelix-backend.onrender.com/auth/gmail/callback'
         )
         authorization_url, state = flow.authorization_url(
             access_type='offline',
@@ -210,7 +210,7 @@ async def auth_gmail_callback(request: Request):
         CLIENT_SECRETS_FILE,
         scopes=SCOPES,
         state=state,
-        redirect_uri='http://localhost:5000/auth/gmail/callback'
+        redirect_uri='https://outrelix-backend.onrender.com/auth/gmail/callback'
     )
     flow.fetch_token(authorization_response=str(request.url))
     credentials = flow.credentials
@@ -239,7 +239,7 @@ async def auth_gmail_callback(request: Request):
             window.opener.postMessage({ gmailConnected: true }, "*");
             window.close();
           } else {
-            window.location = 'http://localhost:3000/dashboard?gmail_connected=true';
+            window.location = 'https://outrelix.vercel.app/dashboard?gmail_connected=true';
           }
         </script>
         <p>You can close this window.</p>
