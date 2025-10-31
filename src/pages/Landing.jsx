@@ -1450,17 +1450,13 @@ const Landing = () => {
                   </div>
                 ) : null}
                 
-                <p className="text-lg lg:text-xl text-gray-600 dark:text-gray-300 font-normal max-w-xl font-poppins leading-relaxed">
-                  Find ideal leads, launch personalized campaigns, and grow your business — even while you sleep.
-                </p>
-                
-                {/* Enhanced CTA Buttons */}
-                <div className="flex flex-col sm:flex-row gap-5">
+                {/* Enhanced CTA Buttons (moved up for better above-the-fold visibility) */}
+                <div className="flex flex-col sm:flex-row gap-4 mt-3">
                   <motion.button
                   onClick={() => setIsSignupOpen(true)}
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
-                    className="group relative bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 text-white px-8 py-4 rounded-xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 ease-out border-0 overflow-hidden"
+                    className="group relative bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 text-white px-7 py-3.5 rounded-xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 ease-out border-0 overflow-hidden"
                   >
                     <span className="relative z-10 flex items-center gap-2">
                       <RocketLaunchIcon className="w-5 h-5" />
@@ -1482,6 +1478,11 @@ const Landing = () => {
                     Watch Demo
                   </motion.button>
                 </div>
+
+                {/* Supporting copy under CTAs */}
+                <p className="text-base lg:text-lg text-gray-600 dark:text-gray-300 font-normal max-w-xl font-poppins leading-relaxed mt-4">
+                  Find ideal leads, launch personalized campaigns, and grow your business — even while you sleep.
+                </p>
                 
                 {/* Enhanced Trust Badges - Moved Closer to Buttons */}
                 <div className="flex flex-col sm:flex-row items-center gap-4 pt-1">
