@@ -1417,7 +1417,7 @@ const Landing = () => {
                       e.target.style.filter = 'drop-shadow(0 0 10px rgba(59, 130, 246, 0.1))';
                     }}
                   >
-                    Supercharge Your Outreach
+                    Supercharge Your Growth with Chrome-Powered AI Marketing
                   </span>
                 </h1>
                 
@@ -1441,8 +1441,14 @@ const Landing = () => {
                     <path d="M6 18L6.5 17.5L7 18L6.5 18.5L6 18Z" fill="currentColor" opacity="0.3"/>
                     <path d="M18 18L17.5 17.5L17 18L17.5 18.5L18 18Z" fill="currentColor" opacity="0.3"/>
                   </svg>
-                  with Smart AI Email Automation
+                  Create SEO-optimized content, powerful outreach emails, and stunning brand assets — all in one smart workspace built with Chrome’s built-in AI.
                 </h2>
+                {typeof window !== 'undefined' && window.chrome && window.chrome.ai ? (
+                  <div className="inline-flex items-center gap-2 bg-green-600/10 text-green-700 dark:text-green-300 border border-green-600/20 px-3 py-1 rounded-full text-sm font-medium">
+                    <span className="inline-block w-2 h-2 bg-green-500 rounded-full"></span>
+                    Chrome AI Enhanced
+                  </div>
+                ) : null}
                 
                 <p className="text-lg lg:text-xl text-gray-600 dark:text-gray-300 font-normal max-w-xl font-poppins leading-relaxed">
                   Find ideal leads, launch personalized campaigns, and grow your business — even while you sleep.
