@@ -1417,7 +1417,7 @@ const Landing = () => {
                       e.target.style.filter = 'drop-shadow(0 0 10px rgba(59, 130, 246, 0.1))';
                     }}
                   >
-                    Supercharge Your Growth with Chrome-Powered AI Marketing
+                    Supercharge Growth with Chrome AI
                   </span>
                 </h1>
                 
@@ -1441,7 +1441,7 @@ const Landing = () => {
                     <path d="M6 18L6.5 17.5L7 18L6.5 18.5L6 18Z" fill="currentColor" opacity="0.3"/>
                     <path d="M18 18L17.5 17.5L17 18L17.5 18.5L18 18Z" fill="currentColor" opacity="0.3"/>
                   </svg>
-                  Create SEO-optimized content, powerful outreach emails, and stunning brand assets — all in one smart workspace built with Chrome’s built-in AI.
+                  All-in-one tool for SEO, emails, and branding — powered by Chrome’s built-in AI.
                 </h2>
                 {typeof window !== 'undefined' && window.chrome && window.chrome.ai ? (
                   <div className="inline-flex items-center gap-2 bg-green-600/10 text-green-700 dark:text-green-300 border border-green-600/20 px-3 py-1 rounded-full text-sm font-medium">
