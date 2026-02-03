@@ -25,6 +25,8 @@ import WriterPage from './pages/WriterPage';
 import BrandGeneratorPage from './pages/BrandGeneratorPage';
 import SEOOptimizerPage from './pages/SEOOptimizerPage';
 import Leads from './pages/Leads';
+import TermsOfService from './pages/TermsOfService';
+import CookiePolicy from './pages/CookiePolicy';
 import { GmailStatusProvider } from './utils/GmailStatusContext';
 
 const RequireAuth = ({ children }) => {
@@ -176,6 +178,8 @@ const App = () => {
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/faq" element={<FAQ />} />
                 <Route path="/privacy" element={<PrivacyPolicy />} />
+                <Route path="/terms" element={<TermsOfService />} />
+                <Route path="/cookies" element={<CookiePolicy />} />
                 <Route path="/data-deletion" element={<DataDeletion />} />
                 <Route path="/pricing-payment" element={<PricingPayment />} />
                 <Route path="/pricing-page" element={<PricingPage />} />

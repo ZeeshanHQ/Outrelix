@@ -47,7 +47,7 @@ const PrivacyPolicy = () => (
         </section>
         <section>
           <h2 className="text-2xl font-semibold mb-2">7. Contact</h2>
-          <p>If you have any questions or requests regarding your privacy, please contact us at <a href="mailto:huaweigps1322@gmail.com" className="text-primary-600 underline">huaweigps1322@gmail.com</a>.</p>
+          <p>If you have any questions or requests regarding your privacy, please contact us at <a href="mailto:support@astraventa.online" className="text-primary-600 underline">support@astraventa.online</a>.</p>
         </section>
       </div>
     </main>

@@ -12,7 +12,7 @@ const DataDeletion = () => (
           <h2 className="text-2xl font-semibold mb-2">How to Request Data Deletion</h2>
           <p>Your privacy is important to us. If you wish to delete your account and all associated data from Outrelix, please follow these steps:</p>
           <ol className="list-decimal pl-6 space-y-2 mt-2">
-            <li>Send an email to <a href="mailto:huaweigps1322@gmail.com" className="text-primary-600 underline">huaweigps1322@gmail.com</a> with the subject line: <strong>Data Deletion Request</strong>.</li>
+            <li>Send an email to <a href="mailto:support@astraventa.online" className="text-primary-600 underline">support@astraventa.online</a> with the subject line: <strong>Data Deletion Request</strong>.</li>
             <li>In your email, include the email address you used to sign up or log in to our service.</li>
             <li>We will process your request and delete your data from our systems within 7 days.</li>
             <li>You will receive a confirmation email once your data has been deleted.</li>
@@ -20,7 +20,7 @@ const DataDeletion = () => (
         </section>
         <section>
           <h2 className="text-2xl font-semibold mb-2">Contact</h2>
-          <p>If you have any questions or concerns about data deletion, please contact us at <a href="mailto:huaweigps1322@gmail.com" className="text-primary-600 underline">huaweigps1322@gmail.com</a>.</p>
+          <p>If you have any questions or concerns about data deletion, please contact us at <a href="mailto:support@astraventa.online" className="text-primary-600 underline">support@astraventa.online</a>.</p>
         </section>
       </div>
     </main>
