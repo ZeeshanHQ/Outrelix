@@ -1,0 +1,52 @@
+{
+  "summary": {
+    "total_companies": 43,
+    "average_lead_score": 44.72,
+    "total_lead_score": 1923.17
+  },
+  "quality_distribution": {
+    "A+": 0,
+    "A": 0,
+    "B+": 0,
+    "B": 8,
+    "C+": 1,
+    "C": 29,
+    "D": 5
+  },
+  "priority_distribution": {
+    "HIGH": 0,
+    "MEDIUM": 0,
+    "LOW": 9,
+    "REJECT": 34
+  },
+  "source_performance": {
+    "gmaps": {
+      "count": 30,
+      "avg_score": 39.5,
+      "total_score": 1185.0
+    },
+    "yelp": {
+      "count": 13,
+      "avg_score": 56.78,
+      "total_score": 738.1700000000001
+    }
+  },
+  "industry_breakdown": {
+    "Unknown": {
+      "count": 34,
+      "avg_score": 40.38,
+      "total_score": 1373.0
+    },
+    "Software": {
+      "count": 9,
+      "avg_score": 61.13,
+      "total_score": 550.1700000000001
+    }
+  },
+  "recommendations": [
+    "Focus on improving 34 low-quality leads (C/D grade)",
+    "Overall lead quality is below target. Review sourcing criteria and validation processes."
+  ],
+  "generated_at": "2025-09-17T19:14:54.220257",
+  "version": "1.0.0"
+}

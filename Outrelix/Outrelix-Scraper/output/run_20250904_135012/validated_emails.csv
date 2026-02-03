@@ -1,0 +1,6 @@
+company_id,email,source,validation,DRY_RUN
+1645b86de739fac7,info0@thetalabs.io,contact_page_extractor,"{'is_valid': True, 'is_disposable': False, 'mx_found': True, 'deliverability': 'medium'}",True
+c94e773194bc12df,info0@epsilonai.ai,contact_page_extractor,"{'is_valid': True, 'is_disposable': False, 'mx_found': True, 'deliverability': 'medium'}",True
+6d7254a79a81d40e,info0@phiintegrations.com,contact_page_extractor,"{'is_valid': True, 'is_disposable': False, 'mx_found': True, 'deliverability': 'medium'}",True
+6d7254a79a81d40e,info1@phiintegrations.com,contact_page_extractor,"{'is_valid': True, 'is_disposable': False, 'mx_found': True, 'deliverability': 'medium'}",True
+74981950cb74e5eb,info0@mumetrics.io,contact_page_extractor,"{'is_valid': True, 'is_disposable': False, 'mx_found': True, 'deliverability': 'high'}",True

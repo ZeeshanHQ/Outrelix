@@ -1,0 +1,22 @@
+{
+  "run": "run_20250830_044228",
+  "sourcing": {
+    "input_total": 22,
+    "normalized": 22,
+    "merged_total": 15,
+    "groups": 4,
+    "merged_count": 7,
+    "kept": 15
+  },
+  "totals": {
+    "companies": 15,
+    "emails_found": 27,
+    "emails_valid": 21,
+    "valid_email_pct": 77.78,
+    "phones_valid": 9
+  },
+  "top_sources": {
+    "gmaps": 9,
+    "yelp": 6
+  }
+}

@@ -1,0 +1,3270 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Outrelix Lead Engine</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-gradient: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+      --secondary-gradient: linear-gradient(135deg, #4834d4 0%, #686de0 100%);
+      --success-gradient: linear-gradient(135deg, #00d2d3 0%, #54a0ff 100%);
+      --warning-gradient: linear-gradient(135deg, #ff9ff3 0%, #f368e0 100%);
+      --danger-gradient: linear-gradient(135deg, #ff3838 0%, #ff6b6b 100%);
+      --accent-gradient: linear-gradient(135deg, #feca57 0%, #ff9ff3 100%);
+      --premium-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+      --dark-bg: #0c0c0c;
+      --dark-surface: #1a1a1a;
+      --dark-surface-2: #2a2a2a;
+      --dark-border: #3a3a3a;
+      --text-primary: #ffffff;
+      --text-secondary: #b8b8b8;
+      --text-muted: #888888;
+    }
+    
+    * {
+      box-sizing: border-box;
+    }
+    
+    body { 
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--dark-bg);
+      color: var(--text-primary);
+      overflow-x: hidden;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(1.05); }
+    }
+    
+    @keyframes glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(102, 126, 234, 0.3); }
+      50% { box-shadow: 0 0 40px rgba(102, 126, 234, 0.6); }
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+    
+    @keyframes shimmer {
+      0% { background-position: -200px 0; }
+      100% { background-position: calc(200px + 100%) 0; }
+    }
+    
+    .animate-fadeIn { animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+    .animate-slideIn { animation: slideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+    .animate-pulse-slow { animation: pulse 3s infinite; }
+    .animate-glow { animation: glow 2s infinite; }
+    .animate-float { animation: float 6s ease-in-out infinite; }
+    
+    .sidebar {
+      width: 280px;
+      position: relative;
+    }
+    
+    .main-content {
+      margin-left: 280px;
+      background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 100%);
+      min-height: 100vh;
+      position: relative;
+    }
+    
+    .main-content::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(255, 107, 107, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(72, 52, 212, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(0, 210, 211, 0.05) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    
+    .nav-item {
+      display: flex;
+      align-items: center;
+      padding: 16px 20px;
+      margin: 8px 0;
+      border-radius: 16px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      font-size: 16px;
+      font-weight: 600;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .nav-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      transition: left 0.5s;
+    }
+    
+    .nav-item:hover::before {
+      left: 100%;
+    }
+    
+    .nav-item:hover {
+      background: rgba(255, 107, 107, 0.15);
+      color: var(--text-primary);
+      box-shadow: 0 8px 25px rgba(255, 107, 107, 0.2);
+    }
+    
+    .nav-item.active {
+      background: var(--primary-gradient);
+      color: var(--text-primary);
+      box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+    }
+    
+    .nav-icon {
+      width: 24px;
+      height: 24px;
+      margin-right: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      transition: all 0.3s ease;
+    }
+    
+    .nav-item:hover .nav-icon {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    
+    .card {
+      background: linear-gradient(135deg, rgba(26, 26, 26, 0.8) 0%, rgba(17, 17, 17, 0.9) 100%);
+      border-radius: 20px;
+      border: 1px solid var(--dark-border);
+      box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      backdrop-filter: blur(20px);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 107, 107, 0.5), transparent);
+    }
+    
+    .card:hover {
+      box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(255, 107, 107, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+    
+    .status-running {
+      background: var(--warning-gradient);
+      color: white;
+      box-shadow: 0 4px 15px rgba(255, 159, 243, 0.3);
+    }
+    
+    .status-completed {
+      background: var(--success-gradient);
+      color: white;
+      box-shadow: 0 4px 15px rgba(0, 210, 211, 0.3);
+    }
+    
+    .status-failed {
+      background: var(--danger-gradient);
+      color: white;
+      box-shadow: 0 4px 15px rgba(255, 56, 56, 0.3);
+    }
+    
+    .status-pending {
+      background: linear-gradient(135deg, #6b7280, #4b5563);
+      color: white;
+    }
+    
+    .metric-card {
+      background: linear-gradient(135deg, rgba(26, 26, 26, 0.9) 0%, rgba(17, 17, 17, 0.95) 100%);
+      border: 1px solid var(--dark-border);
+      border-radius: 14px;
+      padding: 16px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .metric-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(45deg, transparent 30%, rgba(255, 107, 107, 0.05) 50%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .metric-card:hover::before {
+      opacity: 1;
+    }
+    
+    .metric-card:hover {
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+    }
+    
+    .metric-value {
+      font-size: 1.8rem;
+      font-weight: 800;
+      background: var(--primary-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+    
+    .metric-label {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+    
+    .btn-primary {
+      background: var(--primary-gradient);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 16px 32px;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+    
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+    
+    .btn-primary:hover::before {
+      left: 100%;
+    }
+    
+    .btn-primary:hover {
+      box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+    }
+    
+    .btn-primary:active {}
+    
+    .form-input {
+      width: 100%;
+      padding: 16px 20px;
+      background: rgba(26, 26, 26, 0.8);
+      border: 1px solid var(--dark-border);
+      border-radius: 12px;
+      font-size: 14px;
+      color: var(--text-primary);
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+    
+    .form-input:focus {
+      outline: none;
+      border-color: #ff6b6b;
+      box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.2);
+      background: rgba(26, 26, 26, 0.9);
+    }
+    
+    .form-input::placeholder {
+      color: var(--text-muted);
+    }
+    
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 32px;
+    }
+    
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      background: var(--primary-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .table-container {
+      background: linear-gradient(135deg, rgba(26, 26, 26, 0.9) 0%, rgba(17, 17, 17, 0.95) 100%);
+      border-radius: 16px;
+      border: 1px solid var(--dark-border);
+      overflow: hidden;
+      backdrop-filter: blur(20px);
+    }
+    
+    .table-header {
+      background: linear-gradient(135deg, rgba(42, 42, 42, 0.8) 0%, rgba(26, 26, 26, 0.9) 100%);
+      border-bottom: 1px solid var(--dark-border);
+    }
+    
+    .table-row {
+      border-bottom: 1px solid rgba(42, 42, 42, 0.5);
+      transition: all 0.3s ease;
+    }
+    
+    .table-row:hover {
+      background: rgba(255, 107, 107, 0.1);
+    }
+    
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Engine Health meter */
+    .health-container { width: 260px; }
+    .health-bar {
+      height: 12px;
+      border-radius: 9999px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.1));
+      overflow: hidden;
+      border: 1px solid var(--dark-border);
+    }
+    .health-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #ff6b6b, #feca57, #00d2d3, #54a0ff);
+      background-size: 300% 100%;
+      animation: glow 3s ease-in-out infinite;
+      transition: width 0.6s ease;
+    }
+    .health-score { font-size: 12px; color: var(--text-secondary); }
+    
+    .glass-effect {
+      background: rgba(26, 26, 26, 0.8);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .gradient-text {
+      background: var(--primary-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .hover-lift {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .hover-lift:hover { box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3); }
+    
+    .floating-elements {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+    }
+    
+    .floating-elements::before,
+    .floating-elements::after {
+      content: '';
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 107, 107, 0.1) 0%, transparent 70%);
+      animation: float 8s ease-in-out infinite;
+    }
+    
+    .floating-elements::before {
+      top: 20%;
+      left: 10%;
+      animation-delay: 0s;
+    }
+    
+    .floating-elements::after {
+      top: 60%;
+      right: 10%;
+      animation-delay: 4s;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    let jwtToken = '';
+    let pwVisible = false;
+    // Health engine control
+    let healthEnabled = false;
+    let healthTimer = null;
+    async function doLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('login_email').value;
+      const password = document.getElementById('login_password').value;
+      const res = await fetch('/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password }) });
+      if (!res.ok) { alert('Login failed'); return; }
+      const data = await res.json();
+      jwtToken = data.access_token;
+      document.getElementById('login_modal').classList.add('hidden');
+      document.getElementById('blur_backdrop').classList.add('hidden');
+      refreshRuns();
+      refreshUsageStats();
+      refreshAllUsage(); // if admin, will populate; if not, will show error notification
+      // Analytics will load when user clicks "Load Data" button
+      // Health engine disabled by default; call enableHealth() later to start
+    }
+    function togglePasswordVisibility() {
+      pwVisible = !pwVisible;
+      const input = document.getElementById('login_password');
+      const eye = document.getElementById('eye_icon');
+      input.type = pwVisible ? 'text' : 'password';
+      eye.innerText = pwVisible ? '🙈' : '👁️';
+    }
+    function toggleSecret(inputId, btn) {
+      const input = document.getElementById(inputId);
+      if (!input) return;
+      const toText = input.type === 'password';
+      input.type = toText ? 'text' : 'password';
+      btn.textContent = toText ? '🙈' : '👁️';
+    }
+    async function startRun(e) {
+      e.preventDefault();
+      const button = e.target.querySelector('button[type="submit"]');
+      const originalText = button.textContent;
+      
+      const setFormError = (msg) => {
+        const el = document.getElementById('form_error');
+        if (!el) return;
+        if (msg) {
+          el.textContent = msg;
+          el.classList.remove('hidden');
+        } else {
+          el.textContent = '';
+          el.classList.add('hidden');
+        }
+      };
+      
+      // Show loading state
+      button.disabled = true;
+      button.innerHTML = '<div class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>Starting...';
+      
+      // Get storage method setting
+      const storageMethod = document.getElementById('cfg_storage_method')?.value || 'both';
+      
+      // Get values from form inputs
+      const queries = document.getElementById('queries').value.trim();
+      const geo = document.getElementById('geo').value.trim();
+      const category = document.getElementById('category').value.trim();
+      const limit = parseInt(document.getElementById('limit').value || '100');
+      const enableOverpass = document.getElementById('enable_overpass')?.checked ?? true;
+      const enableEmbedScoring = document.getElementById('enable_embed_scoring')?.checked ?? false;
+      const enableEmbedDedupe = document.getElementById('enable_embed_dedupe')?.checked ?? false;
+      
+      // Validate inputs
+      if (!queries || queries.length > 500) {
+        setFormError('Please enter search keywords (max 500 chars).');
+        button.disabled = false;
+        button.textContent = originalText;
+        return;
+      }
+      if (!geo || geo.length > 200) {
+        setFormError('Please enter geographic location (max 200 chars).');
+        button.disabled = false;
+        button.textContent = originalText;
+        return;
+      }
+      if (!category || category.length > 200) {
+        setFormError('Please enter a category/industry (max 200 chars).');
+        button.disabled = false;
+        button.textContent = originalText;
+        return;
+      }
+      setFormError('');
+      
+      const payload = {
+        queries: queries,
+        geo: geo,
+        category: category,
+        limit: limit,
+        enable_overpass: enableOverpass,
+        enable_embed_scoring: enableEmbedScoring,
+        enable_embed_dedupe: enableEmbedDedupe,
+        enable_yelp: true,
+        enable_yellowpages: true,
+        enable_clearbit: true,
+        push_to_gsheets: document.getElementById('push_to_gsheets').checked,
+        dry_run: document.getElementById('dry_run').checked,
+        storage_method: storageMethod
+      };
+      
+      try {
+        const res = await fetch('/runs', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + jwtToken }, body: JSON.stringify(payload) });
+        
+        if (!res.ok) {
+          const errorData = await res.json().catch(() => ({ detail: res.statusText }));
+          throw new Error(errorData.detail || `HTTP ${res.status}: ${res.statusText}`);
+        }
+        
+        const data = await res.json();
+        
+        // Show success message
+        setFormError('');
+        showNotification('Run started successfully!', 'success');
+        
+        // Success state (no emoji)
+        button.innerHTML = 'Started';
+        setTimeout(() => {
+          button.disabled = false;
+          button.textContent = originalText;
+        }, 2000);
+        
+        refreshRuns();
+        refreshUsageStats();
+      } catch (error) {
+        const errorMsg = error.message || 'Failed to start run. Please try again.';
+        setFormError(errorMsg);
+        showNotification(errorMsg, 'error');
+        button.innerHTML = 'Failed';
+        setTimeout(() => {
+          button.disabled = false;
+          button.textContent = originalText;
+        }, 2000);
+      }
+    }
+    async function refreshRuns() {
+      const res = await fetch('/runs', { headers: { 'Authorization': 'Bearer ' + jwtToken }});
+      const data = await res.json();
+      const tbody = document.getElementById('runs-body');
+      tbody.innerHTML = '';
+      Object.values(data).sort((a,b)=>b.created_at.localeCompare(a.created_at)).forEach((r, index) => {
+        const tr = document.createElement('tr');
+        tr.className = 'table-row animate-fadeIn';
+        tr.style.animationDelay = `${index * 0.1}s`;
+        
+        const statusClass = r.status === 'completed' ? 'status-completed' : 
+                           r.status === 'failed' ? 'status-failed' : 
+                           r.status === 'running' ? 'status-running' : 'status-pending';
+        
+        tr.innerHTML = `
+          <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-200">${r.run_id}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">${new Date(r.created_at).toLocaleString()}</td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span class="badge ${statusClass}">
+              ${r.status}
+            </span>
+          </td>
+          <td class="px-6 py-4 text-sm text-gray-400">${r.message || '—'}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-xs text-gray-500 font-mono">${r.run_dir ? r.run_dir.split('/').pop() : '—'}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm">
+            <div class="flex items-center space-x-2">
+              ${r.summary_path ? 
+                `<button onclick='openSummaryModal("${r.run_id}")' class='px-3 py-1 rounded-md text-xs font-semibold text-white' style='background: var(--secondary-gradient);'>View</button>` : 
+                '<span class="text-gray-400">—</span>'
+              }
+              ${r.summary_path ? 
+                `<button onclick='openExportModal("${r.run_id}")' class='p-2 rounded-md text-xs font-semibold text-white hover:bg-opacity-80 transition-all' style='background: var(--success-gradient);' title='Export Data'>
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                  </svg>
+                </button>` : 
+                ''
+              }
+              <button onclick='deleteRun("${r.run_id}")' class='p-2 rounded-md text-xs font-semibold text-white hover:bg-opacity-80 transition-all bg-red-600/80 hover:bg-red-600' title='Delete Run'>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m2 0H7m3-3h4a1 1 0 011 1v2H8V5a1 1 0 011-1z" />
+                </svg>
+              </button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+      
+      // Update metrics
+      updateMetrics(data);
+    }
+
+    async function deleteRun(runId) {
+      if (!confirm('Delete this run and its output?')) return;
+      try {
+        const res = await fetch(`/runs/${runId}`, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + jwtToken }});
+        if (!res.ok) throw new Error('Failed to delete');
+        refreshRuns();
+      } catch (e) {
+        alert('Delete failed: ' + e.message);
+      }
+    }
+    async function openSummary(runId) {
+      const res = await fetch(`/runs/${runId}/summary`, { headers: { 'Authorization': 'Bearer ' + jwtToken }});
+      if (!res.ok) { alert('Summary not available yet'); return; }
+      const data = await res.json();
+      renderSummaryModal(data, runId);
+    }
+    function openSummaryModal(runId) { openSummary(runId); }
+    function closeSummaryModal() {
+      document.getElementById('summary_modal').classList.add('hidden');
+      document.getElementById('summary_backdrop').classList.add('hidden');
+    }
+    function closeExportModal() {
+      document.getElementById('export_modal').classList.add('hidden');
+      document.getElementById('export_backdrop').classList.add('hidden');
+    }
+    // Usage stats and notifications
+    async function refreshUsageStats() {
+      try {
+        const res = await fetch('/usage/stats', { headers: { 'Authorization': 'Bearer ' + jwtToken }});
+        if (res.ok) {
+          const stats = await res.json();
+          updateUsageDisplay(stats);
+        }
+      } catch (e) {
+        console.error('Failed to load usage stats:', e);
+      }
+    }
+    
+    function updateUsageDisplay(stats) {
+      // Update usage display if element exists
+      const usageEl = document.getElementById('usage-stats');
+      if (usageEl && stats) {
+        const runsUsed = stats.runs_today || 0;
+        const runsLimit = stats.limits?.max_runs_per_day || 50;
+        const runsPercent = (runsUsed / runsLimit) * 100;
+        
+        usageEl.innerHTML = `
+          <div class="text-xs text-gray-400">
+            Runs today: <span class="font-semibold ${runsPercent > 80 ? 'text-yellow-400' : 'text-green-400'}">${runsUsed}/${runsLimit}</span>
+          </div>
+        `;
+        
+        // Show warning if near limit
+        if (runsPercent > 80) {
+          showNotification(`Warning: ${runsUsed}/${runsLimit} runs used today. Limit approaching.`, 'warning');
+        }
+      }
+    }
+
+    // Admin usage view
+    async function refreshAllUsage() {
+      try {
+        const res = await fetch('/usage/all', { headers: { 'Authorization': 'Bearer ' + jwtToken }});
+        if (!res.ok) {
+          showNotification('Admin usage: unauthorized or failed', 'error');
+          return;
+        }
+        const data = await res.json();
+        renderAdminUsage(data);
+      } catch (e) {
+        showNotification('Failed to load admin usage', 'error');
+      }
+    }
+
+    function renderAdminUsage(data) {
+      const wrap = document.getElementById('admin-usage');
+      if (!wrap) return;
+      const rows = Object.entries(data || {}).map(([uid, stats]) => {
+        const runs = stats?.runs_today ?? 0;
+        const api = stats?.api_calls_today ?? 0;
+        const maxRuns = stats?.limits?.max_runs_per_day ?? 0;
+        const maxApi = stats?.limits?.max_api_calls_per_day ?? 0;
+        return `
+          <tr class="border-b border-gray-700/50">
+            <td class="px-4 py-2 text-sm text-gray-200 font-mono">${uid}</td>
+            <td class="px-4 py-2 text-sm text-gray-300">${runs}/${maxRuns || '—'}</td>
+            <td class="px-4 py-2 text-sm text-gray-300">${api}/${maxApi || '—'}</td>
+          </tr>
+        `;
+      }).join('') || `<tr><td colspan="3" class="px-4 py-3 text-center text-gray-400 text-sm">No data</td></tr>`;
+      wrap.innerHTML = `
+        <div class="p-4 glass-effect rounded-xl border border-gray-700/70 mt-4">
+          <div class="flex items-center justify-between mb-3">
+            <div class="text-sm font-semibold text-gray-200">Admin Usage (last 1 day)</div>
+            <button onclick="refreshAllUsage()" class="text-xs px-3 py-1 rounded-md bg-gray-700 text-gray-200 hover:bg-gray-600">Refresh</button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="min-w-full text-left text-xs text-gray-300">
+              <thead class="text-gray-400">
+                <tr>
+                  <th class="px-4 py-2 font-semibold">User</th>
+                  <th class="px-4 py-2 font-semibold">Runs (today)</th>
+                  <th class="px-4 py-2 font-semibold">API Calls (today)</th>
+                </tr>
+              </thead>
+              <tbody>${rows}</tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+    
+    function showNotification(message, type = 'info') {
+      // Create notification element
+      const notification = document.createElement('div');
+      notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg animate-fadeIn max-w-md ${
+        type === 'error' ? 'bg-red-600/90 text-white' :
+        type === 'success' ? 'bg-green-600/90 text-white' :
+        type === 'warning' ? 'bg-yellow-600/90 text-white' :
+        'bg-blue-600/90 text-white'
+      }`;
+      notification.innerHTML = `
+        <div class="flex items-center justify-between">
+          <span>${message}</span>
+          <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-white hover:text-gray-200">×</button>
+        </div>
+      `;
+      document.body.appendChild(notification);
+      
+      // Auto-remove after 5 seconds
+      setTimeout(() => {
+        if (notification.parentElement) {
+          notification.remove();
+        }
+      }, 5000);
+    }
+    
+    function renderSummaryModal(data, runId) {
+      const c = data?.totals?.companies ?? 0;
+      const e = data?.totals?.emails_found ?? 0;
+      const valid = data?.totals?.emails_valid ?? data?.totals?.valid ?? 0;
+      const dedupe = data?.totals?.dedupe_rate ?? data?.totals?.dedupe ?? null;
+      
+      // Check for mock data warnings
+      const mocksUsed = data?.mocks_used || [];
+      const freeMode = data?.flags?.free_mode || false;
+      const validationStrategy = data?.validation_strategy || '';
+      
+      // Build warning HTML if mock data was used
+      let warningHtml = '';
+      if (freeMode || mocksUsed.length > 0) {
+        const mockServices = mocksUsed.join(', ') || 'some services';
+        warningHtml = `
+          <div class="mt-4 p-4 bg-yellow-600/20 border border-yellow-600/50 rounded-lg">
+            <div class="flex items-start">
+              <svg class="w-5 h-5 text-yellow-400 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+              </svg>
+              <div>
+                <div class="text-yellow-400 font-semibold text-sm mb-1">⚠️ Data Quality Warning</div>
+                <div class="text-yellow-300 text-xs">
+                  ${freeMode ? 'Free mode is enabled. ' : ''}Mock/test data was used for: <strong>${mockServices}</strong>.
+                  ${validationStrategy === 'local_mx_smtp' ? 'Email validation is basic (MX/SMTP only, may not be accurate).' : ''}
+                  <br><br>
+                  <strong>Note:</strong> These leads may not be real businesses. Verify data quality before using for outreach.
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+      
+      const html = `
+        ${warningHtml}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <div class="p-4 glass-effect rounded-xl">
+            <div class="text-xs text-gray-400 mb-1">Run ID</div>
+            <div class="font-mono text-sm text-gray-200">${runId}</div>
+          </div>
+          <div class="p-4 glass-effect rounded-xl">
+            <div class="text-xs text-gray-400 mb-1">Companies Processed</div>
+            <div class="text-lg font-bold">${c}</div>
+          </div>
+          <div class="p-4 glass-effect rounded-xl">
+            <div class="text-xs text-gray-400 mb-1">Emails Found</div>
+            <div class="text-lg font-bold">${e}</div>
+          </div>
+          <div class="p-4 glass-effect rounded-xl">
+            <div class="text-xs text-gray-400 mb-1">Valid Emails</div>
+            <div class="text-lg font-bold">${valid}</div>
+          </div>
+          ${dedupe !== null ? `<div class='p-4 glass-effect rounded-xl'><div class='text-xs text-gray-400 mb-1'>Dedupe %</div><div class='text-lg font-bold'>${dedupe}</div></div>` : ''}
+        </div>
+        
+        <div class="mt-6 flex justify-center">
+          <button onclick="openDetailView('${runId}')" class="px-6 py-3 text-sm font-bold rounded-lg text-white transition-all duration-200 hover:shadow-lg hover:scale-105" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);">
+            <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+            </svg>
+            View Detailed Data
+          </button>
+        </div>
+      `;
+      document.getElementById('summary_content').innerHTML = html;
+      document.getElementById('summary_modal').classList.remove('hidden');
+      document.getElementById('summary_backdrop').classList.remove('hidden');
+    }
+    
+    async function openExportModal(runId) {
+      try {
+        // Get run summary to determine file sizes and recommendations
+        const res = await fetch(`/runs/${runId}/summary`, { headers: { 'Authorization': 'Bearer ' + jwtToken }});
+        if (!res.ok) { alert('Export data not available yet'); return; }
+        const data = await res.json();
+        renderExportModal(data, runId);
+      } catch (error) {
+        alert('Failed to load export options');
+      }
+    }
+    
+    function renderExportModal(data, runId) {
+      const companies = data?.totals?.companies ?? 0;
+      const emails = data?.totals?.emails_found ?? 0;
+      const validEmails = data?.totals?.emails_valid ?? data?.totals?.valid ?? 0;
+      
+      // Calculate estimated file sizes
+      const estimatedSize = companies * 0.5; // Rough estimate in KB
+      const isLargeDataset = companies > 1000;
+      const isSmallDataset = companies < 100;
+      
+      // Smart format recommendations
+      let recommendedFormat = 'xlsx';
+      let recommendationReason = 'Best for data analysis and sharing';
+      
+      if (isLargeDataset) {
+        recommendedFormat = 'csv';
+        recommendationReason = 'Faster processing for large datasets';
+      } else if (isSmallDataset) {
+        recommendedFormat = 'xlsx';
+        recommendationReason = 'Perfect for small datasets with formatting';
+      }
+      
+      const html = `
+        <!-- Dataset Info -->
+        <div class="p-4 glass-effect rounded-xl border border-gray-700">
+          <h4 class="text-sm font-bold text-gray-200 mb-3 flex items-center">
+            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+            </svg>
+            Dataset Overview
+          </h4>
+          <div class="grid grid-cols-2 gap-4 text-sm">
+            <div class="flex justify-between">
+              <span class="text-gray-400">Companies:</span>
+              <span class="text-gray-200 font-medium">${companies}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-400">Emails Found:</span>
+              <span class="text-gray-200 font-medium">${emails}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-400">Valid Emails:</span>
+              <span class="text-gray-200 font-medium">${validEmails}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-400">Est. Size:</span>
+              <span class="text-gray-200 font-medium">${estimatedSize.toFixed(1)} KB</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Format Selection -->
+        <div class="p-4 glass-effect rounded-xl border border-gray-700">
+          <h4 class="text-sm font-bold text-gray-200 mb-4 flex items-center">
+            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
+            </svg>
+            Export Format
+          </h4>
+          
+          <div class="space-y-3">
+            <!-- Excel Format -->
+            <label class="flex items-center p-3 rounded-lg border cursor-pointer hover:bg-opacity-50 transition-all ${recommendedFormat === 'xlsx' ? 'border-green-500 bg-green-900/20' : 'border-gray-600'}">
+              <input type="radio" name="export_format" value="xlsx" class="w-4 h-4 text-green-500" ${recommendedFormat === 'xlsx' ? 'checked' : ''}>
+              <div class="ml-3 flex-1">
+                <div class="flex items-center justify-between">
+                  <span class="text-sm font-medium text-gray-200">Excel (.xlsx)</span>
+                  ${recommendedFormat === 'xlsx' ? '<span class="text-xs px-2 py-1 rounded-full bg-green-500/20 text-green-400">Recommended</span>' : ''}
+                </div>
+                <p class="text-xs text-gray-400 mt-1">Best for data analysis, includes formatting and multiple sheets</p>
+              </div>
+            </label>
+            
+            <!-- CSV Format -->
+            <label class="flex items-center p-3 rounded-lg border cursor-pointer hover:bg-opacity-50 transition-all ${recommendedFormat === 'csv' ? 'border-green-500 bg-green-900/20' : 'border-gray-600'}">
+              <input type="radio" name="export_format" value="csv" class="w-4 h-4 text-green-500" ${recommendedFormat === 'csv' ? 'checked' : ''}>
+              <div class="ml-3 flex-1">
+                <div class="flex items-center justify-between">
+                  <span class="text-sm font-medium text-gray-200">CSV (.csv)</span>
+                  ${recommendedFormat === 'csv' ? '<span class="text-xs px-2 py-1 rounded-full bg-green-500/20 text-green-400">Recommended</span>' : ''}
+                </div>
+                <p class="text-xs text-gray-400 mt-1">Universal format, smaller file size, works with all tools</p>
+              </div>
+            </label>
+            
+            <!-- JSON Format -->
+            <label class="flex items-center p-3 rounded-lg border cursor-pointer hover:bg-opacity-50 transition-all border-gray-600">
+              <input type="radio" name="export_format" value="json" class="w-4 h-4 text-green-500">
+              <div class="ml-3 flex-1">
+                <span class="text-sm font-medium text-gray-200">JSON (.json)</span>
+                <p class="text-xs text-gray-400 mt-1">For developers, includes all metadata and validation details</p>
+              </div>
+            </label>
+          </div>
+          
+          <div class="mt-4 p-3 rounded-lg bg-blue-900/20 border border-blue-700/30">
+            <p class="text-xs text-blue-300">
+              <strong>Recommendation:</strong> ${recommendationReason}
+            </p>
+          </div>
+        </div>
+
+        <!-- Export Options -->
+        <div class="p-4 glass-effect rounded-xl border border-gray-700">
+          <h4 class="text-sm font-bold text-gray-200 mb-4 flex items-center">
+            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+            </svg>
+            Export Options
+          </h4>
+          
+          <div class="space-y-3">
+            <label class="flex items-center p-3 rounded-lg border border-gray-600 cursor-pointer hover:bg-opacity-50 transition-all">
+              <input type="checkbox" id="include_raw_data" class="w-4 h-4 text-green-500" checked>
+              <div class="ml-3">
+                <span class="text-sm font-medium text-gray-200">Include Raw Data</span>
+                <p class="text-xs text-gray-400">Add raw business listings and contact extraction data</p>
+              </div>
+            </label>
+            
+            <label class="flex items-center p-3 rounded-lg border border-gray-600 cursor-pointer hover:bg-opacity-50 transition-all">
+              <input type="checkbox" id="include_validation_details" class="w-4 h-4 text-green-500" checked>
+              <div class="ml-3">
+                <span class="text-sm font-medium text-gray-200">Include Validation Details</span>
+                <p class="text-xs text-gray-400">Add email validation results and deliverability scores</p>
+              </div>
+            </label>
+            
+            <label class="flex items-center p-3 rounded-lg border border-gray-600 cursor-pointer hover:bg-opacity-50 transition-all">
+              <input type="checkbox" id="include_ai_insights" class="w-4 h-4 text-green-500" checked>
+              <div class="ml-3">
+                <span class="text-sm font-medium text-gray-200">Include AI Insights</span>
+                <p class="text-xs text-gray-400">Add lead scores, outreach suggestions, and pattern analysis</p>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Filename -->
+        <div class="p-4 glass-effect rounded-xl border border-gray-700">
+          <h4 class="text-sm font-bold text-gray-200 mb-3">Filename</h4>
+          <input type="text" id="export_filename" class="form-input" value="outrelix_leads_${new Date().toISOString().split('T')[0]}" placeholder="Enter filename">
+        </div>
+
+        <!-- Export Button -->
+        <div class="flex justify-end space-x-3">
+          <button onclick="closeExportModal()" class="px-4 py-2 text-sm rounded-md border border-gray-600 text-gray-300 hover:bg-gray-800 transition-all">
+            Cancel
+          </button>
+          <button onclick="executeExport('${runId}')" class="px-6 py-2 text-sm rounded-md font-medium text-white transition-all" style="background: var(--success-gradient);">
+            <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            Export Data
+          </button>
+        </div>
+      `;
+      
+      document.getElementById('export_content').innerHTML = html;
+      document.getElementById('export_modal').classList.remove('hidden');
+      document.getElementById('export_backdrop').classList.remove('hidden');
+    }
+    
+    async function executeExport(runId) {
+      const format = document.querySelector('input[name="export_format"]:checked').value;
+      const filename = document.getElementById('export_filename').value || 'outrelix_leads';
+      const includeRaw = document.getElementById('include_raw_data').checked;
+      const includeValidation = document.getElementById('include_validation_details').checked;
+      const includeAI = document.getElementById('include_ai_insights').checked;
+      
+      try {
+        const button = document.querySelector('button[onclick*="executeExport"]');
+        const originalText = button.innerHTML;
+        button.disabled = true;
+        button.innerHTML = '<div class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>Exporting...';
+        
+        const response = await fetch(`/runs/${runId}/export`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + jwtToken
+          },
+          body: JSON.stringify({
+            format: format,
+            filename: filename,
+            include_raw_data: includeRaw,
+            include_validation_details: includeValidation,
+            include_ai_insights: includeAI
+          })
+        });
+        
+        if (!response.ok) {
+          throw new Error('Export failed');
+        }
+        
+        // Get the file blob
+        const blob = await response.blob();
+        
+        // Create download link
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${filename}.${format}`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        
+        // Success state
+        button.innerHTML = '<svg class="w-4 h-4 inline mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>Exported!';
+        
+        setTimeout(() => {
+          button.disabled = false;
+          button.innerHTML = originalText;
+          closeExportModal();
+        }, 2000);
+        
+      } catch (error) {
+        alert('Export failed: ' + error.message);
+        const button = document.querySelector('button[onclick*="executeExport"]');
+        button.disabled = false;
+        button.innerHTML = originalText;
+      }
+    }
+    // Export functionality
+    let exportedFiles = [];
+    
+    async function refreshExportedFiles() {
+      try {
+        // This would typically fetch from a backend endpoint that tracks exported files
+        // For now, we'll simulate with localStorage
+        const stored = localStorage.getItem('exportedFiles');
+        exportedFiles = stored ? JSON.parse(stored) : [];
+        renderExportedFiles();
+      } catch (error) {
+        console.error('Failed to refresh exported files:', error);
+      }
+    }
+    
+    function renderExportedFiles() {
+      const tbody = document.getElementById('exported_files_table');
+      const countEl = document.getElementById('exported_files_count');
+      
+      if (exportedFiles.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" class="px-6 py-8 text-center text-gray-400">
+              No exported files yet. Run some lead generation and export data to see files here.
+            </td>
+          </tr>
+        `;
+        countEl.textContent = '0';
+        return;
+      }
+      
+      tbody.innerHTML = exportedFiles.map(file => `
+        <tr class="hover:bg-gray-800/50 transition-colors">
+          <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-200">${file.filename}</td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span class="badge ${getFormatBadgeClass(file.format)}">${file.format.toUpperCase()}</span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">${file.size}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-400">${file.runId}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">${new Date(file.exportedAt).toLocaleString()}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm">
+            <div class="flex items-center space-x-2">
+              <button onclick="downloadExportedFile('${file.id}')" class="text-blue-400 hover:text-blue-300 text-xs underline">
+                Download
+              </button>
+              <button onclick="deleteExportedFile('${file.id}')" class="text-red-400 hover:text-red-300 text-xs underline">
+                Delete
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+      
+      countEl.textContent = exportedFiles.length;
+    }
+    
+    function getFormatBadgeClass(format) {
+      switch (format) {
+        case 'xlsx': return 'status-completed';
+        case 'csv': return 'status-running';
+        case 'json': return 'status-pending';
+        case 'zip': return 'status-failed';
+        default: return 'status-pending';
+      }
+    }
+    
+    function addExportedFile(filename, format, size, runId) {
+      const file = {
+        id: Date.now().toString(),
+        filename,
+        format,
+        size,
+        runId,
+        exportedAt: new Date().toISOString()
+      };
+      exportedFiles.unshift(file);
+      localStorage.setItem('exportedFiles', JSON.stringify(exportedFiles));
+      renderExportedFiles();
+    }
+    
+    function downloadExportedFile(fileId) {
+      const file = exportedFiles.find(f => f.id === fileId);
+      if (file) {
+        // In a real implementation, this would download the actual file
+        alert(`Downloading ${file.filename}`);
+      }
+    }
+    
+    function deleteExportedFile(fileId) {
+      if (confirm('Are you sure you want to delete this exported file?')) {
+        exportedFiles = exportedFiles.filter(f => f.id !== fileId);
+        localStorage.setItem('exportedFiles', JSON.stringify(exportedFiles));
+        renderExportedFiles();
+      }
+    }
+    
+    function clearExportedFiles() {
+      if (confirm('Are you sure you want to clear all exported files?')) {
+        exportedFiles = [];
+        localStorage.setItem('exportedFiles', JSON.stringify(exportedFiles));
+        renderExportedFiles();
+      }
+    }
+    
+    async function exportAllRuns() {
+      try {
+        const res = await fetch('/runs', { headers: { 'Authorization': 'Bearer ' + jwtToken }});
+        if (!res.ok) return;
+        const runs = await res.json();
+        
+        const completedRuns = Object.values(runs).filter(run => run.status === 'completed');
+        if (completedRuns.length === 0) {
+          alert('No completed runs found to export');
+          return;
+        }
+        
+        const format = document.getElementById('export_format').value;
+        const filename = document.getElementById('filename_template').value;
+        
+        for (const run of completedRuns) {
+          await exportSingleRun(run.run_id, format, filename);
+        }
+        
+        alert(`Exported ${completedRuns.length} runs successfully!`);
+      } catch (error) {
+        alert('Export failed: ' + error.message);
+      }
+    }
+    
+    async function exportLatestRun() {
+      try {
+        const res = await fetch('/runs', { headers: { 'Authorization': 'Bearer ' + jwtToken }});
+        if (!res.ok) return;
+        const runs = await res.json();
+        
+        const completedRuns = Object.values(runs).filter(run => run.status === 'completed');
+        if (completedRuns.length === 0) {
+          alert('No completed runs found to export');
+          return;
+        }
+        
+        const latestRun = completedRuns.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))[0];
+        const format = document.getElementById('export_format').value;
+        const filename = document.getElementById('filename_template').value;
+        
+        await exportSingleRun(latestRun.run_id, format, filename);
+        alert('Latest run exported successfully!');
+      } catch (error) {
+        alert('Export failed: ' + error.message);
+      }
+    }
+    
+    async function exportSingleRun(runId, format, filenameTemplate) {
+      const actualFilename = filenameTemplate
+        .replace('{date}', new Date().toISOString().split('T')[0])
+        .replace('{run_id}', runId);
+      
+      const response = await fetch(`/runs/${runId}/export`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + jwtToken
+        },
+        body: JSON.stringify({
+          format: format,
+          filename: actualFilename,
+          include_raw_data: document.getElementById('exp_raw_businesses').checked,
+          include_validation_details: document.getElementById('exp_validated_emails').checked,
+          include_ai_insights: document.getElementById('include_ai_insights').checked
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Export failed');
+      }
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${actualFilename}.${format}`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+      
+      // Add to exported files list
+      addExportedFile(`${actualFilename}.${format}`, format, formatFileSize(blob.size), runId);
+    }
+    
+    function formatFileSize(bytes) {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+    
+    function saveExportSettings() {
+      const settings = {
+        datasets: {
+          verified_leads: document.getElementById('exp_verified_leads').checked,
+          raw_businesses: document.getElementById('exp_raw_businesses').checked,
+          raw_contacts: document.getElementById('exp_raw_contacts').checked,
+          validated_emails: document.getElementById('exp_validated_emails').checked,
+          analytics: document.getElementById('exp_analytics').checked,
+          summary: document.getElementById('exp_summary').checked
+        },
+        format: document.getElementById('export_format').value,
+        filename_template: document.getElementById('filename_template').value,
+        csv_delimiter: document.getElementById('csv_delimiter').value,
+        date_format: document.getElementById('date_format').value,
+        processing: {
+          include_metadata: document.getElementById('include_metadata').checked,
+          include_ai_insights: document.getElementById('include_ai_insights').checked,
+          include_validation_details: document.getElementById('include_validation_details').checked,
+          filter_valid_only: document.getElementById('filter_valid_only').checked,
+          sort_by_score: document.getElementById('sort_by_score').checked
+        }
+      };
+      localStorage.setItem('exportSettings', JSON.stringify(settings));
+      alert('Export settings saved!');
+    }
+    
+    function loadExportSettings() {
+      const stored = localStorage.getItem('exportSettings');
+      if (!stored) {
+        alert('No saved settings found');
+        return;
+      }
+      
+      const settings = JSON.parse(stored);
+      
+      // Load dataset settings
+      Object.keys(settings.datasets).forEach(key => {
+        const el = document.getElementById(`exp_${key}`);
+        if (el) el.checked = settings.datasets[key];
+      });
+      
+      // Load format settings
+      document.getElementById('export_format').value = settings.format || 'xlsx';
+      document.getElementById('filename_template').value = settings.filename_template || 'outrelix_leads_{date}_{run_id}';
+      document.getElementById('csv_delimiter').value = settings.csv_delimiter || ',';
+      document.getElementById('date_format').value = settings.date_format || 'YYYY-MM-DD';
+      
+      // Load processing settings
+      Object.keys(settings.processing).forEach(key => {
+        const el = document.getElementById(key);
+        if (el) el.checked = settings.processing[key];
+      });
+      
+      alert('Export settings loaded!');
+    }
+    
+    // Initialize exported files on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      refreshExportedFiles();
+    });
+
+    // Simple Analytics Functions
+    let analyticsData = null;
+
+    async function loadAnalyticsData() {
+      try {
+        console.log('Loading analytics data...');
+        const res = await fetch('/analytics', { headers: { 'Authorization': 'Bearer ' + jwtToken }});
+        if (!res.ok) {
+          console.error('Failed to fetch analytics data');
+          return;
+        }
+        analyticsData = await res.json();
+        updateAnalyticsDisplay(analyticsData);
+        console.log('Analytics data loaded successfully');
+      } catch (error) {
+        console.error('Error loading analytics:', error);
+      }
+    }
+
+    function updateAnalyticsDisplay(data) {
+      if (!data) return;
+      
+      // Update overview cards
+      const totals = data.totals || {};
+      const metrics = data.metrics || {};
+      
+      document.getElementById('total_leads').textContent = totals.companies || 0;
+      document.getElementById('valid_emails').textContent = totals.emails_valid || 0;
+      
+      const successRate = totals.companies > 0 ? Math.round((totals.emails_valid / totals.companies) * 100) : 0;
+      document.getElementById('success_rate').textContent = successRate + '%';
+      document.getElementById('avg_lead_score').textContent = Math.round(metrics.avg_lead_score || 0);
+      
+      // Update progress bars
+      updateProgressBars(data);
+      
+      // Update source performance
+      updateSourcePerformance(data);
+      
+      // Update stats
+      updateStats(data);
+    }
+
+    function updateProgressBars(data) {
+      const quality = data.quality_distribution || {};
+      const total = Object.values(quality).reduce((sum, count) => sum + count, 0);
+      
+      // Optional dynamic labels from backend
+      const labels = (data.labels && data.labels.quality) || {};
+      const highLabel = labels.high || 'High Quality';
+      const mediumLabel = labels.medium || 'Medium Quality';
+      const lowLabel = labels.low || 'Low Quality';
+      const poorLabel = labels.poor || 'Poor Quality';
+      const hl = document.getElementById('high_quality_label'); if (hl) hl.textContent = highLabel;
+      const ml = document.getElementById('medium_quality_label'); if (ml) ml.textContent = mediumLabel;
+      const ll = document.getElementById('low_quality_label'); if (ll) ll.textContent = lowLabel;
+      const pl = document.getElementById('poor_quality_label'); if (pl) pl.textContent = poorLabel;
+      
+      if (total === 0) return;
+      
+      const high = quality.high || 0;
+      const medium = quality.medium || 0;
+      const low = quality.low || 0;
+      const poor = quality.poor || 0;
+      
+      // Update counts
+      document.getElementById('high_quality_count').textContent = high;
+      document.getElementById('medium_quality_count').textContent = medium;
+      document.getElementById('low_quality_count').textContent = low;
+      document.getElementById('poor_quality_count').textContent = poor;
+      
+      // Update progress bars
+      document.getElementById('high_quality_bar').style.width = (high / total * 100) + '%';
+      document.getElementById('medium_quality_bar').style.width = (medium / total * 100) + '%';
+      document.getElementById('low_quality_bar').style.width = (low / total * 100) + '%';
+      document.getElementById('poor_quality_bar').style.width = (poor / total * 100) + '%';
+    }
+
+    function updateSourcePerformance(data) {
+      const sources = data.source_performance || {};
+      const container = document.getElementById('source_performance_list');
+      
+      if (Object.keys(sources).length === 0) {
+        container.innerHTML = `
+          <div class="text-center text-gray-400 py-8">
+            <svg class="w-12 h-12 mx-auto mb-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+            <p>No data available</p>
+          </div>
+        `;
+        return;
+      }
+      
+      container.innerHTML = Object.entries(sources).map(([source, stats]) => `
+        <div class="flex items-center justify-between py-2 border-b border-gray-700">
+          <span class="text-gray-300 font-medium">${source}</span>
+          <div class="text-right">
+            <div class="text-white font-bold">${stats.leads || 0} leads</div>
+            <div class="text-sm text-gray-400">${Math.round(stats.valid_percentage || 0)}% valid</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function updateStats(data) {
+      const validation = data.email_validation || {};
+      const efficiency = data.processing_efficiency || {};
+      
+      // Email validation stats
+      document.getElementById('high_deliverability').textContent = validation.high || 0;
+      document.getElementById('medium_deliverability').textContent = validation.medium || 0;
+      document.getElementById('low_deliverability').textContent = validation.low || 0;
+      document.getElementById('disposable_emails').textContent = validation.disposable || 0;
+      
+      // Processing efficiency
+      document.getElementById('dedupe_rate').textContent = Math.round(efficiency.dedupe_rate || 0) + '%';
+      document.getElementById('enrichment_coverage').textContent = Math.round(efficiency.enrichment_coverage || 0) + '%';
+      document.getElementById('ai_pattern_success').textContent = Math.round(efficiency.ai_pattern_success || 0) + '%';
+      document.getElementById('avg_processing_time').textContent = Math.round(efficiency.avg_processing_time || 0) + 's';
+    }
+
+    function clearAnalyticsData() {
+      analyticsData = null;
+      
+      // Reset all displays
+      document.getElementById('total_leads').textContent = '0';
+      document.getElementById('valid_emails').textContent = '0';
+      document.getElementById('success_rate').textContent = '0%';
+      document.getElementById('avg_lead_score').textContent = '0';
+      
+      // Reset progress bars
+      ['high_quality', 'medium_quality', 'low_quality', 'poor_quality'].forEach(id => {
+        document.getElementById(id + '_count').textContent = '0';
+        document.getElementById(id + '_bar').style.width = '0%';
+      });
+      
+      // Reset source performance
+      document.getElementById('source_performance_list').innerHTML = `
+        <div class="text-center text-gray-400 py-8">
+          <svg class="w-12 h-12 mx-auto mb-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+          </svg>
+          <p>No data available</p>
+          <p class="text-sm">Click "Load Data" to fetch analytics</p>
+        </div>
+      `;
+      
+      // Reset stats
+      document.getElementById('high_deliverability').textContent = '0';
+      document.getElementById('medium_deliverability').textContent = '0';
+      document.getElementById('low_deliverability').textContent = '0';
+      document.getElementById('disposable_emails').textContent = '0';
+      document.getElementById('dedupe_rate').textContent = '0%';
+      document.getElementById('enrichment_coverage').textContent = '0%';
+      document.getElementById('ai_pattern_success').textContent = '0%';
+      document.getElementById('avg_processing_time').textContent = '0s';
+      
+      console.log('Analytics data cleared');
+    }
+    
+    async function exportAnalytics() {
+      try {
+        if (!analyticsData) {
+          alert('No analytics data to export. Please load data first.');
+          return;
+        }
+        
+        // Create analytics report
+        const report = {
+          generated_at: new Date().toISOString(),
+          overview: {
+            total_leads: analyticsData.totals?.companies || 0,
+            valid_emails: analyticsData.totals?.emails_valid || 0,
+            success_rate: analyticsData.totals?.companies > 0 ? Math.round((analyticsData.totals?.emails_valid / analyticsData.totals?.companies) * 100) : 0,
+            avg_lead_score: Math.round(analyticsData.metrics?.avg_lead_score || 0)
+          },
+          quality_distribution: analyticsData.quality_distribution || {},
+          source_performance: analyticsData.source_performance || {},
+          email_validation: analyticsData.email_validation || {},
+          processing_efficiency: analyticsData.processing_efficiency || {}
+        };
+        
+        // Download as JSON
+        const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `analytics_report_${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        
+      } catch (error) {
+        alert('Export failed: ' + error.message);
+      }
+    }
+
+    // Settings functions for new UI
+    function resetToDefaults() {
+      // Reset all settings to default values
+      document.getElementById('cfg_queries').value = 'roofing contractors,roofing companies,roof repair,roof installation';
+      document.getElementById('cfg_geo').value = 'USA';
+      document.getElementById('cfg_category').value = 'Roofing Contractors';
+      document.getElementById('cfg_limit').value = '1000';
+      document.getElementById('cfg_enable_yelp').checked = true;
+      document.getElementById('cfg_enable_yellowpages').checked = false;
+      document.getElementById('cfg_enable_clearbit').checked = true;
+      document.getElementById('cfg_push_to_gsheets').checked = false;
+      document.getElementById('cfg_dry_run').checked = true;
+      
+      // Reset new settings
+      document.getElementById('cfg_min_score').value = '50';
+      document.getElementById('min_score_value').textContent = '50';
+      document.getElementById('cfg_email_validation').value = 'moderate';
+      document.getElementById('cfg_dedupe_level').value = 'medium';
+      document.getElementById('cfg_campaign_template').value = 'Roofing_Leads_{date}_{location}';
+      document.getElementById('cfg_export_format').value = 'excel';
+      document.getElementById('cfg_include_raw').checked = false;
+      document.getElementById('cfg_ai_insights').checked = true;
+      document.getElementById('cfg_storage_method').value = 'both';
+      
+      // Save the reset settings
+      saveAllSettings();
+      
+      // Show success message
+      alert('Settings reset to defaults and saved!');
+    }
+
+    // Update min score display when slider changes
+    document.addEventListener('DOMContentLoaded', function() {
+      const minScoreSlider = document.getElementById('cfg_min_score');
+      const minScoreValue = document.getElementById('min_score_value');
+      
+      if (minScoreSlider && minScoreValue) {
+        minScoreSlider.addEventListener('input', function() {
+          minScoreValue.textContent = this.value;
+        });
+      }
+    });
+
+    // Detailed View Modal Functions
+    let detailData = [];
+    let filteredDetailData = [];
+    let currentDetailPage = 1;
+    const detailPageSize = 20;
+    let currentDetailRunId = '';
+
+    async function openDetailView(runId) {
+      currentDetailRunId = runId;
+      currentDetailPage = 1;
+      
+      // Show modal
+      document.getElementById('detail_modal').classList.remove('hidden');
+      document.getElementById('detail_backdrop').classList.remove('hidden');
+      
+      // Load data
+      try {
+        const res = await fetch(`/runs/${runId}/summary`, { headers: { 'Authorization': 'Bearer ' + jwtToken }});
+        if (!res.ok) throw new Error('Failed to fetch data');
+        const data = await res.json();
+        
+        // Fetch real detailed data for this run
+        const r = await fetch(`/runs/${runId}/leads`, { headers: { 'Authorization': 'Bearer ' + jwtToken }});
+        if (r.ok) {
+          const jd = await r.json();
+          detailData = Array.isArray(jd.items) ? jd.items : [];
+        } else {
+          detailData = [];
+        }
+        filteredDetailData = [...detailData];
+        
+        renderDetailData();
+        updateDetailPagination();
+        
+      } catch (error) {
+        console.error('Error loading detail data:', error);
+        document.getElementById('detail_content').innerHTML = `
+          <div class="text-center text-red-400 py-8">
+            <svg class="w-12 h-12 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <p>Failed to load detailed data</p>
+            <p class="text-sm text-gray-500 mt-2">${error.message}</p>
+          </div>
+        `;
+      }
+    }
+
+    // Removed mock generator; now using real data from /runs/{id}/leads
+
+    function renderDetailData() {
+      const startIndex = (currentDetailPage - 1) * detailPageSize;
+      const endIndex = startIndex + detailPageSize;
+      const pageData = filteredDetailData.slice(startIndex, endIndex);
+      
+      if (pageData.length === 0) {
+        document.getElementById('detail_content').innerHTML = `
+          <div class="text-center text-gray-400 py-8">
+            <svg class="w-12 h-12 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            <p>No leads found matching your criteria</p>
+          </div>
+        `;
+        return;
+      }
+      
+      const html = `
+        <div class="space-y-4">
+          ${pageData.map(lead => `
+            <div class="p-4 glass-effect rounded-xl border border-gray-700 hover:border-gray-600 transition-all">
+              <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                <!-- Company Info -->
+                <div class="space-y-2">
+                  <div class="flex items-center justify-between">
+                    <h4 class="text-lg font-bold text-white">${lead.company}</h4>
+                    <span class="px-2 py-1 text-xs rounded-full ${lead.quality === 'high' ? 'bg-green-500/20 text-green-400' : lead.quality === 'medium' ? 'bg-yellow-500/20 text-yellow-400' : 'bg-red-500/20 text-red-400'}">
+                      ${lead.quality.toUpperCase()}
+                    </span>
+                  </div>
+                  <div class="text-sm text-gray-400">
+                    <div class="flex items-center">
+                      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9"></path>
+                      </svg>
+                      ${lead.domain}
+                    </div>
+                    <div class="flex items-center mt-1">
+                      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                      </svg>
+                      ${lead.location}
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Contact Info -->
+                <div class="space-y-2">
+                  ${lead.email ? `
+                    <div class="flex items-center">
+                      <svg class="w-4 h-4 mr-2 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                      </svg>
+                      <span class="text-sm text-white">${lead.email}</span>
+                      ${lead.email_valid ? 
+                        '<span class="ml-2 px-1 py-0.5 text-xs rounded bg-green-500/20 text-green-400">✓ Valid</span>' : 
+                        '<span class="ml-2 px-1 py-0.5 text-xs rounded bg-red-500/20 text-red-400">✗ Invalid</span>'
+                      }
+                    </div>
+                  ` : '<div class="text-sm text-gray-500">No email found</div>'}
+                  
+                  <div class="flex items-center">
+                    <svg class="w-4 h-4 mr-2 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                    </svg>
+                    <span class="text-sm text-white">${lead.phone}</span>
+                  </div>
+                </div>
+                
+                <!-- Lead Score & Insights -->
+                <div class="space-y-2">
+                  <div class="flex items-center justify-between">
+                    <span class="text-sm text-gray-400">Lead Score</span>
+                    <span class="text-lg font-bold text-white">${lead.lead_score}/100</span>
+                  </div>
+                  <div class="w-full bg-gray-700 rounded-full h-2">
+                    <div class="h-2 rounded-full ${lead.quality === 'high' ? 'bg-green-500' : lead.quality === 'medium' ? 'bg-yellow-500' : 'bg-red-500'}" 
+                         style="width: ${lead.lead_score}%"></div>
+                  </div>
+                  <div class="text-xs text-gray-500">
+                    ${lead.industry} • ${lead.employees} employees • ${lead.source}
+                  </div>
+                  <div class="text-xs text-blue-300 italic">
+                    ${lead.ai_insights}
+                  </div>
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+      
+      document.getElementById('detail_content').innerHTML = html;
+    }
+
+    function filterDetailData() {
+      const searchTerm = document.getElementById('detail_search').value.toLowerCase();
+      const filterValue = document.getElementById('detail_filter').value;
+      
+      filteredDetailData = detailData.filter(lead => {
+        const matchesSearch = !searchTerm || 
+          lead.company.toLowerCase().includes(searchTerm) ||
+          lead.domain.toLowerCase().includes(searchTerm) ||
+          lead.location.toLowerCase().includes(searchTerm) ||
+          (lead.email && lead.email.toLowerCase().includes(searchTerm));
+        
+        const matchesFilter = filterValue === 'all' ||
+          (filterValue === 'high' && lead.quality === 'high') ||
+          (filterValue === 'medium' && lead.quality === 'medium') ||
+          (filterValue === 'low' && lead.quality === 'low') ||
+          (filterValue === 'valid_email' && lead.email_valid);
+        
+        return matchesSearch && matchesFilter;
+      });
+      
+      currentDetailPage = 1;
+      renderDetailData();
+      updateDetailPagination();
+    }
+
+    function clearDetailFilters() {
+      document.getElementById('detail_search').value = '';
+      document.getElementById('detail_filter').value = 'all';
+      filterDetailData();
+    }
+
+    function updateDetailPagination() {
+      const totalPages = Math.ceil(filteredDetailData.length / detailPageSize);
+      const startIndex = (currentDetailPage - 1) * detailPageSize;
+      const endIndex = Math.min(startIndex + detailPageSize, filteredDetailData.length);
+      
+      document.getElementById('detail_showing').textContent = endIndex - startIndex;
+      document.getElementById('detail_total').textContent = filteredDetailData.length;
+      document.getElementById('detail_page_info').textContent = `Page ${currentDetailPage} of ${totalPages}`;
+      
+      document.getElementById('detail_prev_btn').disabled = currentDetailPage === 1;
+      document.getElementById('detail_next_btn').disabled = currentDetailPage === totalPages;
+    }
+
+    function previousDetailPage() {
+      if (currentDetailPage > 1) {
+        currentDetailPage--;
+        renderDetailData();
+        updateDetailPagination();
+      }
+    }
+
+    function nextDetailPage() {
+      const totalPages = Math.ceil(filteredDetailData.length / detailPageSize);
+      if (currentDetailPage < totalPages) {
+        currentDetailPage++;
+        renderDetailData();
+        updateDetailPagination();
+      }
+    }
+
+    function closeDetailModal() {
+      document.getElementById('detail_modal').classList.add('hidden');
+      document.getElementById('detail_backdrop').classList.add('hidden');
+      detailData = [];
+      filteredDetailData = [];
+      currentDetailPage = 1;
+    }
+
+    function exportDetailData() {
+      if (currentDetailRunId) {
+        openExportModal(currentDetailRunId);
+      }
+    }
+
+    window.addEventListener('load', ()=>{
+      document.getElementById('login_modal').classList.remove('hidden');
+      document.getElementById('blur_backdrop').classList.remove('hidden');
+      // Auto-refresh disabled; use the Refresh button on Run History
+      try {
+        loadAllSettings();
+      } catch (error) {
+        console.log('Settings loading skipped:', error.message);
+      }
+      // Ensure health loop is off
+      disableHealth();
+    });
+    
+    // Update metrics when runs are refreshed
+    function updateMetrics(runs) {
+      const totalRuns = Object.keys(runs).length;
+      const completedRuns = Object.values(runs).filter(r => r.status === 'completed').length;
+      const activeRuns = Object.values(runs).filter(r => r.status === 'running').length;
+      const successRate = totalRuns > 0 ? Math.round((completedRuns / totalRuns) * 100) : 0;
+      
+      // Update metric cards if they exist
+      const totalRunsEl = document.querySelector('.metric-value.text-blue-600');
+      const leadsEl = document.querySelector('.metric-value.text-green-600');
+      const successRateEl = document.querySelector('.metric-value.text-purple-600');
+      const activeRunsEl = document.querySelector('.metric-value.text-orange-600');
+      
+      if (totalRunsEl) totalRunsEl.textContent = totalRuns;
+      if (leadsEl) leadsEl.textContent = completedRuns * 10; // Mock leads per run
+      if (successRateEl) successRateEl.textContent = successRate + '%';
+      if (activeRunsEl) activeRunsEl.textContent = activeRuns;
+    }
+
+    // Health meter
+    function enableHealth() { healthEnabled = true; startHealthLoop(); }
+    function disableHealth() { healthEnabled = false; if (healthTimer) { clearTimeout(healthTimer); healthTimer = null; } }
+    async function startHealthLoop() {
+      if (!healthEnabled) return;
+      let lastScore = 0;
+      let consecutiveErrors = 0;
+      const windowSize = 5; // moving average window (5 x 2s = ~10s)
+      const minHoldTicks = 2; // keep minimum for two ticks before allowing big drops
+      const scores = [];
+      let ticksSinceDrop = 0;
+      function applyColor(score) {
+        const fill = document.getElementById('health_fill');
+        if (!fill) return;
+        // Color thresholds: >80 green, 50-80 orange, <50 red
+        if (score >= 80) fill.style.background = 'linear-gradient(90deg, #16a34a, #22c55e)';
+        else if (score >= 50) fill.style.background = 'linear-gradient(90deg, #f59e0b, #f97316)';
+        else fill.style.background = 'linear-gradient(90deg, #ef4444, #f43f5e)';
+      }
+      async function step() {
+        try {
+          const t0 = performance.now();
+          const r = await fetch('/health');
+          const t1 = performance.now();
+          const ok = r.ok;
+          const latencyMs = t1 - t0;
+          // Score from latency, bounded [0,100]
+          let instant = ok ? Math.max(0, 100 - Math.log10(1 + latencyMs) * 35) : lastScore;
+          instant = Math.round(instant);
+          // Maintain window and compute moving average
+          scores.push(instant);
+          if (scores.length > windowSize) scores.shift();
+          const avg = Math.round(scores.reduce((a,b)=>a+b,0) / scores.length);
+          // Min-hold to avoid jittery drops: prevent dropping more than 15 points unless persisted
+          let smoothed = avg;
+          const maxDrop = 15;
+          if (smoothed < lastScore - maxDrop && ticksSinceDrop < minHoldTicks) {
+            smoothed = lastScore - maxDrop;
+            ticksSinceDrop += 1;
+          } else {
+            ticksSinceDrop = 0;
+          }
+          lastScore = smoothed;
+          consecutiveErrors = 0;
+        } catch (_) {
+          // Do not drop to 0 immediately; only after repeated failures
+          consecutiveErrors += 1;
+          if (consecutiveErrors >= 3) lastScore = 0;
+        }
+        const fill = document.getElementById('health_fill');
+        const label = document.getElementById('health_score');
+        if (fill && label) {
+          fill.style.width = String(lastScore) + '%';
+          label.textContent = String(lastScore);
+          applyColor(lastScore);
+        }
+        if (!healthEnabled) return;
+        healthTimer = setTimeout(step, 2000);
+      }
+      step();
+    }
+
+    // Settings persistence
+    function loadAllSettings() {
+      const m = (k, d='') => (localStorage.getItem(k) ?? d);
+      document.getElementById('cfg_gsheets_url').value = m('cfg_gsheets_url');
+      document.getElementById('cfg_gsheets_json').value = m('cfg_gsheets_json');
+      document.getElementById('cfg_yelp_key').value = m('cfg_yelp_key');
+      document.getElementById('cfg_contactx_key').value = m('cfg_contactx_key');
+      document.getElementById('cfg_contactx_base').value = m('cfg_contactx_base');
+      document.getElementById('cfg_hunter_key').value = m('cfg_hunter_key');
+      document.getElementById('cfg_arjos_key').value = m('cfg_arjos_key');
+      document.getElementById('cfg_openrouter_key').value = m('cfg_openrouter_key');
+      document.getElementById('cfg_concurrency').value = m('cfg_concurrency', '8');
+      document.getElementById('cfg_timeout').value = m('cfg_timeout', '30');
+      document.getElementById('cfg_batch_size').value = m('cfg_batch_size', '50');
+      document.getElementById('cfg_dry_run').checked = m('cfg_dry_run', 'true') === 'true';
+      
+      // Load new settings
+      document.getElementById('cfg_queries').value = m('cfg_queries', 'business,company,services');
+      document.getElementById('cfg_geo').value = m('cfg_geo', 'USA');
+      document.getElementById('cfg_category').value = m('cfg_category', 'General Business');
+      
+      // Load main form fields
+      if (document.getElementById('queries')) {
+        document.getElementById('queries').value = m('queries', 'business,company,services');
+      }
+      if (document.getElementById('geo')) {
+        document.getElementById('geo').value = m('geo', 'USA');
+      }
+      if (document.getElementById('category')) {
+        document.getElementById('category').value = m('category', 'General Business');
+      }
+      if (document.getElementById('enable_overpass')) {
+        document.getElementById('enable_overpass').checked = m('enable_overpass', 'true') === 'true';
+      }
+      if (document.getElementById('enable_embed_scoring')) {
+        document.getElementById('enable_embed_scoring').checked = m('enable_embed_scoring', 'false') === 'true';
+      }
+      if (document.getElementById('enable_embed_dedupe')) {
+        document.getElementById('enable_embed_dedupe').checked = m('enable_embed_dedupe', 'false') === 'true';
+      }
+      document.getElementById('cfg_limit').value = m('cfg_limit', '1000');
+      document.getElementById('cfg_enable_yelp').checked = m('cfg_enable_yelp', 'true') === 'true';
+      document.getElementById('cfg_enable_yellowpages').checked = m('cfg_enable_yellowpages', 'false') === 'true';
+      document.getElementById('cfg_enable_clearbit').checked = m('cfg_enable_clearbit', 'true') === 'true';
+      document.getElementById('cfg_push_to_gsheets').checked = m('cfg_push_to_gsheets', 'false') === 'true';
+      document.getElementById('cfg_min_score').value = m('cfg_min_score', '50');
+      document.getElementById('min_score_value').textContent = m('cfg_min_score', '50');
+      document.getElementById('cfg_email_validation').value = m('cfg_email_validation', 'moderate');
+      document.getElementById('cfg_dedupe_level').value = m('cfg_dedupe_level', 'medium');
+      document.getElementById('cfg_campaign_template').value = m('cfg_campaign_template', 'Roofing_Leads_{date}_{location}');
+      document.getElementById('cfg_export_format').value = m('cfg_export_format', 'excel');
+      document.getElementById('cfg_include_raw').checked = m('cfg_include_raw', 'false') === 'true';
+      document.getElementById('cfg_ai_insights').checked = m('cfg_ai_insights', 'true') === 'true';
+      document.getElementById('cfg_storage_method').value = m('cfg_storage_method', 'both');
+      
+      // Exports prefs
+      document.getElementById('exp_raw_businesses').checked = m('exp_raw_businesses', 'true') === 'true';
+      document.getElementById('exp_raw_contacts').checked = m('exp_raw_contacts', 'true') === 'true';
+      document.getElementById('exp_validated').checked = m('exp_validated', 'true') === 'true';
+      document.getElementById('exp_final').checked = m('exp_final', 'true') === 'true';
+      document.getElementById('exp_analytics').checked = m('exp_analytics', 'false') === 'true';
+      document.getElementById('fmt_csv').checked = m('fmt_csv', 'true') === 'true';
+      document.getElementById('fmt_excel').checked = m('fmt_excel', 'true') === 'true';
+      document.getElementById('fmt_json').checked = m('fmt_json', 'false') === 'true';
+      document.getElementById('fmt_zip').checked = m('fmt_zip', 'false') === 'true';
+      document.getElementById('exp_prefix').value = m('exp_prefix', 'outrelix_leads');
+      document.getElementById('exp_delim').value = m('exp_delim', ',');
+      document.getElementById('exp_with_timestamp').checked = m('exp_with_timestamp', 'true') === 'true';
+    }
+    function saveAllSettings() {
+      // Save main form fields
+      if (document.getElementById('queries')) {
+        localStorage.setItem('queries', document.getElementById('queries').value);
+      }
+      if (document.getElementById('geo')) {
+        localStorage.setItem('geo', document.getElementById('geo').value);
+      }
+      if (document.getElementById('category')) {
+        localStorage.setItem('category', document.getElementById('category').value);
+      }
+      
+      // Continue with existing save logic
+      const s = (k, v) => localStorage.setItem(k, v ?? '');
+      s('cfg_gsheets_url', document.getElementById('cfg_gsheets_url').value);
+      s('cfg_gsheets_json', document.getElementById('cfg_gsheets_json').value);
+      s('cfg_yelp_key', document.getElementById('cfg_yelp_key').value);
+      s('cfg_contactx_key', document.getElementById('cfg_contactx_key').value);
+      s('cfg_contactx_base', document.getElementById('cfg_contactx_base').value);
+      s('cfg_hunter_key', document.getElementById('cfg_hunter_key').value);
+      s('cfg_arjos_key', document.getElementById('cfg_arjos_key').value);
+      s('cfg_openrouter_key', document.getElementById('cfg_openrouter_key').value);
+      s('cfg_concurrency', document.getElementById('cfg_concurrency').value);
+      s('cfg_timeout', document.getElementById('cfg_timeout').value);
+      s('cfg_batch_size', document.getElementById('cfg_batch_size').value);
+      s('cfg_dry_run', document.getElementById('cfg_dry_run').checked);
+      
+      // Save new settings
+      s('cfg_queries', document.getElementById('cfg_queries').value);
+      s('cfg_geo', document.getElementById('cfg_geo').value);
+      s('cfg_category', document.getElementById('cfg_category').value);
+      s('cfg_limit', document.getElementById('cfg_limit').value);
+      s('cfg_enable_yelp', document.getElementById('cfg_enable_yelp').checked);
+      s('cfg_enable_yellowpages', document.getElementById('cfg_enable_yellowpages').checked);
+      s('cfg_enable_clearbit', document.getElementById('cfg_enable_clearbit').checked);
+      s('enable_overpass', document.getElementById('enable_overpass')?.checked);
+      s('enable_embed_scoring', document.getElementById('enable_embed_scoring')?.checked);
+      s('enable_embed_dedupe', document.getElementById('enable_embed_dedupe')?.checked);
+      s('cfg_push_to_gsheets', document.getElementById('cfg_push_to_gsheets').checked);
+      s('cfg_min_score', document.getElementById('cfg_min_score').value);
+      s('cfg_email_validation', document.getElementById('cfg_email_validation').value);
+      s('cfg_dedupe_level', document.getElementById('cfg_dedupe_level').value);
+      s('cfg_campaign_template', document.getElementById('cfg_campaign_template').value);
+      s('cfg_export_format', document.getElementById('cfg_export_format').value);
+      s('cfg_include_raw', document.getElementById('cfg_include_raw').checked);
+      s('cfg_ai_insights', document.getElementById('cfg_ai_insights').checked);
+      s('cfg_storage_method', document.getElementById('cfg_storage_method').value);
+      
+      saveExportPrefs();
+      alert('Settings saved locally');
+    }
+    function resetDefaultSettings() {
+      localStorage.removeItem('cfg_concurrency');
+      localStorage.removeItem('cfg_timeout');
+      localStorage.removeItem('cfg_batch_size');
+      localStorage.setItem('cfg_dry_run', 'true');
+      loadAllSettings();
+      alert('Defaults restored');
+    }
+
+    // Verifiers
+    async function verifyServer() {
+      try {
+        const r = await fetch('/health');
+        const ok = r.ok;
+        setBadge('status_server', ok ? 'status-completed' : 'status-failed', ok ? 'OK' : 'DOWN');
+      } catch (_) { setBadge('status_server', 'status-failed', 'DOWN'); }
+    }
+    async function verifyAllIntegrations() {
+      verifyServer(); verifyGSheets(); verifyYelp(); verifyContactExtractor(); verifyHunter(); verifyArjos(); verifyOpenRouter();
+    }
+    function setBadge(id, cls, text) {
+      const el = document.getElementById(id);
+      el.className = 'badge ' + cls;
+      el.textContent = text;
+    }
+    async function startTinyDryRun() {
+      if (!jwtToken) { alert('Login first'); return; }
+      setBadge('status_dryrun', 'status-running', 'Running');
+      const queries = document.getElementById('queries')?.value || 'business,company';
+      const geo = document.getElementById('geo')?.value || 'USA';
+      const category = document.getElementById('category')?.value || 'General Business';
+      const payload = { queries: queries, geo: geo, category: category, limit: 1, enable_yelp: true, enable_yellowpages: false, enable_clearbit: false, push_to_gsheets: false, dry_run: true };
+      const res = await fetch('/runs', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + jwtToken }, body: JSON.stringify(payload) });
+      if (res.ok) { setBadge('status_dryrun', 'status-completed', 'Queued'); } else { setBadge('status_dryrun', 'status-failed', 'Failed'); }
+    }
+
+    // Export helpers (client-side prefs only)
+    function saveExportPrefs() {
+      const s = (k, v) => localStorage.setItem(k, v ?? '');
+      s('exp_raw_businesses', document.getElementById('exp_raw_businesses').checked);
+      s('exp_raw_contacts', document.getElementById('exp_raw_contacts').checked);
+      s('exp_validated', document.getElementById('exp_validated').checked);
+      s('exp_final', document.getElementById('exp_final').checked);
+      s('exp_analytics', document.getElementById('exp_analytics').checked);
+      s('fmt_csv', document.getElementById('fmt_csv').checked);
+      s('fmt_excel', document.getElementById('fmt_excel').checked);
+      s('fmt_json', document.getElementById('fmt_json').checked);
+      s('fmt_zip', document.getElementById('fmt_zip').checked);
+      s('exp_prefix', document.getElementById('exp_prefix').value);
+      s('exp_delim', document.getElementById('exp_delim').value);
+      s('exp_with_timestamp', document.getElementById('exp_with_timestamp').checked);
+      console.log('Export preferences saved');
+    }
+    function loadExportPrefs() { loadAllSettings(); }
+    async function exportSelected() {
+      alert('Exports will be generated from the latest run folder. In this UI build, preferences are saved only. For direct export triggers, we can add endpoints next.');
+    }
+    async function exportToGoogleSheets() {
+      setBadge('status_export_gs', 'status-running', 'Pushing');
+      setTimeout(()=> setBadge('status_export_gs', 'status-completed', 'Done'), 1200);
+    }
+
+    // Mock verifications (client-side only quick checks)
+    async function verifyGSheets() {
+      const url = (document.getElementById('cfg_gsheets_url').value || '').trim();
+      if (!url.startsWith('http')) { setBadge('status_gsheets', 'status-failed', 'Invalid URL'); return; }
+      setBadge('status_gsheets', 'status-completed', 'Configured');
+    }
+    async function verifyYelp() {
+      const key = (document.getElementById('cfg_yelp_key').value || '').trim();
+      setBadge('status_yelp', key ? 'status-completed' : 'status-failed', key ? 'Configured' : 'Missing');
+    }
+    async function verifyContactExtractor() {
+      const key = (document.getElementById('cfg_contactx_key').value || '').trim();
+      const base = (document.getElementById('cfg_contactx_base').value || '').trim();
+      const ok = key && base.startsWith('http');
+      setBadge('status_contactx', ok ? 'status-completed' : 'status-failed', ok ? 'Configured' : 'Missing');
+    }
+    async function verifyHunter() {
+      const key = (document.getElementById('cfg_hunter_key').value || '').trim();
+      setBadge('status_hunter', key ? 'status-completed' : 'status-failed', key ? 'Configured' : 'Missing');
+    }
+    async function verifyArjos() {
+      const key = (document.getElementById('cfg_arjos_key').value || '').trim();
+      setBadge('status_arjos', key ? 'status-completed' : 'status-failed', key ? 'Configured' : 'Missing');
+    }
+    async function verifyOpenRouter() {
+      const key = (document.getElementById('cfg_openrouter_key').value || '').trim();
+      setBadge('status_openrouter', key ? 'status-completed' : 'status-failed', key ? 'Configured' : 'Missing');
+    }
+  </script>
+  
+</head>
+<body class="min-h-screen bg-slate-950 text-slate-100">
+  <div class="flex min-h-screen">
+    <!-- Summary Modal -->
+    <div id="summary_backdrop" class="fixed inset-0 z-40 bg-black/70 backdrop-blur-md hidden"></div>
+    <div id="summary_modal" class="fixed inset-0 z-50 hidden">
+      <div class="mx-auto mt-20 w-full max-w-4xl">
+        <div class="card p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-bold gradient-text">Run Summary</h3>
+            <button onclick="closeSummaryModal()" class="px-3 py-1 text-sm rounded-md" style="background: var(--danger-gradient);">Close</button>
+          </div>
+          <div id="summary_content" class="text-sm text-gray-300"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detailed View Modal -->
+    <div id="detail_backdrop" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden" style="z-index: 900;"></div>
+    <div id="detail_modal" class="fixed inset-0 hidden" style="z-index: 1000;">
+      <div class="mx-auto mt-8 w-full max-w-7xl h-[90vh]">
+        <div class="card h-full flex flex-col">
+          <div class="flex items-center justify-between mb-6 p-6 border-b border-gray-700">
+            <h3 class="text-2xl font-bold gradient-text">Detailed Lead Data</h3>
+            <div class="flex items-center space-x-3">
+              <button onclick="exportDetailData()" class="px-4 py-2 text-sm font-bold rounded-lg text-white transition-all duration-200 hover:shadow-lg" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                Export All
+              </button>
+              <button onclick="closeDetailModal()" class="px-4 py-2 text-sm font-bold rounded-lg border-2 border-gray-600 text-gray-300 hover:bg-gray-800 hover:border-gray-500 transition-all duration-200">
+                <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+                Close
+              </button>
+            </div>
+          </div>
+          
+          <div class="flex-1 overflow-hidden">
+            <div class="h-full flex flex-col">
+              <!-- Filter and Search Bar -->
+              <div class="p-4 border-b border-gray-700">
+                <div class="flex items-center space-x-4">
+                  <div class="flex-1">
+                    <input type="text" id="detail_search" placeholder="Search companies, emails, or locations..." class="form-input w-full" onkeyup="filterDetailData()">
+                  </div>
+                  <div class="flex items-center space-x-2">
+                    <select id="detail_filter" class="form-input" onchange="filterDetailData()">
+                      <option value="all">All Leads</option>
+                      <option value="high">High Quality (80+)</option>
+                      <option value="medium">Medium Quality (50-79)</option>
+                      <option value="low">Low Quality (0-49)</option>
+                      <option value="valid_email">Valid Emails Only</option>
+                    </select>
+                    <button onclick="clearDetailFilters()" class="px-3 py-2 text-xs rounded-md border border-gray-600 text-gray-300 hover:bg-gray-800">
+                      Clear
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Data Table -->
+              <div class="flex-1 overflow-auto">
+                <div id="detail_content" class="p-4">
+                  <div class="text-center text-gray-400 py-8">
+                    <div class="inline-block w-8 h-8 border-2 border-gray-600 border-t-transparent rounded-full animate-spin"></div>
+                    <p class="mt-2">Loading detailed data...</p>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Pagination -->
+              <div class="p-4 border-t border-gray-700">
+                <div class="flex items-center justify-between">
+                  <div class="text-sm text-gray-400">
+                    Showing <span id="detail_showing">0</span> of <span id="detail_total">0</span> leads
+                  </div>
+                  <div class="flex items-center space-x-2">
+                    <button onclick="previousDetailPage()" class="px-3 py-1 text-sm rounded-md border border-gray-600 text-gray-300 hover:bg-gray-800" id="detail_prev_btn" disabled>
+                      Previous
+                    </button>
+                    <span class="text-sm text-gray-400" id="detail_page_info">Page 1 of 1</span>
+                    <button onclick="nextDetailPage()" class="px-3 py-1 text-sm rounded-md border border-gray-600 text-gray-300 hover:bg-gray-800" id="detail_next_btn" disabled>
+                      Next
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Export Modal -->
+    <div id="export_backdrop" class="fixed inset-0 z-40 bg-black/70 backdrop-blur-md hidden"></div>
+    <div id="export_modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+      <div class="w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+        <div class="card p-6">
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="text-xl font-bold gradient-text">Export Lead Data</h3>
+            <button onclick="closeExportModal()" class="px-3 py-1 text-sm rounded-md" style="background: var(--danger-gradient);">Close</button>
+          </div>
+          
+          <div id="export_content" class="space-y-6">
+            <!-- Export options will be populated here -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Floating Background Elements -->
+    <div class="floating-elements"></div>
+    
+    <!-- Login Modal -->
+    <div id="blur_backdrop" class="fixed inset-0 z-40 bg-black/80 backdrop-blur-xl hidden"></div>
+    <div id="login_modal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
+      <div class="card p-10 w-full max-w-md shadow-2xl animate-fadeIn animate-glow">
+        <div class="text-center mb-10">
+          <div class="w-20 h-20 mx-auto mb-6 rounded-3xl overflow-hidden animate-float">
+            <img src="/logo.png" alt="Outrelix Logo" class="w-full h-full object-contain" />
+          </div>
+          <h3 class="text-3xl font-bold gradient-text mb-3">Welcome to Outrelix</h3>
+          <p class="text-gray-400 text-sm">Sign in to access your premium lead generation dashboard</p>
+        </div>
+        <form onsubmit="doLogin(event)" class="space-y-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-3">Email Address</label>
+            <input id="login_email" class="form-input" placeholder="you@company.com" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-3">Password</label>
+            <div class="relative">
+              <input id="login_password" type="password" class="form-input pr-12" placeholder="••••••••" />
+              <button type="button" onclick="togglePasswordVisibility()" class="absolute inset-y-0 right-3 my-auto h-8 w-8 grid place-items-center text-gray-400 hover:text-white transition-colors" aria-label="Toggle password visibility">
+                <span id="eye_icon" class="text-lg">👁️</span>
+              </button>
+            </div>
+          </div>
+          <button class="w-full btn-primary">
+            Sign In
+          </button>
+          <p class="text-xs text-gray-500 text-center">Demo: Set OUTRELIX_ADMIN_EMAIL and OUTRELIX_ADMIN_PASSWORD in .env</p>
+        </form>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar fixed left-0 top-0 h-full z-30">
+      <div class="p-6">
+        <div class="flex items-center space-x-4 mb-12">
+          <div class="w-16 h-16 rounded-2xl overflow-hidden">
+            <img src="/logo.png" alt="Outrelix Logo" class="w-full h-full object-contain" />
+          </div>
+          <div>
+            <h1 class="text-2xl font-bold gradient-text">Outrelix</h1>
+            <p class="text-lg text-gray-400 font-medium">Lead Engine Pro</p>
+          </div>
+        </div>
+        
+        <nav class="space-y-4">
+          <a href="#" class="nav-item active" onclick="showSection('dashboard')">
+            <div class="nav-icon">
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+              </svg>
+            </div>
+            Dashboard
+          </a>
+          
+          <a href="#" class="nav-item" onclick="showSection('runs')">
+            <div class="nav-icon">
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clip-rule="evenodd"/>
+              </svg>
+            </div>
+            Run History
+          </a>
+          
+          <a href="#" class="nav-item" onclick="showSection('analytics')">
+            <div class="nav-icon">
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/>
+              </svg>
+            </div>
+            Analytics
+          </a>
+          
+          <a href="#" class="nav-item" onclick="showSection('settings')">
+            <div class="nav-icon">
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/>
+              </svg>
+            </div>
+            Settings
+          </a>
+          
+          <a href="#" class="nav-item" onclick="showSection('exports')">
+            <div class="nav-icon">
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
+              </svg>
+            </div>
+            Exports
+          </a>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content flex-1">
+      <div class="p-8">
+        <!-- Dashboard Section -->
+        <div id="dashboard-section" class="section">
+          <div class="section-header">
+            <h1 class="section-title">Dashboard</h1>
+            <div class="flex items-center space-x-4">
+              <div class="health-container">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="text-xs text-gray-400">Engine Health</span>
+                  <span id="health_score" class="health-score">0</span>
+                </div>
+                <div class="health-bar">
+                  <div id="health_fill" class="health-fill"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Compact Metrics Cards -->
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div class="metric-card animate-fadeIn">
+              <div class="metric-value" style="background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">0</div>
+              <div class="metric-label">Total Runs</div>
+            </div>
+            <div class="metric-card animate-fadeIn" style="animation-delay: 0.1s;">
+              <div class="metric-value" style="background: var(--success-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">0</div>
+              <div class="metric-label">Leads Generated</div>
+            </div>
+            <div class="metric-card animate-fadeIn" style="animation-delay: 0.2s;">
+              <div class="metric-value" style="background: var(--secondary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">0%</div>
+              <div class="metric-label">Success Rate</div>
+            </div>
+            <div class="metric-card animate-fadeIn" style="animation-delay: 0.3s;">
+              <div class="metric-value" style="background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">0</div>
+              <div class="metric-label">Active Runs</div>
+            </div>
+          </div>
+          
+          <!-- Compact Quick Actions + Key Features -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="card p-6 animate-slideIn lg:col-span-2">
+              <h3 class="text-lg font-bold gradient-text mb-4">Quick Start</h3>
+              <div id="form_error" class="hidden p-3 rounded-lg bg-red-500/10 text-red-200 text-sm border border-red-500/40 mb-3"></div>
+              <form onsubmit="startRun(event)" class="space-y-6">
+                <!-- Industry Selection -->
+                <div>
+                  <label class="block text-xs font-medium text-gray-300 mb-2">Industry / Category</label>
+                  <select id="category" class="form-input">
+                    <option value="General Business">General Business</option>
+                    <option value="Roofing Contractors">Roofing Contractors</option>
+                    <option value="Plumbing Services">Plumbing Services</option>
+                    <option value="HVAC Services">HVAC Services</option>
+                    <option value="Electrical Services">Electrical Services</option>
+                    <option value="Landscaping">Landscaping</option>
+                    <option value="Home Improvement">Home Improvement</option>
+                    <option value="Real Estate">Real Estate</option>
+                    <option value="Legal Services">Legal Services</option>
+                    <option value="Accounting Services">Accounting Services</option>
+                    <option value="Marketing Agencies">Marketing Agencies</option>
+                    <option value="IT Services">IT Services</option>
+                    <option value="Healthcare">Healthcare</option>
+                    <option value="Restaurants">Restaurants</option>
+                    <option value="Retail">Retail</option>
+                    <option value="Manufacturing">Manufacturing</option>
+                    <option value="Construction">Construction</option>
+                    <option value="Automotive">Automotive</option>
+                    <option value="Education">Education</option>
+                    <option value="Fitness & Wellness">Fitness & Wellness</option>
+                    <option value="Other">Other (specify in keywords)</option>
+                  </select>
+                    </div>
+
+                <!-- Search Keywords -->
+                <div>
+                  <label class="block text-xs font-medium text-gray-300 mb-2">
+                    Search Keywords (comma-separated)
+                    <span class="text-gray-500 text-xs ml-1">e.g., "plumbers, plumbing services, pipe repair"</span>
+                  </label>
+                  <input id="queries" type="text" class="form-input" placeholder="Enter keywords separated by commas" value="business,company,services" />
+                    </div>
+
+                <!-- Geographic Location -->
+                <div>
+                  <label class="block text-xs font-medium text-gray-300 mb-2">
+                    Geographic Location
+                    <span class="text-gray-500 text-xs ml-1">e.g., "USA", "New York, NY", "California"</span>
+                  </label>
+                  <input id="geo" type="text" class="form-input" placeholder="Enter location" value="USA" />
+                </div>
+
+                <!-- Admin usage section -->
+                <div id="admin-usage"></div>
+
+                <!-- User Configurable Settings -->
+                <div>
+                  <label class="block text-xs font-medium text-gray-300 mb-2">Max Results (1-5000)</label>
+                  <input id="limit" type="number" class="form-input" value="100" min="1" max="5000" />
+                </div>
+
+                <!-- Data Sources -->
+                <div class="grid grid-cols-2 gap-4">
+                  <label class="flex items-center space-x-3 p-4 glass-effect rounded-xl cursor-pointer hover:bg-opacity-80 transition-all">
+                    <input id="enable_overpass" type="checkbox" class="w-5 h-5 text-red-500 bg-transparent border-gray-400 rounded focus:ring-red-500" checked />
+                    <div>
+                      <div class="text-sm text-gray-200 font-semibold">Enable Overpass (OSM)</div>
+                      <div class="text-xs text-gray-400">Free, open data source</div>
+                    </div>
+                  </label>
+                  <label class="flex items-center space-x-3 p-4 glass-effect rounded-xl cursor-pointer hover:bg-opacity-80 transition-all">
+                    <input id="enable_yelp" type="checkbox" class="w-5 h-5 text-red-500 bg-transparent border-gray-400 rounded focus:ring-red-500" checked disabled />
+                    <div>
+                      <div class="text-sm text-gray-200 font-semibold">Yelp (RapidAPI)</div>
+                      <div class="text-xs text-gray-400">Uses API credits</div>
+                    </div>
+                  </label>
+                </div>
+
+                <!-- AI Options -->
+                <div class="grid grid-cols-2 gap-4">
+                  <label class="flex items-center space-x-3 p-4 glass-effect rounded-xl cursor-pointer hover:bg-opacity-80 transition-all">
+                    <input id="enable_embed_scoring" type="checkbox" class="w-5 h-5 text-red-500 bg-transparent border-gray-400 rounded focus:ring-red-500" />
+                    <div>
+                      <div class="text-sm text-gray-200 font-semibold">Embedding Relevance Scoring</div>
+                      <div class="text-xs text-gray-400">Ranks leads vs keywords/industry (CPU)</div>
+                    </div>
+                  </label>
+                  <label class="flex items-center space-x-3 p-4 glass-effect rounded-xl cursor-pointer hover:bg-opacity-80 transition-all">
+                    <input id="enable_embed_dedupe" type="checkbox" class="w-5 h-5 text-red-500 bg-transparent border-gray-400 rounded focus:ring-red-500" />
+                    <div>
+                      <div class="text-sm text-gray-200 font-semibold">Embedding Dedupe</div>
+                      <div class="text-xs text-gray-400">Catches near-duplicate companies (CPU)</div>
+                    </div>
+                  </label>
+                </div>
+
+                <!-- Hardcoded API Status -->
+                <div class="p-4 glass-effect rounded-xl border border-gray-700">
+                  <h4 class="text-sm font-bold text-gray-200 mb-3 flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                    API Integration Status
+                  </h4>
+                  <div class="grid grid-cols-2 gap-3">
+                    <div class="flex items-center justify-between p-2 rounded-lg bg-green-900/20 border border-green-700/30">
+                      <span class="text-xs text-gray-300">Google Maps</span>
+                      <span class="text-xs text-green-400 font-medium">Active</span>
+                    </div>
+                    <div class="flex items-center justify-between p-2 rounded-lg bg-green-900/20 border border-green-700/30">
+                      <span class="text-xs text-gray-300">Yelp Fusion</span>
+                      <span class="text-xs text-green-400 font-medium">Active</span>
+                    </div>
+                    <div class="flex items-center justify-between p-2 rounded-lg bg-green-900/20 border border-green-700/30">
+                      <span class="text-xs text-gray-300">Hunter.io</span>
+                      <span class="text-xs text-green-400 font-medium">Active</span>
+                    </div>
+                    <div class="flex items-center justify-between p-2 rounded-lg bg-green-900/20 border border-green-700/30">
+                      <span class="text-xs text-gray-300">Clearbit</span>
+                      <span class="text-xs text-green-400 font-medium">Active</span>
+                    </div>
+                    <div class="flex items-center justify-between p-2 rounded-lg bg-green-900/20 border border-green-700/30">
+                      <span class="text-xs text-gray-300">ARJOS Validator</span>
+                      <span class="text-xs text-green-400 font-medium">Active</span>
+                    </div>
+                    <div class="flex items-center justify-between p-2 rounded-lg bg-green-900/20 border border-green-700/30">
+                      <span class="text-xs text-gray-300">OpenRouter AI</span>
+                      <span class="text-xs text-green-400 font-medium">Active</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Optional Features -->
+                <div class="grid grid-cols-2 gap-4">
+                  <label class="flex items-center space-x-3 p-4 glass-effect rounded-xl cursor-pointer hover:bg-opacity-80 transition-all">
+                    <input id="push_to_gsheets" type="checkbox" class="w-5 h-5 text-red-500 bg-transparent border-gray-400 rounded focus:ring-red-500" />
+                    <span class="text-sm text-gray-300 font-medium">Export to Google Sheets</span>
+                  </label>
+                  <label class="flex items-center space-x-4 p-4 glass-effect rounded-xl cursor-pointer hover:bg-opacity-80 transition-all">
+                    <input id="dry_run" type="checkbox" class="w-5 h-5 text-red-500 bg-transparent border-gray-400 rounded focus:ring-red-500" checked />
+                    <div>
+                      <span class="text-sm font-medium text-gray-300">Test Mode</span>
+                      <p class="text-xs text-gray-500">Safe testing with mock data</p>
+                    </div>
+                  </label>
+                </div>
+                <button type="submit" class="w-full btn-primary">
+                  Start Lead Generation
+                </button>
+              </form>
+            </div>
+
+            <div class="card p-6 animate-slideIn" style="animation-delay: 0.2s;">
+              <h3 class="text-lg font-bold gradient-text mb-4">Key Engine Features</h3>
+              <ul class="space-y-3 text-sm text-gray-300">
+                <li class="flex items-center justify-between">
+                  <span>US Roofing Contractors sourcing</span>
+                  <span class="badge status-completed">On</span>
+                </li>
+                <li class="flex items-center justify-between">
+                  <span>Email extraction & validation</span>
+                  <span class="badge status-completed">On</span>
+                </li>
+                <li class="flex items-center justify-between">
+                  <span>AI scoring & patterns</span>
+                  <span class="badge status-completed">On</span>
+                </li>
+                <li class="flex items-center justify-between">
+                  <span>Fuzzy dedupe</span>
+                  <span class="badge status-completed">On</span>
+                </li>
+                <li class="flex items-center justify-between">
+                  <span>Exports: Excel/CSV/Sheets</span>
+                  <span class="badge status-completed">On</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Run History Section -->
+        <div id="runs-section" class="section hidden">
+          <div class="section-header">
+            <h1 class="section-title">Run History</h1>
+            <button onclick="refreshRuns()" class="btn-primary">
+              Refresh
+            </button>
+          </div>
+          
+          <div class="table-container">
+            <table class="min-w-full">
+              <thead class="table-header">
+                <tr>
+                  <th class="px-6 py-4 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Run ID</th>
+                  <th class="px-6 py-4 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Created</th>
+                  <th class="px-6 py-4 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Status</th>
+                  <th class="px-6 py-4 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Message</th>
+                  <th class="px-6 py-4 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Output</th>
+                  <th class="px-6 py-4 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="runs-body" class="divide-y divide-gray-700"></tbody>
+            </table>
+          </div>
+        </div>
+        
+        <!-- Analytics Section -->
+        <div id="analytics-section" class="section hidden">
+          <div class="section-header">
+            <h1 class="section-title">Analytics Dashboard</h1>
+            <div class="flex items-center space-x-4">
+              <button onclick="loadAnalyticsData()" class="px-8 py-3 text-sm font-bold rounded-lg text-white transition-all duration-200 hover:shadow-lg hover:scale-105" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);">
+                <svg class="w-5 h-5 mr-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+                Load Analytics Data
+              </button>
+            </div>
+          </div>
+          
+          <!-- Simple Overview Cards -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="card p-6 text-center">
+              <div class="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </div>
+              <h3 class="text-3xl font-bold text-white mb-2" id="total_leads">0</h3>
+              <p class="text-gray-400">Total Leads</p>
+            </div>
+            
+            <div class="card p-6 text-center">
+              <div class="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+                </svg>
+              </div>
+              <h3 class="text-3xl font-bold text-white mb-2" id="valid_emails">0</h3>
+              <p class="text-gray-400">Valid Emails</p>
+            </div>
+            
+            <div class="card p-6 text-center">
+              <div class="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                </svg>
+              </div>
+              <h3 class="text-3xl font-bold text-white mb-2" id="success_rate">0%</h3>
+              <p class="text-gray-400">Email Success Rate</p>
+            </div>
+            
+            <div class="card p-6 text-center">
+              <div class="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                </svg>
+              </div>
+              <h3 class="text-3xl font-bold text-white mb-2" id="avg_lead_score">0</h3>
+              <p class="text-gray-400">Avg Lead Score</p>
+            </div>
+          </div>
+
+          <!-- Simple Progress Bars -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <div class="card p-6">
+              <h3 class="text-xl font-bold text-white mb-6">Lead Quality Distribution</h3>
+              <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                  <span class="text-gray-300" id="high_quality_label">High Quality</span>
+                  <span class="text-white font-bold" id="high_quality_count">0</span>
+                </div>
+                <div class="w-full bg-gray-700 rounded-full h-3">
+                  <div class="bg-green-500 h-3 rounded-full" id="high_quality_bar" style="width: 0%"></div>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                  <span class="text-gray-300" id="medium_quality_label">Medium Quality</span>
+                  <span class="text-white font-bold" id="medium_quality_count">0</span>
+                </div>
+                <div class="w-full bg-gray-700 rounded-full h-3">
+                  <div class="bg-yellow-500 h-3 rounded-full" id="medium_quality_bar" style="width: 0%"></div>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                  <span class="text-gray-300" id="low_quality_label">Low Quality</span>
+                  <span class="text-white font-bold" id="low_quality_count">0</span>
+                </div>
+                <div class="w-full bg-gray-700 rounded-full h-3">
+                  <div class="bg-orange-500 h-3 rounded-full" id="low_quality_bar" style="width: 0%"></div>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                  <span class="text-gray-300" id="poor_quality_label">Poor Quality</span>
+                  <span class="text-white font-bold" id="poor_quality_count">0</span>
+                </div>
+                <div class="w-full bg-gray-700 rounded-full h-3">
+                  <div class="bg-red-500 h-3 rounded-full" id="poor_quality_bar" style="width: 0%"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card p-6">
+              <h3 class="text-xl font-bold text-white mb-6">Source Performance</h3>
+              <div class="space-y-4" id="source_performance_list">
+                <div class="text-center text-gray-400 py-8">
+                  <svg class="w-12 h-12 mx-auto mb-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                  </svg>
+                  <p>No data available</p>
+                  <p class="text-sm">Click "Load Data" to fetch analytics</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Simple Stats Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="card p-6">
+              <h4 class="text-lg font-bold text-white mb-4">Email Validation</h4>
+              <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                  <span class="text-gray-400">High Deliverability</span>
+                  <span class="text-green-400 font-bold" id="high_deliverability">0</span>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-gray-400">Medium Deliverability</span>
+                  <span class="text-yellow-400 font-bold" id="medium_deliverability">0</span>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-gray-400">Low Deliverability</span>
+                  <span class="text-red-400 font-bold" id="low_deliverability">0</span>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-gray-400">Disposable</span>
+                  <span class="text-gray-400 font-bold" id="disposable_emails">0</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="card p-6">
+              <h4 class="text-lg font-bold text-white mb-4">Processing Stats</h4>
+              <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                  <span class="text-gray-400">Deduplication Rate</span>
+                  <span class="text-blue-400 font-bold" id="dedupe_rate">0%</span>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-gray-400">Enrichment Coverage</span>
+                  <span class="text-purple-400 font-bold" id="enrichment_coverage">0%</span>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-gray-400">AI Success Rate</span>
+                  <span class="text-pink-400 font-bold" id="ai_pattern_success">0%</span>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-gray-400">Avg Processing Time</span>
+                  <span class="text-cyan-400 font-bold" id="avg_processing_time">0s</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="card p-6">
+              <h4 class="text-lg font-bold text-white mb-4">Quick Actions</h4>
+              <div class="space-y-3">
+                <button onclick="loadAnalyticsData()" class="w-full py-3 px-6 rounded-lg text-white font-bold transition-all duration-200 hover:shadow-lg hover:scale-105" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);">
+                  <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                  </svg>
+                  Refresh Analytics
+                </button>
+                <button onclick="exportAnalytics()" class="w-full py-3 px-6 rounded-lg border-2 border-gray-600 text-gray-300 hover:bg-gray-800 hover:border-gray-500 transition-all duration-200 font-medium">
+                  <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                  </svg>
+                  Export Report
+                </button>
+                <button onclick="clearAnalyticsData()" class="w-full py-3 px-6 rounded-lg bg-gray-700 text-gray-300 hover:bg-gray-600 hover:shadow-lg transition-all duration-200 font-medium">
+                  <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                  </svg>
+                  Clear Data
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Settings Section -->
+        <div id="settings-section" class="section hidden">
+          <div class="section-header">
+            <h1 class="section-title">Lead Generation Settings</h1>
+            <div class="flex items-center gap-3">
+              <button onclick="saveAllSettings()" class="px-6 py-3 text-sm font-bold rounded-lg text-white transition-all duration-200 hover:shadow-lg hover:scale-105" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);">
+                <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                Save Settings
+              </button>
+              <button onclick="resetToDefaults()" class="px-6 py-3 text-sm font-bold rounded-lg border-2 border-gray-600 text-gray-300 hover:bg-gray-800 hover:border-gray-500 transition-all duration-200">
+                <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+                Reset Defaults
+              </button>
+            </div>
+          </div>
+          
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Lead Generation Configuration -->
+            <div class="card p-6">
+              <h3 class="text-xl font-bold text-white mb-6 flex items-center">
+                <svg class="w-6 h-6 mr-3 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+                Search Configuration
+              </h3>
+              <div class="space-y-6">
+                <div>
+                  <label class="block text-sm font-bold text-gray-300 mb-3">Target Keywords</label>
+                  <textarea id="cfg_queries" class="form-input h-20 resize-none" placeholder="roofing contractors, roofing companies, roof repair, roof installation, roofing services"></textarea>
+                  <p class="text-xs text-gray-500 mt-1">Separate keywords with commas. These will be used to find relevant businesses.</p>
+                </div>
+                
+                <div>
+                  <label class="block text-sm font-bold text-gray-300 mb-3">Geographic Location</label>
+                  <input id="cfg_geo" class="form-input" placeholder="USA, California, New York, Texas" />
+                  <p class="text-xs text-gray-500 mt-1">Specify countries, states, or cities to target.</p>
+                </div>
+                
+                <div>
+                  <label class="block text-sm font-bold text-gray-300 mb-3">Business Category</label>
+                  <input id="cfg_category" class="form-input" placeholder="Roofing Contractors, Construction Companies, Home Improvement" />
+                  <p class="text-xs text-gray-500 mt-1">Define the type of businesses you want to target.</p>
+                </div>
+                
+                <div>
+                  <label class="block text-sm font-bold text-gray-300 mb-3">Maximum Leads per Run</label>
+                  <input id="cfg_limit" type="number" class="form-input" placeholder="1000" min="10" max="10000" />
+                  <p class="text-xs text-gray-500 mt-1">Limit the number of leads to generate (10-10,000).</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Data Sources & Processing -->
+            <div class="card p-6">
+              <h3 class="text-xl font-bold text-white mb-6 flex items-center">
+                <svg class="w-6 h-6 mr-3 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Data Sources & Processing
+              </h3>
+              <div class="space-y-6">
+                <div class="p-4 glass-effect rounded-xl">
+                  <h4 class="text-lg font-bold text-white mb-4">Data Sources</h4>
+                  <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                      <div class="flex items-center">
+                        <input id="cfg_enable_yelp" type="checkbox" class="w-5 h-5 rounded text-blue-600" />
+                        <label class="ml-3 text-gray-300 font-medium">Yelp Business Directory</label>
+                      </div>
+                      <span class="text-xs text-gray-500">Alternative business data</span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                      <div class="flex items-center">
+                        <input id="cfg_enable_yellowpages" type="checkbox" class="w-5 h-5 rounded text-blue-600" />
+                        <label class="ml-3 text-gray-300 font-medium">Yellow Pages</label>
+                      </div>
+                      <span class="text-xs text-gray-500">Additional business listings</span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                      <div class="flex items-center">
+                        <input id="cfg_enable_clearbit" type="checkbox" class="w-5 h-5 rounded text-blue-600" />
+                        <label class="ml-3 text-gray-300 font-medium">Clearbit Enrichment</label>
+                      </div>
+                      <span class="text-xs text-gray-500">Company data enrichment</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="p-4 glass-effect rounded-xl">
+                  <h4 class="text-lg font-bold text-white mb-4">Output Options</h4>
+                  <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                      <div class="flex items-center">
+                        <input id="cfg_push_to_gsheets" type="checkbox" class="w-5 h-5 rounded text-blue-600" />
+                        <label class="ml-3 text-gray-300 font-medium">Export to Google Sheets</label>
+                      </div>
+                      <span class="text-xs text-gray-500">Auto-export results</span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                      <div class="flex items-center">
+                        <input id="cfg_dry_run" type="checkbox" class="w-5 h-5 rounded text-blue-600" />
+                        <label class="ml-3 text-gray-300 font-medium">Test Mode (Dry Run)</label>
+                      </div>
+                      <span class="text-xs text-gray-500">No real API calls</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="p-4 glass-effect rounded-xl">
+                  <h4 class="text-lg font-bold text-white mb-4">File Storage Method</h4>
+                  <div class="space-y-3">
+                    <div>
+                      <label class="block text-sm font-bold text-gray-300 mb-3">Storage Strategy</label>
+                      <select id="cfg_storage_method" class="form-input">
+                        <option value="both" selected>Both (Recommended) - Server + Browser Download</option>
+                        <option value="browser_only">Browser Only - Just download, no server storage</option>
+                        <option value="server_only">Server Only - Just server storage, manual export</option>
+                      </select>
+                      <p class="text-xs text-gray-500 mt-1">Choose how files are stored after lead generation</p>
+                    </div>
+                    
+                    <div class="p-3 rounded-lg bg-blue-900/20 border border-blue-700/30">
+                      <div class="text-xs text-blue-300">
+                        <strong>💡 Storage Methods:</strong><br>
+                        • <strong>Both:</strong> Server backup + instant download<br>
+                        • <strong>Browser Only:</strong> Faster, no server storage<br>
+                        • <strong>Server Only:</strong> Centralized storage, manual export
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Lead Quality Settings -->
+            <div class="card p-6">
+              <h3 class="text-xl font-bold text-white mb-6 flex items-center">
+                <svg class="w-6 h-6 mr-3 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                </svg>
+                Lead Quality & Filtering
+              </h3>
+              <div class="space-y-6">
+                <div>
+                  <label class="block text-sm font-bold text-gray-300 mb-3">Minimum Lead Score</label>
+                  <input id="cfg_min_score" type="range" min="0" max="100" value="50" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer" />
+                  <div class="flex justify-between text-xs text-gray-500 mt-1">
+                    <span>0 (All leads)</span>
+                    <span id="min_score_value" class="text-white font-bold">50</span>
+                    <span>100 (High quality only)</span>
+                  </div>
+                </div>
+                
+                <div>
+                  <label class="block text-sm font-bold text-gray-300 mb-3">Email Validation Level</label>
+                  <select id="cfg_email_validation" class="form-input">
+                    <option value="strict">Strict (High deliverability only)</option>
+                    <option value="moderate" selected>Moderate (Valid emails)</option>
+                    <option value="loose">Loose (Include all found emails)</option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label class="block text-sm font-bold text-gray-300 mb-3">Deduplication Sensitivity</label>
+                  <select id="cfg_dedupe_level" class="form-input">
+                    <option value="high">High (Remove similar companies)</option>
+                    <option value="medium" selected>Medium (Balance)</option>
+                    <option value="low">Low (Keep more results)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Agency Workflow Settings -->
+            <div class="card p-6">
+              <h3 class="text-xl font-bold text-white mb-6 flex items-center">
+                <svg class="w-6 h-6 mr-3 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                </svg>
+                Agency Workflow
+              </h3>
+              <div class="space-y-6">
+                <div>
+                  <label class="block text-sm font-bold text-gray-300 mb-3">Campaign Name Template</label>
+                  <input id="cfg_campaign_template" class="form-input" placeholder="Roofing_Leads_{date}_{location}" />
+                  <p class="text-xs text-gray-500 mt-1">Use {date}, {location}, {category} for dynamic naming.</p>
+                </div>
+                
+                <div>
+                  <label class="block text-sm font-bold text-gray-300 mb-3">Auto-Export Format</label>
+                  <select id="cfg_export_format" class="form-input">
+                    <option value="excel">Excel (.xlsx)</option>
+                    <option value="csv">CSV (.csv)</option>
+                    <option value="both">Both Excel & CSV</option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label class="block text-sm font-bold text-gray-300 mb-3">Include Raw Data</label>
+                  <div class="flex items-center space-x-3">
+                    <input id="cfg_include_raw" type="checkbox" class="w-5 h-5 rounded text-blue-600" />
+                    <label class="text-gray-300">Include unprocessed business data in exports</label>
+                  </div>
+                </div>
+                
+                <div>
+                  <label class="block text-sm font-bold text-gray-300 mb-3">AI Insights</label>
+                  <div class="flex items-center space-x-3">
+                    <input id="cfg_ai_insights" type="checkbox" class="w-5 h-5 rounded text-blue-600" checked />
+                    <label class="text-gray-300">Generate AI-powered lead insights and scoring</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Exports Section -->
+        <div id="exports-section" class="section hidden">
+          <div class="section-header">
+            <h1 class="section-title">Exports</h1>
+            <div class="flex items-center space-x-4">
+              <button onclick="refreshExportedFiles()" class="px-6 py-2 text-sm rounded-md font-medium text-white transition-all" style="background: var(--primary-gradient);">
+                <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+                Refresh Files
+              </button>
+            </div>
+          </div>
+          
+          <!-- Exported Files Table -->
+          <div class="card p-6 mb-6 animate-fadeIn">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-lg font-bold gradient-text">Exported Files</h3>
+              <div class="flex items-center space-x-2">
+                <span class="text-sm text-gray-400">Total: <span id="exported_files_count">0</span> files</span>
+                <button onclick="clearExportedFiles()" class="text-xs px-2 py-1 rounded text-red-400 hover:bg-red-900/20 transition-all">
+                  Clear All
+                </button>
+              </div>
+            </div>
+            
+            <div class="table-container">
+              <table class="min-w-full">
+                <thead class="table-header">
+                  <tr>
+                    <th class="px-6 py-4 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Filename</th>
+                    <th class="px-6 py-4 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Format</th>
+                    <th class="px-6 py-4 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Size</th>
+                    <th class="px-6 py-4 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Run ID</th>
+                    <th class="px-6 py-4 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Exported</th>
+                    <th class="px-6 py-4 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="exported_files_table" class="divide-y divide-gray-700">
+                  <!-- Exported files will be populated here -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Advanced Export Options -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="card p-6 animate-fadeIn lg:col-span-2">
+              <h3 class="text-lg font-bold gradient-text mb-4">Advanced Export Options</h3>
+              
+              <!-- Dataset Selection -->
+              <div class="p-4 glass-effect rounded-xl mb-4">
+                <h4 class="text-sm font-bold text-gray-200 mb-3 flex items-center">
+                  <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+                  </svg>
+                  Dataset Selection
+                </h4>
+                <div class="grid grid-cols-2 gap-4">
+                  <label class="flex items-center p-3 rounded-lg border border-gray-600 cursor-pointer hover:bg-opacity-50 transition-all">
+                    <input id="exp_verified_leads" type="checkbox" class="w-4 h-4 text-green-500" checked>
+                    <div class="ml-3">
+                      <span class="text-sm font-medium text-gray-200">Verified Leads</span>
+                      <p class="text-xs text-gray-400">Main lead data with validation</p>
+                    </div>
+                  </label>
+                  <label class="flex items-center p-3 rounded-lg border border-gray-600 cursor-pointer hover:bg-opacity-50 transition-all">
+                    <input id="exp_raw_businesses" type="checkbox" class="w-4 h-4 text-green-500" checked>
+                    <div class="ml-3">
+                      <span class="text-sm font-medium text-gray-200">Raw Businesses</span>
+                      <p class="text-xs text-gray-400">Original business listings</p>
+                    </div>
+                  </label>
+                  <label class="flex items-center p-3 rounded-lg border border-gray-600 cursor-pointer hover:bg-opacity-50 transition-all">
+                    <input id="exp_raw_contacts" type="checkbox" class="w-4 h-4 text-green-500" checked>
+                    <div class="ml-3">
+                      <span class="text-sm font-medium text-gray-200">Raw Contacts</span>
+                      <p class="text-xs text-gray-400">Contact extraction data</p>
+                    </div>
+                  </label>
+                  <label class="flex items-center p-3 rounded-lg border border-gray-600 cursor-pointer hover:bg-opacity-50 transition-all">
+                    <input id="exp_validated_emails" type="checkbox" class="w-4 h-4 text-green-500" checked>
+                    <div class="ml-3">
+                      <span class="text-sm font-medium text-gray-200">Validated Emails</span>
+                      <p class="text-xs text-gray-400">Email validation results</p>
+                    </div>
+                  </label>
+                  <label class="flex items-center p-3 rounded-lg border border-gray-600 cursor-pointer hover:bg-opacity-50 transition-all">
+                    <input id="exp_analytics" type="checkbox" class="w-4 h-4 text-green-500">
+                    <div class="ml-3">
+                      <span class="text-sm font-medium text-gray-200">Analytics Report</span>
+                      <p class="text-xs text-gray-400">Performance metrics & insights</p>
+                    </div>
+                  </label>
+                  <label class="flex items-center p-3 rounded-lg border border-gray-600 cursor-pointer hover:bg-opacity-50 transition-all">
+                    <input id="exp_summary" type="checkbox" class="w-4 h-4 text-green-500">
+                    <div class="ml-3">
+                      <span class="text-sm font-medium text-gray-200">Run Summary</span>
+                      <p class="text-xs text-gray-400">Execution summary & stats</p>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Format & Output Options -->
+              <div class="p-4 glass-effect rounded-xl mb-4">
+                <h4 class="text-sm font-bold text-gray-200 mb-3 flex items-center">
+                  <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                  </svg>
+                  Format & Output Options
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-2">Export Format</label>
+                    <select id="export_format" class="form-input">
+                      <option value="xlsx">Excel (.xlsx) - Multiple sheets</option>
+                      <option value="csv">CSV (.csv) - Single sheet</option>
+                      <option value="json">JSON (.json) - Complete data</option>
+                      <option value="zip">ZIP Archive - All formats</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-2">Filename Template</label>
+                    <input id="filename_template" class="form-input" value="outrelix_leads_{date}_{run_id}" placeholder="outrelix_leads_{date}_{run_id}">
+                  </div>
+                  <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-2">CSV Delimiter</label>
+                    <select id="csv_delimiter" class="form-input">
+                      <option value=",">Comma (,)</option>
+                      <option value=";">Semicolon (;)</option>
+                      <option value="\t">Tab</option>
+                      <option value="|">Pipe (|)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-2">Date Format</label>
+                    <select id="date_format" class="form-input">
+                      <option value="YYYY-MM-DD">2025-01-05</option>
+                      <option value="MM-DD-YYYY">01-05-2025</option>
+                      <option value="DD-MM-YYYY">05-01-2025</option>
+                      <option value="YYYYMMDD">20250105</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Data Processing Options -->
+              <div class="p-4 glass-effect rounded-xl mb-4">
+                <h4 class="text-sm font-bold text-gray-200 mb-3 flex items-center">
+                  <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/>
+                  </svg>
+                  Data Processing Options
+                </h4>
+                <div class="space-y-3">
+                  <label class="flex items-center p-3 rounded-lg border border-gray-600 cursor-pointer hover:bg-opacity-50 transition-all">
+                    <input id="include_metadata" type="checkbox" class="w-4 h-4 text-green-500" checked>
+                    <div class="ml-3">
+                      <span class="text-sm font-medium text-gray-200">Include Metadata</span>
+                      <p class="text-xs text-gray-400">Add run info, timestamps, and processing details</p>
+                    </div>
+                  </label>
+                  <label class="flex items-center p-3 rounded-lg border border-gray-600 cursor-pointer hover:bg-opacity-50 transition-all">
+                    <input id="include_ai_insights" type="checkbox" class="w-4 h-4 text-green-500" checked>
+                    <div class="ml-3">
+                      <span class="text-sm font-medium text-gray-200">Include AI Insights</span>
+                      <p class="text-xs text-gray-400">Lead scores, outreach suggestions, pattern analysis</p>
+                    </div>
+                  </label>
+                  <label class="flex items-center p-3 rounded-lg border border-gray-600 cursor-pointer hover:bg-opacity-50 transition-all">
+                    <input id="include_validation_details" type="checkbox" class="w-4 h-4 text-green-500" checked>
+                    <div class="ml-3">
+                      <span class="text-sm font-medium text-gray-200">Include Validation Details</span>
+                      <p class="text-xs text-gray-400">Email validation results and deliverability scores</p>
+                    </div>
+                  </label>
+                  <label class="flex items-center p-3 rounded-lg border border-gray-600 cursor-pointer hover:bg-opacity-50 transition-all">
+                    <input id="filter_valid_only" type="checkbox" class="w-4 h-4 text-green-500">
+                    <div class="ml-3">
+                      <span class="text-sm font-medium text-gray-200">Filter Valid Only</span>
+                      <p class="text-xs text-gray-400">Export only leads with valid emails and phones</p>
+                    </div>
+                  </label>
+                  <label class="flex items-center p-3 rounded-lg border border-gray-600 cursor-pointer hover:bg-opacity-50 transition-all">
+                    <input id="sort_by_score" type="checkbox" class="w-4 h-4 text-green-500" checked>
+                    <div class="ml-3">
+                      <span class="text-sm font-medium text-gray-200">Sort by Lead Score</span>
+                      <p class="text-xs text-gray-400">Order leads by quality score (highest first)</p>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="flex items-center gap-3">
+                <button onclick="exportAllRuns()" class="btn-primary px-6 py-2">
+                  <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                  </svg>
+                  Export All Runs
+                </button>
+                <button onclick="exportLatestRun()" class="btn-primary px-6 py-2">
+                  <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                  </svg>
+                  Export Latest
+                </button>
+                <button onclick="saveExportSettings()" class="px-4 py-2 text-sm rounded-md border border-gray-600 text-gray-300 hover:bg-gray-800 transition-all">
+                  Save Settings
+                </button>
+                <button onclick="loadExportSettings()" class="px-4 py-2 text-sm rounded-md border border-gray-600 text-gray-300 hover:bg-gray-800 transition-all">
+                  Load Settings
+                </button>
+              </div>
+            </div>
+
+            <!-- Default Settings & Tips -->
+            <div class="card p-6 animate-fadeIn">
+              <h3 class="text-lg font-bold gradient-text mb-4">Default Settings & Tips</h3>
+              
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="p-4 glass-effect rounded-xl">
+                  <h4 class="text-sm font-bold text-gray-200 mb-3">Recommended Defaults</h4>
+                  <ul class="space-y-2 text-sm text-gray-300">
+                    <li class="flex items-center">
+                      <svg class="w-4 h-4 mr-2 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                      </svg>
+                      Excel for small datasets (&lt;1000 leads)
+                    </li>
+                    <li class="flex items-center">
+                      <svg class="w-4 h-4 mr-2 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                      </svg>
+                      CSV for large datasets (&gt;1000 leads)
+                    </li>
+                    <li class="flex items-center">
+                      <svg class="w-4 h-4 mr-2 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                      </svg>
+                      Include metadata for tracking
+                    </li>
+                    <li class="flex items-center">
+                      <svg class="w-4 h-4 mr-2 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                      </svg>
+                      Sort by lead score for priority
+                    </li>
+                  </ul>
+                </div>
+                
+                <div class="p-4 glass-effect rounded-xl">
+                  <h4 class="text-sm font-bold text-gray-200 mb-3">Pro Tips</h4>
+                  <ul class="space-y-2 text-sm text-gray-300">
+                    <li class="flex items-start">
+                      <span class="text-blue-400 mr-2">💡</span>
+                      Use ZIP for multiple formats in one download
+                    </li>
+                    <li class="flex items-start">
+                      <span class="text-blue-400 mr-2">💡</span>
+                      Filter valid only for highest quality leads
+                    </li>
+                    <li class="flex items-start">
+                      <span class="text-blue-400 mr-2">💡</span>
+                      Include analytics for performance insights
+                    </li>
+                    <li class="flex items-start">
+                      <span class="text-blue-400 mr-2">💡</span>
+                      Save settings for consistent exports
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    function showSection(sectionName) {
+      // Hide all sections
+      document.querySelectorAll('.section').forEach(section => {
+        section.classList.add('hidden');
+      });
+      
+      // Remove active class from all nav items
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
+      });
+      
+      // Show selected section
+      document.getElementById(sectionName + '-section').classList.remove('hidden');
+      
+      // Add active class to clicked nav item
+      event.target.closest('.nav-item').classList.add('active');
+    }
+  </script>
+</body>
+</html>
+

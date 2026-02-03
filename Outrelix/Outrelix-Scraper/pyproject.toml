@@ -1,0 +1,22 @@
+[project]
+name = "outrelix-lead-engine"
+version = "0.1.0"
+requires-python = ">=3.10"
+
+[tool.ruff]
+line-length = 100
+exclude = [
+  ".venv",
+  "venv",
+  "output",
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+ignore = ["E501", "I001"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["src"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["F401", "E501", "I001"]
