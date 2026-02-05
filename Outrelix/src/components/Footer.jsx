@@ -122,21 +122,30 @@ const Footer = () => {
                 </motion.a>
               </li>
               <li>
+                <MotionLink
+                  to="/privacy"
+                  whileHover={{ x: 5 }}
+                  className="text-gray-400 hover:text-white dark:hover:text-yellow-400 transition-colors"
+                >
+                  Privacy Policy
+                </MotionLink>
+              </li>
+              <li>
+                <MotionLink
+                  to="/terms"
+                  whileHover={{ x: 5 }}
+                  className="text-gray-400 hover:text-white dark:hover:text-yellow-400 transition-colors"
+                >
+                  Terms of Service
+                </MotionLink>
+              </li>
+              <li>
                 <motion.a
                   href="/contact"
                   whileHover={{ x: 5 }}
                   className="text-gray-400 hover:text-white dark:hover:text-yellow-400 transition-colors"
                 >
                   {t('footer_support')}
-                </motion.a>
-              </li>
-              <li>
-                <motion.a
-                  href="#"
-                  whileHover={{ x: 5 }}
-                  className="text-gray-400 hover:text-white dark:hover:text-yellow-400 transition-colors"
-                >
-                  {t('footer_blog')}
                 </motion.a>
               </li>
             </ul>
@@ -176,21 +185,21 @@ const Footer = () => {
                 whileHover={{ scale: 1.1 }}
                 className="text-gray-400 hover:text-white dark:hover:text-yellow-400 transition-colors text-sm"
               >
-                {t('footer_privacy')}
+                Privacy Policy
               </MotionLink>
               <MotionLink
                 to="/terms"
                 whileHover={{ scale: 1.1 }}
                 className="text-gray-400 hover:text-white dark:hover:text-yellow-400 transition-colors text-sm"
               >
-                {t('footer_terms')}
+                Terms of Service
               </MotionLink>
               <MotionLink
                 to="/cookies"
                 whileHover={{ scale: 1.1 }}
                 className="text-gray-400 hover:text-white dark:hover:text-yellow-400 transition-colors text-sm"
               >
-                {t('footer_cookie')}
+                Cookie Policy
               </MotionLink>
             </div>
           </div>
