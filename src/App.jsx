@@ -16,6 +16,8 @@ import About from './pages/About';
 import Blog from './pages/Blog';
 import Contact from './pages/Contact';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
+import CookiePolicy from './pages/CookiePolicy';
 import DataDeletion from './pages/DataDeletion';
 import FAQ from './pages/FAQ';
 import PricingPayment from './pages/PricingPayment';
@@ -74,6 +76,8 @@ const App = () => {
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/faq" element={<FAQ />} />
                 <Route path="/privacy" element={<PrivacyPolicy />} />
+                <Route path="/terms" element={<TermsOfService />} />
+                <Route path="/cookies" element={<CookiePolicy />} />
                 <Route path="/data-deletion" element={<DataDeletion />} />
                 <Route path="/pricing-payment" element={<PricingPayment />} />
                 <Route path="/pricing-page" element={<PricingPage />} />
