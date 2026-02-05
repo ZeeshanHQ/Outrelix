@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: outrelix-backend
+    env: python
+    plan: free
+    runtime: python-3.11
+    buildCommand: pip install -r requirements_complete.txt
+    startCommand: python app_complete.py
+    envVars:
+      - key: SUPABASE_URL
+        value: https://bfoggljxtwoloxthtocy.supabase.co
+      - key: SUPABASE_KEY
+        value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJmb2dnbGp4dHdvbG94dGh0b2N5Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0OTkwMzYxNiwiZXhwIjoyMDY1NDc5NjE2fQ.tb8-UDuye8roMeCwW0YqgjBbodo3x4Bwe_o0JM87kkM
+      - key: RESEND_API_KEY
+        value: re_CDQcfX8S_KLKwPtn9gzgTjyqNXw47GqUD
+      - key: RESEND_DOMAIN
+        value: cavexa.online
+      - key: SENDER_EMAIL
+        value: noreply@cavexa.online
+
