@@ -8,6 +8,8 @@ import {
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
+const MotionLink = motion(Link);
+
 const Footer = () => {
   const { t } = useTranslation();
   const currentYear = new Date().getFullYear();
@@ -169,30 +171,27 @@ const Footer = () => {
               © {currentYear} {t('footer_company')}. {t('footer_copyright')}
             </p>
             <div className="flex space-x-6">
-              <motion.a
-                as={Link}
+              <MotionLink
                 to="/privacy"
                 whileHover={{ scale: 1.1 }}
                 className="text-gray-400 hover:text-white dark:hover:text-yellow-400 transition-colors text-sm"
               >
                 {t('footer_privacy')}
-              </motion.a>
-              <motion.a
-                as={Link}
+              </MotionLink>
+              <MotionLink
                 to="/terms"
                 whileHover={{ scale: 1.1 }}
                 className="text-gray-400 hover:text-white dark:hover:text-yellow-400 transition-colors text-sm"
               >
                 {t('footer_terms')}
-              </motion.a>
-              <motion.a
-                as={Link}
+              </MotionLink>
+              <MotionLink
                 to="/cookies"
                 whileHover={{ scale: 1.1 }}
                 className="text-gray-400 hover:text-white dark:hover:text-yellow-400 transition-colors text-sm"
               >
                 {t('footer_cookie')}
-              </motion.a>
+              </MotionLink>
             </div>
           </div>
         </div>
