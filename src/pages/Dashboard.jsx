@@ -104,6 +104,19 @@ const Dashboard = () => {
     const savedUser = localStorage.getItem('user');
     return savedUser ? JSON.parse(savedUser) : null;
   });
+
+  useEffect(() => {
+    const handleUserUpdate = () => {
+      const savedUser = localStorage.getItem('user');
+      setUser(savedUser ? JSON.parse(savedUser) : null);
+    };
+    window.addEventListener('user-updated', handleUserUpdate);
+    window.addEventListener('storage', handleUserUpdate);
+    return () => {
+      window.removeEventListener('user-updated', handleUserUpdate);
+      window.removeEventListener('storage', handleUserUpdate);
+    };
+  }, []);
   const [showWelcome, setShowWelcome] = useState(false);
   const [stats, setStats] = useState({
     totalEmails: 0,
@@ -557,8 +570,8 @@ const Dashboard = () => {
             <button
               onClick={() => { setActiveTab('dashboard'); setSidebarOpen(false); }}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === 'dashboard'
-                  ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg'
-                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg'
+                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -569,8 +582,8 @@ const Dashboard = () => {
             <button
               onClick={() => { setActiveTab('analyzer'); setSidebarOpen(false); }}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === 'analyzer'
-                  ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg'
-                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg'
+                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -886,10 +899,10 @@ const Dashboard = () => {
                     key={index}
                     variants={itemVariants}
                     className={`p-4 rounded-lg transition-colors duration-300 ${activity.type === 'positive'
-                        ? 'bg-green-50 text-green-700 dark:bg-green-900 dark:text-green-200'
-                        : activity.type === 'negative'
-                          ? 'bg-red-50 text-red-700 dark:bg-red-900 dark:text-red-200'
-                          : 'bg-gray-50 text-gray-700 dark:bg-gray-900 dark:text-gray-200'
+                      ? 'bg-green-50 text-green-700 dark:bg-green-900 dark:text-green-200'
+                      : activity.type === 'negative'
+                        ? 'bg-red-50 text-red-700 dark:bg-red-900 dark:text-red-200'
+                        : 'bg-gray-50 text-gray-700 dark:bg-gray-900 dark:text-gray-200'
                       }`}
                   >
                     {activity.message}

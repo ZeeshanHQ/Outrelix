@@ -28,31 +28,59 @@ import WriterPage from './pages/WriterPage';
 import BrandGeneratorPage from './pages/BrandGeneratorPage';
 import SEOOptimizerPage from './pages/SEOOptimizerPage';
 import { GmailStatusProvider } from './utils/GmailStatusContext';
-import { useState, useEffect } from 'react';
+import { auth } from './supabase';
 
 const RequireAuth = ({ children }) => {
   const [isReady, setIsReady] = useState(false);
   const [isAuthed, setIsAuthed] = useState(false);
 
   useEffect(() => {
-    const checkAuth = () => {
+    // Initial check from Supabase directly to be most accurate
+    const initAuth = async () => {
       try {
-        const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
-        const user = localStorage.getItem('user');
-        setIsAuthed(!!isAuthenticated && !!user);
-      } catch {
+        const { session } = await auth.getSession();
+        if (session && session.user) {
+          // Sync localStorage if we have a valid session but flags are missing
+          const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+          if (!isAuthenticated) {
+            localStorage.setItem('isAuthenticated', 'true');
+            localStorage.setItem('user', JSON.stringify({
+              email: session.user.email,
+              name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0],
+              displayName: session.user.user_metadata?.full_name || session.user.email?.split('@')[0],
+              photoURL: session.user.user_metadata?.avatar_url || null,
+              provider: session.user.app_metadata?.provider || 'supabase'
+            }));
+            window.dispatchEvent(new Event('user-updated'));
+          }
+          setIsAuthed(true);
+        } else {
+          // No session from Supabase
+          const localStorageAuthed = localStorage.getItem('isAuthenticated') === 'true';
+          setIsAuthed(localStorageAuthed);
+        }
+      } catch (err) {
+        console.error('Auth verification error:', err);
         setIsAuthed(false);
       } finally {
         setIsReady(true);
       }
     };
 
-    checkAuth();
-    window.addEventListener('storage', checkAuth);
-    window.addEventListener('user-updated', checkAuth);
+    initAuth();
+
+    // Listen for storage changes from other tabs/processes
+    const handleStorageChange = () => {
+      const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+      setIsAuthed(isAuthenticated);
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('user-updated', handleStorageChange);
+
     return () => {
-      window.removeEventListener('storage', checkAuth);
-      window.removeEventListener('user-updated', checkAuth);
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('user-updated', handleStorageChange);
     };
   }, []);
 
@@ -61,6 +89,33 @@ const RequireAuth = ({ children }) => {
 };
 
 const App = () => {
+  useEffect(() => {
+    // Global listener to keep localStorage in sync with Supabase
+    const { data: { subscription } } = auth.onAuthStateChange((event, session) => {
+      console.log('Supabase Auth Event:', event);
+      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+        if (session?.user) {
+          localStorage.setItem('isAuthenticated', 'true');
+          localStorage.setItem('user', JSON.stringify({
+            email: session.user.email,
+            name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0],
+            displayName: session.user.user_metadata?.full_name || session.user.email?.split('@')[0],
+            photoURL: session.user.user_metadata?.avatar_url || null,
+            provider: session.user.app_metadata?.provider || 'supabase'
+          }));
+          window.dispatchEvent(new Event('user-updated'));
+        }
+      } else if (event === 'SIGNED_OUT') {
+        localStorage.removeItem('isAuthenticated');
+        localStorage.removeItem('user');
+        window.dispatchEvent(new Event('user-updated'));
+      }
+    });
+
+    return () => {
+      subscription?.unsubscribe();
+    };
+  }, []);
   return (
     <I18nextProvider i18n={i18n}>
       <GmailStatusProvider>
