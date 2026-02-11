@@ -136,6 +136,39 @@ const Dashboard = () => {
   const [repliesData, setRepliesData] = useState([28, 48, 40, 19, 86, 27, 90]);
   const [showConnectGmailModal, setShowConnectGmailModal] = useState(false);
   const [gmailJustConnected, setGmailJustConnected] = useState(false);
+  const [activities, setActivities] = useState([
+    { id: 1, type: 'search', message: 'Neural scraper identified 142 technology leads in Dubai', time: 'Just now' },
+    { id: 2, type: 'analysis', message: 'Sentiment score for lead j.smith@tech.com: 94% (High Intent)', time: '2m ago' },
+    { id: 3, type: 'writing', message: 'Icebreaker generated for Sarah Connor @ Skynet Inc.', time: '5m ago' },
+    { id: 4, type: 'system', message: 'RAG Knowledge Vault synchronized with recent objection successes', time: '12m ago' },
+  ]);
+
+  // Activity Feed simulation
+  useEffect(() => {
+    const activityInterval = setInterval(() => {
+      const messages = [
+        'Scanned LinkedIn for recent posts in Marketing industry',
+        'Company news detected for NeoCorp: "New funding round"',
+        'Generated personalized intro for Alex Rivera',
+        'Objection detected: "Budget constraints" - Counter-argument prepared',
+        'Lead score updated for Venture Capital partners',
+        'Sentiment trend: 15% increase in "Curious" leads this hour',
+        'Neural scraper bypass detected for restricted domain',
+        'Icebreaker refined based on recent sentiment pattern'
+      ];
+
+      const newActivity = {
+        id: Date.now(),
+        type: ['search', 'analysis', 'writing', 'system'][Math.floor(Math.random() * 4)],
+        message: messages[Math.floor(Math.random() * messages.length)],
+        time: 'Just now'
+      };
+
+      setActivities(prev => [newActivity, ...prev.slice(0, 3)]);
+    }, 5000);
+
+    return () => clearInterval(activityInterval);
+  }, []);
 
   // Add this useEffect after sentData/repliesData state declarations:
   useEffect(() => {
@@ -686,6 +719,62 @@ const Dashboard = () => {
                   transition={{ delay: 1.2, duration: 0.8 }}
                   className="max-w-7xl mx-auto w-full px-4 mb-8"
                 >
+                  {/* Neural Activity Feed - The "Pulse" of the Platform */}
+                  <div className="bg-slate-900/50 backdrop-blur-xl rounded-3xl p-6 border border-white/5 mb-8 shadow-2xl relative overflow-hidden group">
+                    {/* Animated background glow */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-transparent to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
+
+                    <div className="relative z-10 flex items-center justify-between mb-6">
+                      <div className="flex items-center gap-3">
+                        <div className="relative">
+                          <div className="w-3 h-3 rounded-full bg-blue-500 animate-ping absolute inset-0"></div>
+                          <div className="w-3 h-3 rounded-full bg-blue-500 relative"></div>
+                        </div>
+                        <h3 className="text-white font-black tracking-tight text-lg uppercase">Neural Activity Feed</h3>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <span className="text-[10px] text-gray-500 uppercase font-black tracking-widest bg-white/5 px-3 py-1 rounded-full">Live Orchestration</span>
+                        <div className="flex gap-1">
+                          <div className="w-1 h-3 bg-blue-500/40 rounded-full animate-[bounce_1s_infinite_0ms]"></div>
+                          <div className="w-1 h-3 bg-blue-500/60 rounded-full animate-[bounce_1s_infinite_200ms]"></div>
+                          <div className="w-1 h-3 bg-blue-500/80 rounded-full animate-[bounce_1s_infinite_400ms]"></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                      <AnimatePresence mode="popLayout">
+                        {activities.map((activity, idx) => (
+                          <motion.div
+                            key={activity.id}
+                            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                            transition={{ duration: 0.4, ease: "easeOut" }}
+                            className="flex items-start gap-3 p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-white/10 transition-colors"
+                          >
+                            <div className={`p-2 rounded-lg ${activity.type === 'search' ? 'bg-blue-500/10 text-blue-400' :
+                                activity.type === 'analysis' ? 'bg-purple-500/10 text-purple-400' :
+                                  activity.type === 'writing' ? 'bg-pink-500/10 text-pink-400' :
+                                    'bg-indigo-500/10 text-indigo-400'
+                              }`}>
+                              {activity.type === 'search' && <RocketLaunchIcon className="w-4 h-4" />}
+                              {activity.type === 'analysis' && <SparklesIcon className="w-4 h-4" />}
+                              {activity.type === 'writing' && <ChatBubbleLeftRightIcon className="w-4 h-4" />}
+                              {activity.type === 'system' && <ShieldCheckIcon className="w-4 h-4" />}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-xs text-gray-300 font-medium leading-relaxed truncate-2-lines line-clamp-2">
+                                {activity.message}
+                              </p>
+                              <span className="text-[10px] text-gray-500 mt-1 block">{activity.time}</span>
+                            </div>
+                          </motion.div>
+                        ))}
+                      </AnimatePresence>
+                    </div>
+                  </div>
+
                   {/* Premium AI Agent Status Hub */}
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                     {/* Lead Engine Agent */}
