@@ -16,6 +16,7 @@ import About from './pages/About';
 import Blog from './pages/Blog';
 import Contact from './pages/Contact';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import Leads from './pages/Leads';
 import TermsOfService from './pages/TermsOfService';
 import CookiePolicy from './pages/CookiePolicy';
 import DataDeletion from './pages/DataDeletion';
@@ -27,6 +28,37 @@ import WriterPage from './pages/WriterPage';
 import BrandGeneratorPage from './pages/BrandGeneratorPage';
 import SEOOptimizerPage from './pages/SEOOptimizerPage';
 import { GmailStatusProvider } from './utils/GmailStatusContext';
+import { useState, useEffect } from 'react';
+
+const RequireAuth = ({ children }) => {
+  const [isReady, setIsReady] = useState(false);
+  const [isAuthed, setIsAuthed] = useState(false);
+
+  useEffect(() => {
+    const checkAuth = () => {
+      try {
+        const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+        const user = localStorage.getItem('user');
+        setIsAuthed(!!isAuthenticated && !!user);
+      } catch {
+        setIsAuthed(false);
+      } finally {
+        setIsReady(true);
+      }
+    };
+
+    checkAuth();
+    window.addEventListener('storage', checkAuth);
+    window.addEventListener('user-updated', checkAuth);
+    return () => {
+      window.removeEventListener('storage', checkAuth);
+      window.removeEventListener('user-updated', checkAuth);
+    };
+  }, []);
+
+  if (!isReady) return null;
+  return isAuthed ? children : <Navigate to="/" replace />;
+};
 
 const App = () => {
   return (
@@ -62,15 +94,86 @@ const App = () => {
             <main className="container mx-auto px-4 py-8 pt-20">
               <Routes>
                 <Route path="/" element={<Landing />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/analyze" element={<AnalyzePage />} />
-                <Route path="/writer" element={<WriterPage />} />
-                <Route path="/brand-generator" element={<BrandGeneratorPage />} />
-                <Route path="/seo-optimizer" element={<SEOOptimizerPage />} />
-                <Route path="/campaigns" element={<Campaigns />} />
-                <Route path="/campaigns/:jobId" element={<Campaigns />} />
-                <Route path="/analytics" element={<Analytics />} />
-                <Route path="/settings" element={<Settings />} />
+                <Route
+                  path="/dashboard"
+                  element={
+                    <RequireAuth>
+                      <Dashboard />
+                    </RequireAuth>
+                  }
+                />
+                <Route
+                  path="/analyze"
+                  element={
+                    <RequireAuth>
+                      <AnalyzePage />
+                    </RequireAuth>
+                  }
+                />
+                <Route
+                  path="/writer"
+                  element={
+                    <RequireAuth>
+                      <WriterPage />
+                    </RequireAuth>
+                  }
+                />
+                <Route
+                  path="/brand-generator"
+                  element={
+                    <RequireAuth>
+                      <BrandGeneratorPage />
+                    </RequireAuth>
+                  }
+                />
+                <Route
+                  path="/seo-optimizer"
+                  element={
+                    <RequireAuth>
+                      <SEOOptimizerPage />
+                    </RequireAuth>
+                  }
+                />
+                <Route
+                  path="/campaigns"
+                  element={
+                    <RequireAuth>
+                      <Campaigns />
+                    </RequireAuth>
+                  }
+                />
+                <Route
+                  path="/campaigns/:jobId"
+                  element={
+                    <RequireAuth>
+                      <Campaigns />
+                    </RequireAuth>
+                  }
+                />
+                <Route
+                  path="/leads"
+                  element={
+                    <RequireAuth>
+                      <Leads />
+                    </RequireAuth>
+                  }
+                />
+                <Route
+                  path="/analytics"
+                  element={
+                    <RequireAuth>
+                      <Analytics />
+                    </RequireAuth>
+                  }
+                />
+                <Route
+                  path="/settings"
+                  element={
+                    <RequireAuth>
+                      <Settings />
+                    </RequireAuth>
+                  }
+                />
                 <Route path="/about" element={<About />} />
                 <Route path="/blog" element={<Blog />} />
                 <Route path="/contact" element={<Contact />} />

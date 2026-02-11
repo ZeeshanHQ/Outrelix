@@ -179,7 +179,7 @@ const Dashboard = () => {
     try {
       setIsBackendLoading(true);
       console.log('🔄 Loading industries...');
-      
+
       const response = await backendManager.fetchWithWakeUp(`${BACKEND_URL}/api/industries`);
 
       // Check if the response status is OK (status in the range 200-299)
@@ -298,7 +298,7 @@ const Dashboard = () => {
       tooltip: {
         enabled: true,
         callbacks: {
-          label: function(context) {
+          label: function (context) {
             // Add icons or custom text here
             const icon = context.dataset.label === 'Emails Sent' ? '📤' : '📥';
             return `${icon} ${context.dataset.label}: ${context.parsed.y}`;
@@ -426,7 +426,7 @@ const Dashboard = () => {
                 <span className="absolute inset-0 flex flex-col items-center justify-center bg-white/70 dark:bg-gray-900/70 backdrop-blur-[2px] rounded-2xl z-10">
                   <LockClosedIcon className="w-8 h-8 text-purple-500 mb-2 animate-pulse" />
                   <span className="text-xs text-purple-700 dark:text-purple-300 font-semibold text-center px-2">
-                    This was available in your free access.<br/>Upgrade to unlock again + get 10+ premium industries.
+                    This was available in your free access.<br />Upgrade to unlock again + get 10+ premium industries.
                   </span>
                 </span>
               )}
@@ -556,11 +556,10 @@ const Dashboard = () => {
           <nav className="space-y-3 flex-1">
             <button
               onClick={() => { setActiveTab('dashboard'); setSidebarOpen(false); }}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-                activeTab === 'dashboard' 
-                  ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg' 
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === 'dashboard'
+                  ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg'
                   : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-              }`}
+                }`}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
@@ -569,11 +568,10 @@ const Dashboard = () => {
             </button>
             <button
               onClick={() => { setActiveTab('analyzer'); setSidebarOpen(false); }}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-                activeTab === 'analyzer' 
-                  ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg' 
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === 'analyzer'
+                  ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg'
                   : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-              }`}
+                }`}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -604,11 +602,11 @@ const Dashboard = () => {
             >
               {/* Lucide Palette icon */}
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
-                <path d="M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0Z"/>
-                <path d="M10 8h.01"/>
-                <path d="M15 8h.01"/>
-                <path d="M12 6h.01"/>
-                <path d="M11 12a4 4 0 0 0 4 4h1a2 2 0 0 0 2-2c0-1.1-.9-2-2-2h-1"/>
+                <path d="M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0Z" />
+                <path d="M10 8h.01" />
+                <path d="M15 8h.01" />
+                <path d="M12 6h.01" />
+                <path d="M11 12a4 4 0 0 0 4 4h1a2 2 0 0 0 2-2c0-1.1-.9-2-2-2h-1" />
               </svg>
               <span className="font-semibold">Brand Generator</span>
             </button>
@@ -645,220 +643,302 @@ const Dashboard = () => {
           </div>
         ) : (
           <>
-      {/* Animated Welcome Message */}
-      <div className="flex flex-col items-center justify-center pt-8 pb-2">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.7, y: 40 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ duration: 1.2, type: 'spring', bounce: 0.4 }}
-          className="mb-2"
-        >
-          <span
-            className="text-5xl md:text-7xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 drop-shadow-lg font-[Pacifico,cursive]"
-            style={{ letterSpacing: '2px', lineHeight: 1.1 }}
-          >
-            Hi{user?.name ? `, ${user.name.split(' ')[0]}!` : user?.displayName ? `, ${user.displayName.split(' ')[0]}!` : user?.email ? `, ${user.email.split('@')[0]}!` : '!'}
-          </span>
-        </motion.div>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.1, duration: 0.8, type: 'spring' }}
-          className="text-xl md:text-2xl font-semibold text-gray-700 dark:text-gray-200 font-poppins"
-        >
-          Welcome to your dashboard!
-        </motion.div>
-      </div>
-      {/* AI-powered Industry Selection Section */}
-      <div className="relative py-10 px-4 md:px-8 rounded-3xl bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-blue-900 shadow-xl mb-8 overflow-hidden">
-        {/* AI feeling animated background */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.25 }}
-          className="absolute inset-0 pointer-events-none z-0"
-          style={{
-            background: 'radial-gradient(circle at 60% 40%, #3b82f6 0%, #a855f7 40%, transparent 80%)',
-            filter: 'blur(60px)',
-          }}
-        />
-        {renderIndustryGrid()}
-        {/* Highlighted Start Button */}
-        <motion.div
-          initial={{ opacity: 0.7 }}
-          animate={selectedIndustry ? { opacity: 1 } : {}}
-          transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-          className="flex justify-center mt-8 z-10"
-        >
-          <button
-            onClick={() => handleDashboardStartCampaign(selectedIndustry)}
-            disabled={!selectedIndustry}
-            className={`px-8 py-3 rounded-full text-lg font-bold font-poppins transition-all duration-300 shadow-lg
-              ${selectedIndustry ? 'bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white ring-4 ring-blue-300/40 hover:brightness-110 hover:shadow-2xl' : 'bg-gray-300 dark:bg-gray-700 text-gray-400 cursor-not-allowed'}
-            `}
-          >
-            {selectedIndustry ? `Start ${selectedIndustry} Campaign` : 'Select Industry to Start'}
-          </button>
-        </motion.div>
-        {/* Premium Industries Card (moved below industry selection) */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, type: 'spring' }}
-          className="mt-10 flex justify-center"
-        >
-          <div className="relative bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 p-1 rounded-2xl shadow-xl w-full max-w-xl">
-            <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-4">
-                <span className="text-4xl">🌐</span>
-                <div>
-                  <div className="text-lg md:text-xl font-bold text-gray-900 dark:text-white font-poppins">Unlock 10+ Premium Industries</div>
-                  <div className="text-sm text-gray-600 dark:text-gray-300 font-poppins">Upgrade to access Healthcare, Finance, Manufacturing, and more!</div>
+            {/* Animated Welcome Message */}
+            <div className="flex flex-col items-center justify-center pt-8 pb-2">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.7, y: 40 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ duration: 1.2, type: 'spring', bounce: 0.4 }}
+                className="mb-2"
+              >
+                <span
+                  className="text-5xl md:text-7xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 drop-shadow-lg font-[Pacifico,cursive]"
+                  style={{ letterSpacing: '2px', lineHeight: 1.1 }}
+                >
+                  Hi{user?.name ? `, ${user.name.split(' ')[0]}!` : user?.displayName ? `, ${user.displayName.split(' ')[0]}!` : user?.email ? `, ${user.email.split('@')[0]}!` : '!'}
+                </span>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.1, duration: 0.8, type: 'spring' }}
+                className="text-xl md:text-2xl font-semibold text-gray-700 dark:text-gray-200 font-poppins"
+              >
+                Welcome to your dashboard!
+              </motion.div>
+            </div>
+
+            {/* NEW: Lead Engine Hero Widget */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.3, duration: 0.8 }}
+              className="max-w-6xl mx-auto w-full px-4 mb-10"
+            >
+              <div className="relative group overflow-hidden bg-gradient-to-br from-[#1e293b] to-[#0f172a] rounded-[2rem] p-8 md:p-12 border border-white/10 shadow-2xl transition-all hover:border-blue-500/30">
+                <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
+                  <RocketLaunchIcon className="w-48 h-48 text-blue-400 rotate-12 transition-transform group-hover:scale-110" />
+                </div>
+
+                <div className="relative z-10 flex flex-col md:flex-row items-center gap-10">
+                  <div className="flex-1 text-center md:text-left">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 mb-6">
+                      <SparklesIcon className="w-4 h-4 text-blue-400" />
+                      <span className="text-xs font-bold text-blue-400 uppercase tracking-widest">New Feature</span>
+                    </div>
+                    <h2 className="text-3xl md:text-5xl font-black text-white mb-6 tracking-tight leading-tight">
+                      Unlock <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">High-Performance</span> <br />
+                      Lead Generation
+                    </h2>
+                    <p className="text-gray-400 text-lg mb-8 max-w-xl leading-relaxed">
+                      Experience our unique neural scraping technology. Find thousands of hyper-targeted leads in minutes, not days.
+                    </p>
+
+                    <div className="flex flex-wrap justify-center md:justify-start gap-4">
+                      <button
+                        onClick={() => navigate('/leads')}
+                        className="px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-2xl shadow-lg shadow-blue-600/30 transition-all hover:-translate-y-1 active:scale-95 flex items-center gap-3"
+                      >
+                        <RocketLaunchIcon className="w-5 h-5" />
+                        Launch Lead Engine
+                      </button>
+                      <div className="flex items-center gap-4 px-6 border-l border-white/10 ml-2">
+                        <div className="flex flex-col">
+                          <span className="text-2xl font-black text-white">50k+</span>
+                          <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Leads Found Today</span>
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="text-2xl font-black text-white">99.2%</span>
+                          <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Accuracy Rate</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="hidden md:block flex-shrink-0">
+                    <div className="relative w-64 h-64">
+                      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-indigo-500/20 rounded-3xl rotate-6 blur-xl"></div>
+                      <div className="relative bg-gradient-to-br from-slate-800 to-slate-900 border border-white/10 rounded-3xl p-6 flex flex-col justify-between h-full">
+                        <div className="flex items-center justify-between mb-4">
+                          <SparklesIcon className="w-8 h-8 text-blue-400" />
+                          <div className="px-3 py-1 bg-green-500/20 border border-green-500/30 rounded-full">
+                            <span className="text-xs font-bold text-green-400">LIVE</span>
+                          </div>
+                        </div>
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-2 text-gray-300">
+                            <div className="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></div>
+                            <span className="text-sm">Scanning 1,240 sources</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-gray-300">
+                            <div className="w-2 h-2 rounded-full bg-purple-400 animate-pulse"></div>
+                            <span className="text-sm">AI filtering active</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-gray-300">
+                            <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+                            <span className="text-sm">Quality verified ✓</span>
+                          </div>
+                        </div>
+                        <div className="mt-6 pt-4 border-t border-white/10">
+                          <div className="text-3xl font-black text-white mb-1">2,489</div>
+                          <div className="text-xs text-gray-500 uppercase tracking-widest font-bold">New Leads This Hour</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
+            </motion.div>
+
+            {/* AI-powered Industry Selection Section */}
+            <div className="relative py-10 px-4 md:px-8 rounded-3xl bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-blue-900 shadow-xl mb-8 overflow-hidden">
+              {/* AI feeling animated background */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.25 }}
+                className="absolute inset-0 pointer-events-none z-0"
+                style={{
+                  background: 'radial-gradient(circle at 60% 40%, #3b82f6 0%, #a855f7 40%, transparent 80%)',
+                  filter: 'blur(60px)',
+                }}
+              />
+              {renderIndustryGrid()}
+              {/* Highlighted Start Button */}
+              <motion.div
+                initial={{ opacity: 0.7 }}
+                animate={selectedIndustry ? { opacity: 1 } : {}}
+                transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                className="flex justify-center mt-8 z-10"
+              >
+                <button
+                  onClick={() => handleDashboardStartCampaign(selectedIndustry)}
+                  disabled={!selectedIndustry}
+                  className={`px-8 py-3 rounded-full text-lg font-bold font-poppins transition-all duration-300 shadow-lg
+              ${selectedIndustry ? 'bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white ring-4 ring-blue-300/40 hover:brightness-110 hover:shadow-2xl' : 'bg-gray-300 dark:bg-gray-700 text-gray-400 cursor-not-allowed'}
+            `}
+                >
+                  {selectedIndustry ? `Start ${selectedIndustry} Campaign` : 'Select Industry to Start'}
+                </button>
+              </motion.div>
+              {/* Premium Industries Card (moved below industry selection) */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, type: 'spring' }}
+                className="mt-10 flex justify-center"
+              >
+                <div className="relative bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 p-1 rounded-2xl shadow-xl w-full max-w-xl">
+                  <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                      <span className="text-4xl">🌐</span>
+                      <div>
+                        <div className="text-lg md:text-xl font-bold text-gray-900 dark:text-white font-poppins">Unlock 10+ Premium Industries</div>
+                        <div className="text-sm text-gray-600 dark:text-gray-300 font-poppins">Upgrade to access Healthcare, Finance, Manufacturing, and more!</div>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => navigate('/pricing')}
+                      className="mt-4 md:mt-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:brightness-110 transition-all font-poppins"
+                    >
+                      Upgrade Now
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+            {/* Stats Cards with Icons */}
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-4xl mx-auto mb-8 relative"
+            >
+              {[
+                {
+                  label: t('totalEmails'),
+                  value: stats.totalEmails,
+                  color: 'bg-blue-500 dark:bg-blue-600',
+                  icon: <EnvelopeIcon className="h-6 w-6 text-white" />
+                },
+                {
+                  label: t('sent'),
+                  value: stats.sent,
+                  color: 'bg-green-500 dark:bg-green-600',
+                  icon: <PaperAirplaneIcon className="h-6 w-6 text-white" />
+                },
+                {
+                  label: t('replies'),
+                  value: stats.replies,
+                  color: 'bg-yellow-500 dark:bg-yellow-600',
+                  icon: <ChatBubbleLeftRightIcon className="h-6 w-6 text-white" />
+                },
+                {
+                  label: t('successRate'),
+                  value: '85%',
+                  color: 'bg-purple-500 dark:bg-purple-600',
+                  icon: <ChartBarIcon className="h-6 w-6 text-white" />
+                },
+              ].map((stat) => (
+                <motion.div
+                  key={stat.label}
+                  variants={itemVariants}
+                  className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 hover:shadow-lg transition-shadow duration-300"
+                >
+                  <div className="flex items-center">
+                    <div className={`${stat.color} p-3 rounded-full shadow-md`}>
+                      {stat.icon}
+                    </div>
+                    <div className="ml-4">
+                      <p className="text-sm font-medium text-gray-500 dark:text-gray-300">{stat.label}</p>
+                      <p className="text-2xl font-semibold text-gray-900 dark:text-white">{stat.value}</p>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
+
+            {/* Chart */}
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 transition-colors duration-300"
+              style={{ minHeight: 350, height: 350 }}
+            >
+              <Line data={chartData} options={chartOptions} />
+            </motion.div>
+
+            {/* Recent Activity */}
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 transition-colors duration-300"
+            >
+              <h2 className="text-xl font-semibold mb-4 dark:text-white">{t('recentActivity')}</h2>
+              <div className="space-y-4">
+                {[
+                  { type: 'positive', message: t('positiveReply') },
+                  { type: 'negative', message: t('negativeReply') },
+                  { type: 'neutral', message: t('neutralReply') },
+                ].map((activity, index) => (
+                  <motion.div
+                    key={index}
+                    variants={itemVariants}
+                    className={`p-4 rounded-lg transition-colors duration-300 ${activity.type === 'positive'
+                        ? 'bg-green-50 text-green-700 dark:bg-green-900 dark:text-green-200'
+                        : activity.type === 'negative'
+                          ? 'bg-red-50 text-red-700 dark:bg-red-900 dark:text-red-200'
+                          : 'bg-gray-50 text-gray-700 dark:bg-gray-900 dark:text-gray-200'
+                      }`}
+                  >
+                    {activity.message}
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          </>
+        )}
+        <ConnectGmailModal
+          open={showConnectGmailModal}
+          onClose={() => setShowConnectGmailModal(false)}
+          onConnected={email => {
+            setGmailJustConnected(true);
+            refreshGmailStatus();
+            setShowConnectGmailModal(false);
+            // After connecting Gmail, if there was a pending campaign, create it now
+            if (pendingCampaign) {
+              setShowStartModal(false);
+              setLoading(false);
+              setPendingCampaign(null);
+            }
+          }}
+          gmailEmail={gmailEmail}
+        />
+        {/* Upgrade Banner for Real Estate lock (FOMO) */}
+        {lockedIndustries.includes('Real Estate') && (
+          <div className="max-w-4xl mx-auto w-full mb-8">
+            <div className="flex flex-col items-center justify-center bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 dark:from-blue-900 dark:via-purple-900 dark:to-pink-900 border border-blue-200 dark:border-blue-800 rounded-2xl shadow-lg px-6 py-4 gap-3">
+              <div className="text-lg font-semibold text-blue-900 dark:text-white font-poppins flex items-center gap-2">
+                <span className="mr-2">⏳</span>Real Estate just locked. <span className="font-bold text-purple-700 dark:text-purple-300 ml-1">Upgrade now to unlock it + 10 more premium industries.</span>
+              </div>
               <button
-                onClick={() => navigate('/pricing')}
-                className="mt-4 md:mt-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:brightness-110 transition-all font-poppins"
+                onClick={() => navigate('/pricing-payment')}
+                className="px-8 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold shadow hover:shadow-lg transition-all text-lg font-poppins"
               >
                 Upgrade Now
               </button>
             </div>
           </div>
-        </motion.div>
-      </div>
-      {/* Stats Cards with Icons */}
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-4xl mx-auto mb-8 relative"
-      >
-        {[
-          { 
-            label: t('totalEmails'), 
-            value: stats.totalEmails, 
-            color: 'bg-blue-500 dark:bg-blue-600',
-            icon: <EnvelopeIcon className="h-6 w-6 text-white" />
-          },
-          { 
-            label: t('sent'), 
-            value: stats.sent, 
-            color: 'bg-green-500 dark:bg-green-600',
-            icon: <PaperAirplaneIcon className="h-6 w-6 text-white" />
-          },
-          { 
-            label: t('replies'), 
-            value: stats.replies, 
-            color: 'bg-yellow-500 dark:bg-yellow-600',
-            icon: <ChatBubbleLeftRightIcon className="h-6 w-6 text-white" />
-          },
-          { 
-            label: t('successRate'), 
-            value: '85%', 
-            color: 'bg-purple-500 dark:bg-purple-600',
-            icon: <ChartBarIcon className="h-6 w-6 text-white" />
-          },
-        ].map((stat) => (
-          <motion.div
-            key={stat.label}
-            variants={itemVariants}
-            className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 hover:shadow-lg transition-shadow duration-300"
-          >
-            <div className="flex items-center">
-              <div className={`${stat.color} p-3 rounded-full shadow-md`}>
-                {stat.icon}
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-500 dark:text-gray-300">{stat.label}</p>
-                <p className="text-2xl font-semibold text-gray-900 dark:text-white">{stat.value}</p>
-              </div>
-            </div>
-          </motion.div>
-        ))}
-      </motion.div>
-
-      {/* Chart */}
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 transition-colors duration-300"
-        style={{ minHeight: 350, height: 350 }}
-      >
-        <Line data={chartData} options={chartOptions} />
-      </motion.div>
-
-      {/* Recent Activity */}
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 transition-colors duration-300"
-      >
-        <h2 className="text-xl font-semibold mb-4 dark:text-white">{t('recentActivity')}</h2>
-        <div className="space-y-4">
-          {[
-            { type: 'positive', message: t('positiveReply') },
-            { type: 'negative', message: t('negativeReply') },
-            { type: 'neutral', message: t('neutralReply') },
-          ].map((activity, index) => (
-            <motion.div
-              key={index}
-              variants={itemVariants}
-              className={`p-4 rounded-lg transition-colors duration-300 ${
-                activity.type === 'positive'
-                  ? 'bg-green-50 text-green-700 dark:bg-green-900 dark:text-green-200'
-                  : activity.type === 'negative'
-                  ? 'bg-red-50 text-red-700 dark:bg-red-900 dark:text-red-200'
-                  : 'bg-gray-50 text-gray-700 dark:bg-gray-900 dark:text-gray-200'
-              }`}
-            >
-              {activity.message}
-            </motion.div>
-          ))}
-        </div>
-      </motion.div>
-          </>
         )}
-      <ConnectGmailModal
-        open={showConnectGmailModal}
-        onClose={() => setShowConnectGmailModal(false)}
-        onConnected={email => {
-          setGmailJustConnected(true);
-          refreshGmailStatus();
-          setShowConnectGmailModal(false);
-          // After connecting Gmail, if there was a pending campaign, create it now
-          if (pendingCampaign) {
-            setShowStartModal(false);
-            setLoading(false);
-            setPendingCampaign(null);
-          }
-        }}
-        gmailEmail={gmailEmail}
-      />
-      {/* Upgrade Banner for Real Estate lock (FOMO) */}
-      {lockedIndustries.includes('Real Estate') && (
-        <div className="max-w-4xl mx-auto w-full mb-8">
-          <div className="flex flex-col items-center justify-center bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 dark:from-blue-900 dark:via-purple-900 dark:to-pink-900 border border-blue-200 dark:border-blue-800 rounded-2xl shadow-lg px-6 py-4 gap-3">
-            <div className="text-lg font-semibold text-blue-900 dark:text-white font-poppins flex items-center gap-2">
-              <span className="mr-2">⏳</span>Real Estate just locked. <span className="font-bold text-purple-700 dark:text-purple-300 ml-1">Upgrade now to unlock it + 10 more premium industries.</span>
-            </div>
-            <button
-              onClick={() => navigate('/pricing-payment')}
-              className="px-8 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold shadow hover:shadow-lg transition-all text-lg font-poppins"
-            >
-              Upgrade Now
-            </button>
+        {/* Show form error if present */}
+        {formError && (
+          <div className="w-full mb-2 px-4 py-2 rounded-lg bg-red-100 text-red-700 font-semibold text-sm text-center shadow font-poppins">
+            {formError}
           </div>
-        </div>
-      )}
-      {/* Show form error if present */}
-      {formError && (
-        <div className="w-full mb-2 px-4 py-2 rounded-lg bg-red-100 text-red-700 font-semibold text-sm text-center shadow font-poppins">
-          {formError}
-        </div>
-      )}
-      <div className="mt-auto">
-        <Footer />
+        )}
+        <div className="mt-auto">
+          <Footer />
         </div>
       </div>
     </div>

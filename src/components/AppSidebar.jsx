@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { LayoutGrid, Search, PenTool, Settings as Cog, Palette, Mail, BarChart3, PanelsTopLeft } from 'lucide-react';
+import { LayoutGrid, Search, PenTool, Settings as Cog, Palette, Mail, BarChart3, PanelsTopLeft, Users } from 'lucide-react';
 
 const navItems = [
   { key: 'dashboard', label: 'Dashboard', icon: LayoutGrid, to: '/dashboard' },
@@ -9,6 +9,7 @@ const navItems = [
   { key: 'writer', label: 'Smart Writer', icon: PenTool, to: '/writer' },
   { key: 'seo', label: 'SEO Optimizer', icon: Cog, to: '/seo-optimizer' },
   { key: 'brand', label: 'Brand Generator', icon: Palette, to: '/brand-generator' },
+  { key: 'leads', label: 'Lead Generation', icon: Users, to: '/leads' },
   { key: 'campaigns', label: 'Campaigns', icon: Mail, to: '/campaigns' },
   { key: 'analytics', label: 'Analytics', icon: BarChart3, to: '/analytics' },
 ];
@@ -26,7 +27,7 @@ const AppSidebar = () => {
       {!open && (
         <button
           aria-label="Open navigation"
-          onMouseDown={(e)=>{ e.stopPropagation(); e.preventDefault(); }}
+          onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); }}
           onClick={(e) => { e.stopPropagation(); setOpen(true); }}
           className="fixed top-28 left-6 z-[80] p-3 rounded-2xl shadow-xl border bg-white/90 dark:bg-gray-800/90 border-gray-200 dark:border-gray-700 hover:shadow-2xl transition-all hover:-translate-y-0.5 backdrop-blur pointer-events-auto"
         >
@@ -55,11 +56,10 @@ const AppSidebar = () => {
             <button
               key={key}
               onClick={() => { navigate(to); setOpen(false); }}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-                isActive(to)
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${isActive(to)
                   ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg'
                   : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-              }`}
+                }`}
             >
               <Icon className="w-5 h-5" />
               <span className="font-semibold">{label}</span>
