@@ -754,9 +754,9 @@ const Dashboard = () => {
                             className="flex items-start gap-3 p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-white/10 transition-colors"
                           >
                             <div className={`p-2 rounded-lg ${activity.type === 'search' ? 'bg-blue-500/10 text-blue-400' :
-                                activity.type === 'analysis' ? 'bg-purple-500/10 text-purple-400' :
-                                  activity.type === 'writing' ? 'bg-pink-500/10 text-pink-400' :
-                                    'bg-indigo-500/10 text-indigo-400'
+                              activity.type === 'analysis' ? 'bg-purple-500/10 text-purple-400' :
+                                activity.type === 'writing' ? 'bg-pink-500/10 text-pink-400' :
+                                  'bg-indigo-500/10 text-indigo-400'
                               }`}>
                               {activity.type === 'search' && <RocketLaunchIcon className="w-4 h-4" />}
                               {activity.type === 'analysis' && <SparklesIcon className="w-4 h-4" />}
@@ -898,6 +898,112 @@ const Dashboard = () => {
                       </div>
                     </motion.div>
                   </div>
+
+                  {/* NEW: LEAD INTELLIGENCE HUB (Sentiment Heat Map) */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 1.3, duration: 0.8 }}
+                    className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8"
+                  >
+                    {/* Sentiment Heat Map Gauge */}
+                    <div className="lg:col-span-2 bg-slate-900/40 backdrop-blur-xl rounded-[2.5rem] p-8 border border-white/5 shadow-2xl relative overflow-hidden">
+                      <div className="relative z-10">
+                        <div className="flex items-center justify-between mb-8">
+                          <div>
+                            <h3 className="text-2xl font-black text-white tracking-tight">Lead Intelligence Hub</h3>
+                            <p className="text-gray-400 text-sm">Real-time sentiment distribution across your funnel</p>
+                          </div>
+                          <div className="p-3 bg-purple-500/10 rounded-2xl border border-purple-500/20">
+                            <SparklesIcon className="w-6 h-6 text-purple-400" />
+                          </div>
+                        </div>
+
+                        <div className="flex flex-col md:flex-row items-center gap-10">
+                          {/* Circular Gauge Representation */}
+                          <div className="relative w-48 h-48 flex items-center justify-center">
+                            <svg className="w-full h-full -rotate-90">
+                              {/* Angry / Critical (Red) */}
+                              <circle cx="96" cy="96" r="80" stroke="currentColor" strokeWidth="16" fill="transparent" className="text-red-500/20" />
+                              <circle cx="96" cy="96" r="80" stroke="currentColor" strokeWidth="16" fill="transparent" strokeDasharray="502" strokeDashoffset="450" className="text-red-500" />
+
+                              {/* Cold (Gray/Blue) */}
+                              <circle cx="96" cy="96" r="80" stroke="currentColor" strokeWidth="16" fill="transparent" strokeDasharray="502" strokeDashoffset="350" className="text-slate-600" />
+
+                              {/* Warm / Curious (Yellow) */}
+                              <circle cx="96" cy="96" r="80" stroke="currentColor" strokeWidth="16" fill="transparent" strokeDasharray="502" strokeDashoffset="200" className="text-amber-400" />
+
+                              {/* Hot / Ready (Green) */}
+                              <circle cx="96" cy="96" r="80" stroke="currentColor" strokeWidth="16" fill="transparent" strokeDasharray="502" strokeDashoffset="50" className="text-green-400" />
+                            </svg>
+                            <div className="absolute inset-0 flex flex-col items-center justify-center">
+                              <span className="text-4xl font-black text-white">92</span>
+                              <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Global Score</span>
+                            </div>
+                          </div>
+
+                          {/* Legend & Stats */}
+                          <div className="flex-1 grid grid-cols-2 gap-4 w-full">
+                            <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
+                              <div className="flex items-center gap-2 mb-1">
+                                <div className="w-2 h-2 rounded-full bg-green-400"></div>
+                                <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Ready to Buy</span>
+                              </div>
+                              <div className="text-2xl font-black text-white">42%</div>
+                            </div>
+                            <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
+                              <div className="flex items-center gap-2 mb-1">
+                                <div className="w-2 h-2 rounded-full bg-amber-400"></div>
+                                <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Curious</span>
+                              </div>
+                              <div className="text-2xl font-black text-white">31%</div>
+                            </div>
+                            <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
+                              <div className="flex items-center gap-2 mb-1">
+                                <div className="w-2 h-2 rounded-full bg-slate-500"></div>
+                                <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Cold Leads</span>
+                              </div>
+                              <div className="text-2xl font-black text-white">18%</div>
+                            </div>
+                            <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
+                              <div className="flex items-center gap-2 mb-1">
+                                <div className="w-2 h-2 rounded-full bg-red-500"></div>
+                                <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Critical</span>
+                              </div>
+                              <div className="text-2xl font-black text-white">9%</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* AI Opportunity Card */}
+                    <div className="bg-gradient-to-br from-purple-600/20 to-pink-600/20 backdrop-blur-xl rounded-[2.5rem] p-8 border border-white/10 shadow-2xl relative overflow-hidden group border-purple-500/30">
+                      <div className="relative z-10">
+                        <h3 className="text-xl font-bold text-white mb-6">Top AI Opportunity</h3>
+                        <div className="space-y-6">
+                          <div className="flex items-start gap-4 p-4 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors cursor-pointer">
+                            <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+                              <span className="text-lg">🏢</span>
+                            </div>
+                            <div>
+                              <p className="text-sm font-bold text-white">TechFlow Solutions</p>
+                              <p className="text-xs text-gray-400 mt-1 line-clamp-2">"Interested in scaling but worried about onboarding speed..."</p>
+                              <div className="flex items-center gap-2 mt-2">
+                                <span className="px-2 py-0.5 rounded-full bg-green-500/20 text-[10px] font-bold text-green-400">98% Match</span>
+                                <span className="px-2 py-0.5 rounded-full bg-purple-500/20 text-[10px] font-bold text-purple-400">High Intent</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <button className="w-full py-4 bg-white text-black font-black rounded-2xl text-sm shadow-xl shadow-white/10 hover:scale-[1.02] transition-transform flex items-center justify-center gap-2">
+                            <SparklesIcon className="w-4 h-4" />
+                            Generate AI Response
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
 
                   {/* Lead Engine Hero Widget - Enhanced for Platform Feel */}
                   <motion.div
