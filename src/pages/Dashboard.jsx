@@ -42,6 +42,8 @@ import ConnectGmailModal from '../components/ConnectGmailModal';
 import { useGmailStatus } from '../utils/GmailStatusContext';
 import Analyzer from '../components/Analyzer';
 import AppSidebar from '../components/AppSidebar';
+import IcebreakerReviewModal from '../components/IcebreakerReviewModal';
+import ObjectionHandlerModal from '../components/ObjectionHandlerModal';
 
 // Register ChartJS components
 ChartJS.register(
@@ -136,6 +138,8 @@ const Dashboard = () => {
   const [repliesData, setRepliesData] = useState([28, 48, 40, 19, 86, 27, 90]);
   const [showConnectGmailModal, setShowConnectGmailModal] = useState(false);
   const [gmailJustConnected, setGmailJustConnected] = useState(false);
+  const [showIcebreakerModal, setShowIcebreakerModal] = useState(false);
+  const [showObjectionModal, setShowObjectionModal] = useState(false);
   const [activities, setActivities] = useState([
     { id: 1, type: 'search', message: 'Neural scraper identified 142 technology leads in Dubai', time: 'Just now' },
     { id: 2, type: 'analysis', message: 'Sentiment score for lead j.smith@tech.com: 94% (High Intent)', time: '2m ago' },
@@ -674,612 +678,626 @@ const Dashboard = () => {
               </svg>
               <span className="font-semibold">Analytics</span>
             </button>
-          </motion.div>
+          </nav>
+        </div>
+      </motion.div>
 
-          {/* Fixed full-screen background gradient */}
-          <div className="fixed inset-0 w-full h-full z-0 bg-gradient-to-br from-[#e3e9fa] via-[#c7d2fe] to-[#f3e8ff] dark:from-[#0a183d] dark:via-[#1a237e] dark:to-[#4b006e]" aria-hidden="true"></div>
-          {/* Scrollable content */}
-          <div className="relative min-h-screen w-full flex flex-col px-0 z-10 bg-transparent">
-            {/* Conditional Content Based on Active Tab */}
-            {activeTab === 'analyzer' ? (
-              <div className="pt-20">
-                <Analyzer />
-              </div>
-            ) : (
-              <>
-                {/* Animated Welcome Message */}
-                <div className="flex flex-col items-center justify-center pt-8 pb-2">
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.7, y: 40 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    transition={{ duration: 1.2, type: 'spring', bounce: 0.4 }}
-                    className="mb-2"
-                  >
-                    <span
-                      className="text-5xl md:text-7xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 drop-shadow-lg font-[Pacifico,cursive]"
-                      style={{ letterSpacing: '2px', lineHeight: 1.1 }}
-                    >
-                      Hi{user?.name ? `, ${user.name.split(' ')[0]}!` : user?.displayName ? `, ${user.displayName.split(' ')[0]}!` : user?.email ? `, ${user.email.split('@')[0]}!` : '!'}
-                    </span>
-                  </motion.div>
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 1.1, duration: 0.8, type: 'spring' }}
-                    className="text-xl md:text-2xl font-semibold text-gray-700 dark:text-gray-200 font-poppins"
-                  >
-                    AI Command Center
-                  </motion.div>
+      {/* Fixed full-screen background gradient */}
+      <div className="fixed inset-0 w-full h-full z-0 bg-gradient-to-br from-[#e3e9fa] via-[#c7d2fe] to-[#f3e8ff] dark:from-[#0a183d] dark:via-[#1a237e] dark:to-[#4b006e]" aria-hidden="true"></div>
+      {/* Scrollable content */}
+      <div className="relative min-h-screen w-full flex flex-col px-0 z-10 bg-transparent">
+        {/* Conditional Content Based on Active Tab */}
+        {activeTab === 'analyzer' ? (
+          <div className="pt-20">
+            <Analyzer />
+          </div>
+        ) : (
+          <>
+            {/* Animated Welcome Message */}
+            <div className="flex flex-col items-center justify-center pt-8 pb-2">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.7, y: 40 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ duration: 1.2, type: 'spring', bounce: 0.4 }}
+                className="mb-2"
+              >
+                <span
+                  className="text-5xl md:text-7xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 drop-shadow-lg font-[Pacifico,cursive]"
+                  style={{ letterSpacing: '2px', lineHeight: 1.1 }}
+                >
+                  Hi{user?.name ? `, ${user.name.split(' ')[0]}!` : user?.displayName ? `, ${user.displayName.split(' ')[0]}!` : user?.email ? `, ${user.email.split('@')[0]}!` : '!'}
+                </span>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.1, duration: 0.8, type: 'spring' }}
+                className="text-xl md:text-2xl font-semibold text-gray-700 dark:text-gray-200 font-poppins"
+              >
+                AI Command Center
+              </motion.div>
+            </div>
+
+            {/* NEW: AI COMMAND CENTER GRID */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.2, duration: 0.8 }}
+              className="max-w-7xl mx-auto w-full px-4 mb-8"
+            >
+              {/* Neural Activity Feed - The "Pulse" of the Platform */}
+              <div className="bg-slate-900/50 backdrop-blur-xl rounded-3xl p-6 border border-white/5 mb-8 shadow-2xl relative overflow-hidden group">
+                {/* Animated background glow */}
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-transparent to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
+
+                <div className="relative z-10 flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="relative">
+                      <div className="w-3 h-3 rounded-full bg-blue-500 animate-ping absolute inset-0"></div>
+                      <div className="w-3 h-3 rounded-full bg-blue-500 relative"></div>
+                    </div>
+                    <h3 className="text-white font-black tracking-tight text-lg uppercase">Neural Activity Feed</h3>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <span className="text-[10px] text-gray-500 uppercase font-black tracking-widest bg-white/5 px-3 py-1 rounded-full">Live Orchestration</span>
+                    <div className="flex gap-1">
+                      <div className="w-1 h-3 bg-blue-500/40 rounded-full animate-[bounce_1s_infinite_0ms]"></div>
+                      <div className="w-1 h-3 bg-blue-500/60 rounded-full animate-[bounce_1s_infinite_200ms]"></div>
+                      <div className="w-1 h-3 bg-blue-500/80 rounded-full animate-[bounce_1s_infinite_400ms]"></div>
+                    </div>
+                  </div>
                 </div>
 
-                {/* NEW: AI COMMAND CENTER GRID */}
-                <motion.div
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1.2, duration: 0.8 }}
-                  className="max-w-7xl mx-auto w-full px-4 mb-8"
-                >
-                  {/* Neural Activity Feed - The "Pulse" of the Platform */}
-                  <div className="bg-slate-900/50 backdrop-blur-xl rounded-3xl p-6 border border-white/5 mb-8 shadow-2xl relative overflow-hidden group">
-                    {/* Animated background glow */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-transparent to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
-
-                    <div className="relative z-10 flex items-center justify-between mb-6">
-                      <div className="flex items-center gap-3">
-                        <div className="relative">
-                          <div className="w-3 h-3 rounded-full bg-blue-500 animate-ping absolute inset-0"></div>
-                          <div className="w-3 h-3 rounded-full bg-blue-500 relative"></div>
-                        </div>
-                        <h3 className="text-white font-black tracking-tight text-lg uppercase">Neural Activity Feed</h3>
-                      </div>
-                      <div className="flex items-center gap-4">
-                        <span className="text-[10px] text-gray-500 uppercase font-black tracking-widest bg-white/5 px-3 py-1 rounded-full">Live Orchestration</span>
-                        <div className="flex gap-1">
-                          <div className="w-1 h-3 bg-blue-500/40 rounded-full animate-[bounce_1s_infinite_0ms]"></div>
-                          <div className="w-1 h-3 bg-blue-500/60 rounded-full animate-[bounce_1s_infinite_200ms]"></div>
-                          <div className="w-1 h-3 bg-blue-500/80 rounded-full animate-[bounce_1s_infinite_400ms]"></div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                      <AnimatePresence mode="popLayout">
-                        {activities.map((activity, idx) => (
-                          <motion.div
-                            key={activity.id}
-                            initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.95, y: -10 }}
-                            transition={{ duration: 0.4, ease: "easeOut" }}
-                            className="flex items-start gap-3 p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-white/10 transition-colors"
-                          >
-                            <div className={`p-2 rounded-lg ${activity.type === 'search' ? 'bg-blue-500/10 text-blue-400' :
-                              activity.type === 'analysis' ? 'bg-purple-500/10 text-purple-400' :
-                                activity.type === 'writing' ? 'bg-pink-500/10 text-pink-400' :
-                                  'bg-indigo-500/10 text-indigo-400'
-                              }`}>
-                              {activity.type === 'search' && <RocketLaunchIcon className="w-4 h-4" />}
-                              {activity.type === 'analysis' && <SparklesIcon className="w-4 h-4" />}
-                              {activity.type === 'writing' && <ChatBubbleLeftRightIcon className="w-4 h-4" />}
-                              {activity.type === 'system' && <ShieldCheckIcon className="w-4 h-4" />}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="text-xs text-gray-300 font-medium leading-relaxed truncate-2-lines line-clamp-2">
-                                {activity.message}
-                              </p>
-                              <span className="text-[10px] text-gray-500 mt-1 block">{activity.time}</span>
-                            </div>
-                          </motion.div>
-                        ))}
-                      </AnimatePresence>
-                    </div>
-                  </div>
-
-                  {/* Premium AI Agent Status Hub */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                    {/* Lead Engine Agent */}
-                    <motion.div
-                      whileHover={{ scale: 1.02, y: -4 }}
-                      className="relative group overflow-hidden bg-gradient-to-br from-blue-900/40 to-blue-950/60 backdrop-blur-xl rounded-2xl p-6 border border-blue-500/20 shadow-xl cursor-pointer"
-                      onClick={() => navigate('/leads')}
-                    >
-                      <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl"></div>
-                      <div className="relative z-10">
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="p-3 bg-blue-500/20 rounded-xl border border-blue-500/30">
-                            <RocketLaunchIcon className="w-6 h-6 text-blue-400" />
-                          </div>
-                          <div className="px-2 py-1 bg-green-500/20 border border-green-500/30 rounded-full">
-                            <span className="text-[10px] font-bold text-green-400">ACTIVE</span>
-                          </div>
-                        </div>
-                        <h3 className="text-lg font-bold text-white mb-2">Lead Engine</h3>
-                        <p className="text-sm text-gray-400 mb-4">Neural scraping technology</p>
-                        <div className="space-y-2">
-                          <div className="flex justify-between items-center">
-                            <span className="text-xs text-gray-500">Today's Finds</span>
-                            <span className="text-sm font-bold text-blue-400">2,489</span>
-                          </div>
-                          <div className="flex justify-between items-center">
-                            <span className="text-xs text-gray-500">Accuracy</span>
-                            <span className="text-sm font-bold text-green-400">99.2%</span>
-                          </div>
-                        </div>
-                      </div>
-                    </motion.div>
-
-                    {/* Sentiment Scorer Agent */}
-                    <motion.div
-                      whileHover={{ scale: 1.02, y: -4 }}
-                      className="relative group overflow-hidden bg-gradient-to-br from-purple-900/40 to-purple-950/60 backdrop-blur-xl rounded-2xl p-6 border border-purple-500/20 shadow-xl"
-                    >
-                      <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl"></div>
-                      <div className="relative z-10">
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="p-3 bg-purple-500/20 rounded-xl border border-purple-500/30">
-                            <SparklesIcon className="w-6 h-6 text-purple-400" />
-                          </div>
-                          <div className="px-2 py-1 bg-amber-500/20 border border-amber-500/30 rounded-full">
-                            <span className="text-[10px] font-bold text-amber-400">COMING SOON</span>
-                          </div>
-                        </div>
-                        <h3 className="text-lg font-bold text-white mb-2">Sentiment Scorer</h3>
-                        <p className="text-sm text-gray-400 mb-4">AI-powered mood analysis</p>
-                        <div className="space-y-2">
-                          <div className="flex justify-between items-center">
-                            <span className="text-xs text-gray-500">Hot Leads</span>
-                            <span className="text-sm font-bold text-purple-400">--</span>
-                          </div>
-                          <div className="flex justify-between items-center">
-                            <span className="text-xs text-gray-500">Avg. Temperature</span>
-                            <span className="text-sm font-bold text-orange-400">--</span>
-                          </div>
-                        </div>
-                      </div>
-                    </motion.div>
-
-                    {/* Icebreaker Agent */}
-                    <motion.div
-                      whileHover={{ scale: 1.02, y: -4 }}
-                      className="relative group overflow-hidden bg-gradient-to-br from-pink-900/40 to-pink-950/60 backdrop-blur-xl rounded-2xl p-6 border border-pink-500/20 shadow-xl"
-                    >
-                      <div className="absolute top-0 right-0 w-32 h-32 bg-pink-500/10 rounded-full blur-3xl"></div>
-                      <div className="relative z-10">
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="p-3 bg-pink-500/20 rounded-xl border border-pink-500/30">
-                            <ChatBubbleLeftRightIcon className="w-6 h-6 text-pink-400" />
-                          </div>
-                          <div className="px-2 py-1 bg-amber-500/20 border border-amber-500/30 rounded-full">
-                            <span className="text-[10px] font-bold text-amber-400">COMING SOON</span>
-                          </div>
-                        </div>
-                        <h3 className="text-lg font-bold text-white mb-2">Icebreaker AI</h3>
-                        <p className="text-sm text-gray-400 mb-4">Hyper-personalized openers</p>
-                        <div className="space-y-2">
-                          <div className="flex justify-between items-center">
-                            <span className="text-xs text-gray-500">Generated</span>
-                            <span className="text-sm font-bold text-pink-400">--</span>
-                          </div>
-                          <div className="flex justify-between items-center">
-                            <span className="text-xs text-gray-500">Success Rate</span>
-                            <span className="text-sm font-bold text-green-400">--</span>
-                          </div>
-                        </div>
-                      </div>
-                    </motion.div>
-
-                    {/* Objection Handler Agent */}
-                    <motion.div
-                      whileHover={{ scale: 1.02, y: -4 }}
-                      className="relative group overflow-hidden bg-gradient-to-br from-indigo-900/40 to-indigo-950/60 backdrop-blur-xl rounded-2xl p-6 border border-indigo-500/20 shadow-xl"
-                    >
-                      <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl"></div>
-                      <div className="relative z-10">
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="p-3 bg-indigo-500/20 rounded-xl border border-indigo-500/30">
-                            <ShieldCheckIcon className="w-6 h-6 text-indigo-400" />
-                          </div>
-                          <div className="px-2 py-1 bg-amber-500/20 border border-amber-500/30 rounded-full">
-                            <span className="text-[10px] font-bold text-amber-400">COMING SOON</span>
-                          </div>
-                        </div>
-                        <h3 className="text-lg font-bold text-white mb-2">Objection Handler</h3>
-                        <p className="text-sm text-gray-400 mb-4">RAG-powered responses</p>
-                        <div className="space-y-2">
-                          <div className="flex justify-between items-center">
-                            <span className="text-xs text-gray-500">Handled</span>
-                            <span className="text-sm font-bold text-indigo-400">--</span>
-                          </div>
-                          <div className="flex justify-between items-center">
-                            <span className="text-xs text-gray-500">Conversion</span>
-                            <span className="text-sm font-bold text-green-400">--</span>
-                          </div>
-                        </div>
-                      </div>
-                    </motion.div>
-                  </div>
-
-                  {/* NEW: LEAD INTELLIGENCE HUB (Sentiment Heat Map) */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 1.3, duration: 0.8 }}
-                    className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8"
-                  >
-                    {/* Sentiment Heat Map Gauge */}
-                    <div className="lg:col-span-2 bg-slate-900/40 backdrop-blur-xl rounded-[2.5rem] p-8 border border-white/5 shadow-2xl relative overflow-hidden">
-                      <div className="relative z-10">
-                        <div className="flex items-center justify-between mb-8">
-                          <div>
-                            <h3 className="text-2xl font-black text-white tracking-tight">Lead Intelligence Hub</h3>
-                            <p className="text-gray-400 text-sm">Real-time sentiment distribution across your funnel</p>
-                          </div>
-                          <div className="p-3 bg-purple-500/10 rounded-2xl border border-purple-500/20">
-                            <SparklesIcon className="w-6 h-6 text-purple-400" />
-                          </div>
-                        </div>
-
-                        <div className="flex flex-col md:flex-row items-center gap-10">
-                          {/* Circular Gauge Representation */}
-                          <div className="relative w-48 h-48 flex items-center justify-center">
-                            <svg className="w-full h-full -rotate-90">
-                              {/* Angry / Critical (Red) */}
-                              <circle cx="96" cy="96" r="80" stroke="currentColor" strokeWidth="16" fill="transparent" className="text-red-500/20" />
-                              <circle cx="96" cy="96" r="80" stroke="currentColor" strokeWidth="16" fill="transparent" strokeDasharray="502" strokeDashoffset="450" className="text-red-500" />
-
-                              {/* Cold (Gray/Blue) */}
-                              <circle cx="96" cy="96" r="80" stroke="currentColor" strokeWidth="16" fill="transparent" strokeDasharray="502" strokeDashoffset="350" className="text-slate-600" />
-
-                              {/* Warm / Curious (Yellow) */}
-                              <circle cx="96" cy="96" r="80" stroke="currentColor" strokeWidth="16" fill="transparent" strokeDasharray="502" strokeDashoffset="200" className="text-amber-400" />
-
-                              {/* Hot / Ready (Green) */}
-                              <circle cx="96" cy="96" r="80" stroke="currentColor" strokeWidth="16" fill="transparent" strokeDasharray="502" strokeDashoffset="50" className="text-green-400" />
-                            </svg>
-                            <div className="absolute inset-0 flex flex-col items-center justify-center">
-                              <span className="text-4xl font-black text-white">92</span>
-                              <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Global Score</span>
-                            </div>
-                          </div>
-
-                          {/* Legend & Stats */}
-                          <div className="flex-1 grid grid-cols-2 gap-4 w-full">
-                            <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
-                              <div className="flex items-center gap-2 mb-1">
-                                <div className="w-2 h-2 rounded-full bg-green-400"></div>
-                                <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Ready to Buy</span>
-                              </div>
-                              <div className="text-2xl font-black text-white">42%</div>
-                            </div>
-                            <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
-                              <div className="flex items-center gap-2 mb-1">
-                                <div className="w-2 h-2 rounded-full bg-amber-400"></div>
-                                <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Curious</span>
-                              </div>
-                              <div className="text-2xl font-black text-white">31%</div>
-                            </div>
-                            <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
-                              <div className="flex items-center gap-2 mb-1">
-                                <div className="w-2 h-2 rounded-full bg-slate-500"></div>
-                                <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Cold Leads</span>
-                              </div>
-                              <div className="text-2xl font-black text-white">18%</div>
-                            </div>
-                            <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
-                              <div className="flex items-center gap-2 mb-1">
-                                <div className="w-2 h-2 rounded-full bg-red-500"></div>
-                                <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Critical</span>
-                              </div>
-                              <div className="text-2xl font-black text-white">9%</div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* AI Opportunity Card */}
-                    <div className="bg-gradient-to-br from-purple-600/20 to-pink-600/20 backdrop-blur-xl rounded-[2.5rem] p-8 border border-white/10 shadow-2xl relative overflow-hidden group border-purple-500/30">
-                      <div className="relative z-10">
-                        <h3 className="text-xl font-bold text-white mb-6">Top AI Opportunity</h3>
-                        <div className="space-y-6">
-                          <div className="flex items-start gap-4 p-4 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors cursor-pointer">
-                            <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
-                              <span className="text-lg">🏢</span>
-                            </div>
-                            <div>
-                              <p className="text-sm font-bold text-white">TechFlow Solutions</p>
-                              <p className="text-xs text-gray-400 mt-1 line-clamp-2">"Interested in scaling but worried about onboarding speed..."</p>
-                              <div className="flex items-center gap-2 mt-2">
-                                <span className="px-2 py-0.5 rounded-full bg-green-500/20 text-[10px] font-bold text-green-400">98% Match</span>
-                                <span className="px-2 py-0.5 rounded-full bg-purple-500/20 text-[10px] font-bold text-purple-400">High Intent</span>
-                              </div>
-                            </div>
-                          </div>
-
-                          <button className="w-full py-4 bg-white text-black font-black rounded-2xl text-sm shadow-xl shadow-white/10 hover:scale-[1.02] transition-transform flex items-center justify-center gap-2">
-                            <SparklesIcon className="w-4 h-4" />
-                            Generate AI Response
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-
-                  {/* Lead Engine Hero Widget - Enhanced for Platform Feel */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 1.4, duration: 0.8 }}
-                    className="mb-8"
-                  >
-                    <div className="relative group overflow-hidden bg-gradient-to-br from-[#1e293b] to-[#0f172a] rounded-[2rem] p-8 md:p-12 border border-white/10 shadow-2xl transition-all hover:border-blue-500/30">
-                      <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
-                        <RocketLaunchIcon className="w-48 h-48 text-blue-400 rotate-12 transition-transform group-hover:scale-110" />
-                      </div>
-
-                      <div className="relative z-10 flex flex-col md:flex-row items-center gap-10">
-                        <div className="flex-1 text-center md:text-left">
-                          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 mb-6">
-                            <SparklesIcon className="w-4 h-4 text-blue-400" />
-                            <span className="text-xs font-bold text-blue-400 uppercase tracking-widest">Core Feature</span>
-                          </div>
-                          <h2 className="text-3xl md:text-5xl font-black text-white mb-6 tracking-tight leading-tight">
-                            Unlock <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">High-Performance</span> <br />
-                            Lead Generation
-                          </h2>
-                          <p className="text-gray-400 text-lg mb-8 max-w-xl leading-relaxed">
-                            Experience our unique neural scraping technology. Find thousands of hyper-targeted leads in minutes, not days.
-                          </p>
-
-                          <div className="flex flex-wrap justify-center md:justify-start gap-4">
-                            <button
-                              onClick={() => navigate('/leads')}
-                              className="px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-2xl shadow-lg shadow-blue-600/30 transition-all hover:-translate-y-1 active:scale-95 flex items-center gap-3"
-                            >
-                              <RocketLaunchIcon className="w-5 h-5" />
-                              Launch Lead Engine
-                            </button>
-                            <div className="flex items-center gap-4 px-6 border-l border-white/10 ml-2">
-                              <div className="flex flex-col">
-                                <span className="text-2xl font-black text-white">50k+</span>
-                                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Leads Found Today</span>
-                              </div>
-                              <div className="flex flex-col">
-                                <span className="text-2xl font-black text-white">99.2%</span>
-                                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Accuracy Rate</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="hidden md:block flex-shrink-0">
-                          <div className="relative w-64 h-64">
-                            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-indigo-500/20 rounded-3xl rotate-6 blur-xl"></div>
-                            <div className="relative bg-gradient-to-br from-slate-800 to-slate-900 border border-white/10 rounded-3xl p-6 flex flex-col justify-between h-full">
-                              <div className="flex items-center justify-between mb-4">
-                                <SparklesIcon className="w-8 h-8 text-blue-400" />
-                                <div className="px-3 py-1 bg-green-500/20 border border-green-500/30 rounded-full">
-                                  <span className="text-xs font-bold text-green-400">LIVE</span>
-                                </div>
-                              </div>
-                              <div className="space-y-3">
-                                <div className="flex items-center gap-2 text-gray-300">
-                                  <div className="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></div>
-                                  <span className="text-sm">Scanning 1,240 sources</span>
-                                </div>
-                                <div className="flex items-center gap-2 text-gray-300">
-                                  <div className="w-2 h-2 rounded-full bg-purple-400 animate-pulse"></div>
-                                  <span className="text-sm">AI filtering active</span>
-                                </div>
-                                <div className="flex items-center gap-2 text-gray-300">
-                                  <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
-                                  <span className="text-sm">Quality verified ✓</span>
-                                </div>
-                              </div>
-                              <div className="mt-6 pt-4 border-t border-white/10">
-                                <div className="text-3xl font-black text-white mb-1">2,489</div>
-                                <div className="text-xs text-gray-500 uppercase tracking-widest font-bold">New Leads This Hour</div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-
-                  {/* AI-powered Industry Selection Section */}
-                  <div className="relative py-10 px-4 md:px-8 rounded-3xl bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-blue-900 shadow-xl mb-8 overflow-hidden">
-                    {/* AI feeling animated background */}
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 0.25 }}
-                      className="absolute inset-0 pointer-events-none z-0"
-                      style={{
-                        background: 'radial-gradient(circle at 60% 40%, #3b82f6 0%, #a855f7 40%, transparent 80%)',
-                        filter: 'blur(60px)',
-                      }}
-                    />
-                    {renderIndustryGrid()}
-                    {/* Highlighted Start Button */}
-                    <motion.div
-                      initial={{ opacity: 0.7 }}
-                      animate={selectedIndustry ? { opacity: 1 } : {}}
-                      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                      className="flex justify-center mt-8 z-10"
-                    >
-                      <button
-                        onClick={() => handleDashboardStartCampaign(selectedIndustry)}
-                        disabled={!selectedIndustry}
-                        className={`px-8 py-3 rounded-full text-lg font-bold font-poppins transition-all duration-300 shadow-lg
-              ${selectedIndustry ? 'bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white ring-4 ring-blue-300/40 hover:brightness-110 hover:shadow-2xl' : 'bg-gray-300 dark:bg-gray-700 text-gray-400 cursor-not-allowed'}
-            `}
-                      >
-                        {selectedIndustry ? `Start ${selectedIndustry} Campaign` : 'Select Industry to Start'}
-                      </button>
-                    </motion.div>
-                    {/* Premium Industries Card (moved below industry selection) */}
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.7, type: 'spring' }}
-                      className="mt-10 flex justify-center"
-                    >
-                      <div className="relative bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 p-1 rounded-2xl shadow-xl w-full max-w-xl">
-                        <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-4">
-                          <div className="flex items-center gap-4">
-                            <span className="text-4xl">🌐</span>
-                            <div>
-                              <div className="text-lg md:text-xl font-bold text-gray-900 dark:text-white font-poppins">Unlock 10+ Premium Industries</div>
-                              <div className="text-sm text-gray-600 dark:text-gray-300 font-poppins">Upgrade to access Healthcare, Finance, Manufacturing, and more!</div>
-                            </div>
-                          </div>
-                          <button
-                            onClick={() => navigate('/pricing')}
-                            className="mt-4 md:mt-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:brightness-110 transition-all font-poppins"
-                          >
-                            Upgrade Now
-                          </button>
-                        </div>
-                      </div>
-                    </motion.div>
-                  </div>
-                  {/* Stats Cards with Icons */}
-                  <motion.div
-                    variants={containerVariants}
-                    initial="hidden"
-                    animate="visible"
-                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-4xl mx-auto mb-8 relative"
-                  >
-                    {[
-                      {
-                        label: t('totalEmails'),
-                        value: stats.totalEmails,
-                        color: 'bg-blue-500 dark:bg-blue-600',
-                        icon: <EnvelopeIcon className="h-6 w-6 text-white" />
-                      },
-                      {
-                        label: t('sent'),
-                        value: stats.sent,
-                        color: 'bg-green-500 dark:bg-green-600',
-                        icon: <PaperAirplaneIcon className="h-6 w-6 text-white" />
-                      },
-                      {
-                        label: t('replies'),
-                        value: stats.replies,
-                        color: 'bg-yellow-500 dark:bg-yellow-600',
-                        icon: <ChatBubbleLeftRightIcon className="h-6 w-6 text-white" />
-                      },
-                      {
-                        label: t('successRate'),
-                        value: '85%',
-                        color: 'bg-purple-500 dark:bg-purple-600',
-                        icon: <ChartBarIcon className="h-6 w-6 text-white" />
-                      },
-                    ].map((stat) => (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <AnimatePresence mode="popLayout">
+                    {activities.map((activity, idx) => (
                       <motion.div
-                        key={stat.label}
-                        variants={itemVariants}
-                        className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 hover:shadow-lg transition-shadow duration-300"
+                        key={activity.id}
+                        initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                        transition={{ duration: 0.4, ease: "easeOut" }}
+                        className="flex items-start gap-3 p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-white/10 transition-colors"
                       >
-                        <div className="flex items-center">
-                          <div className={`${stat.color} p-3 rounded-full shadow-md`}>
-                            {stat.icon}
-                          </div>
-                          <div className="ml-4">
-                            <p className="text-sm font-medium text-gray-500 dark:text-gray-300">{stat.label}</p>
-                            <p className="text-2xl font-semibold text-gray-900 dark:text-white">{stat.value}</p>
-                          </div>
+                        <div className={`p-2 rounded-lg ${activity.type === 'search' ? 'bg-blue-500/10 text-blue-400' :
+                          activity.type === 'analysis' ? 'bg-purple-500/10 text-purple-400' :
+                            activity.type === 'writing' ? 'bg-pink-500/10 text-pink-400' :
+                              'bg-indigo-500/10 text-indigo-400'
+                          }`}>
+                          {activity.type === 'search' && <RocketLaunchIcon className="w-4 h-4" />}
+                          {activity.type === 'analysis' && <SparklesIcon className="w-4 h-4" />}
+                          {activity.type === 'writing' && <ChatBubbleLeftRightIcon className="w-4 h-4" />}
+                          {activity.type === 'system' && <ShieldCheckIcon className="w-4 h-4" />}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs text-gray-300 font-medium leading-relaxed truncate-2-lines line-clamp-2">
+                            {activity.message}
+                          </p>
+                          <span className="text-[10px] text-gray-500 mt-1 block">{activity.time}</span>
                         </div>
                       </motion.div>
                     ))}
-                  </motion.div>
+                  </AnimatePresence>
+                </div>
+              </div>
 
-                  {/* Chart */}
-                  <motion.div
-                    variants={containerVariants}
-                    initial="hidden"
-                    animate="visible"
-                    className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 transition-colors duration-300"
-                    style={{ minHeight: 350, height: 350 }}
-                  >
-                    <Line data={chartData} options={chartOptions} />
-                  </motion.div>
-
-                  {/* Recent Activity */}
-                  <motion.div
-                    variants={containerVariants}
-                    initial="hidden"
-                    animate="visible"
-                    className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 transition-colors duration-300"
-                  >
-                    <h2 className="text-xl font-semibold mb-4 dark:text-white">{t('recentActivity')}</h2>
-                    <div className="space-y-4">
-                      {[
-                        { type: 'positive', message: t('positiveReply') },
-                        { type: 'negative', message: t('negativeReply') },
-                        { type: 'neutral', message: t('neutralReply') },
-                      ].map((activity, index) => (
-                        <motion.div
-                          key={index}
-                          variants={itemVariants}
-                          className={`p-4 rounded-lg transition-colors duration-300 ${activity.type === 'positive'
-                            ? 'bg-green-50 text-green-700 dark:bg-green-900 dark:text-green-200'
-                            : activity.type === 'negative'
-                              ? 'bg-red-50 text-red-700 dark:bg-red-900 dark:text-red-200'
-                              : 'bg-gray-50 text-gray-700 dark:bg-gray-900 dark:text-gray-200'
-                            }`}
-                        >
-                          {activity.message}
-                        </motion.div>
-                      ))}
+              {/* Premium AI Agent Status Hub */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                {/* Lead Engine Agent */}
+                <motion.div
+                  whileHover={{ scale: 1.02, y: -4 }}
+                  className="relative group overflow-hidden bg-gradient-to-br from-blue-900/40 to-blue-950/60 backdrop-blur-xl rounded-2xl p-6 border border-blue-500/20 shadow-xl cursor-pointer"
+                  onClick={() => navigate('/leads')}
+                >
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl"></div>
+                  <div className="relative z-10">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="p-3 bg-blue-500/20 rounded-xl border border-blue-500/30">
+                        <RocketLaunchIcon className="w-6 h-6 text-blue-400" />
+                      </div>
+                      <div className="px-2 py-1 bg-green-500/20 border border-green-500/30 rounded-full">
+                        <span className="text-[10px] font-bold text-green-400">ACTIVE</span>
+                      </div>
                     </div>
-                  </motion.div>
-                </>
-        )}
-                <ConnectGmailModal
-                  open={showConnectGmailModal}
-                  onClose={() => setShowConnectGmailModal(false)}
-                  onConnected={email => {
-                    setGmailJustConnected(true);
-                    refreshGmailStatus();
-                    setShowConnectGmailModal(false);
-                    // After connecting Gmail, if there was a pending campaign, create it now
-                    if (pendingCampaign) {
-                      setShowStartModal(false);
-                      setLoading(false);
-                      setPendingCampaign(null);
-                    }
+                    <h3 className="text-lg font-bold text-white mb-2">Lead Engine</h3>
+                    <p className="text-sm text-gray-400 mb-4">Neural scraping technology</p>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-xs text-gray-500">Today's Finds</span>
+                        <span className="text-sm font-bold text-blue-400">2,489</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-xs text-gray-500">Accuracy</span>
+                        <span className="text-sm font-bold text-green-400">99.2%</span>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* Sentiment Scorer Agent */}
+                <motion.div
+                  whileHover={{ scale: 1.02, y: -4 }}
+                  className="relative group overflow-hidden bg-gradient-to-br from-purple-900/40 to-purple-950/60 backdrop-blur-xl rounded-2xl p-6 border border-purple-500/20 shadow-xl"
+                >
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl"></div>
+                  <div className="relative z-10">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="p-3 bg-purple-500/20 rounded-xl border border-purple-500/30">
+                        <SparklesIcon className="w-6 h-6 text-purple-400" />
+                      </div>
+                      <div className="px-2 py-1 bg-amber-500/20 border border-amber-500/30 rounded-full">
+                        <span className="text-[10px] font-bold text-amber-400">COMING SOON</span>
+                      </div>
+                    </div>
+                    <h3 className="text-lg font-bold text-white mb-2">Sentiment Scorer</h3>
+                    <p className="text-sm text-gray-400 mb-4">AI-powered mood analysis</p>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-xs text-gray-500">Hot Leads</span>
+                        <span className="text-sm font-bold text-purple-400">--</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-xs text-gray-500">Avg. Temperature</span>
+                        <span className="text-sm font-bold text-orange-400">--</span>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* Icebreaker Agent */}
+                <motion.div
+                  whileHover={{ scale: 1.02, y: -4 }}
+                  onClick={() => setShowIcebreakerModal(true)}
+                  className="relative group overflow-hidden bg-gradient-to-br from-pink-900/40 to-pink-950/60 backdrop-blur-xl rounded-2xl p-6 border border-pink-500/20 shadow-xl cursor-pointer"
+                >
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-pink-500/10 rounded-full blur-3xl"></div>
+                  <div className="relative z-10">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="p-3 bg-pink-500/20 rounded-xl border border-pink-500/30">
+                        <ChatBubbleLeftRightIcon className="w-6 h-6 text-pink-400" />
+                      </div>
+                      <div className="px-2 py-1 bg-pink-500/20 border border-pink-500/30 rounded-full animate-pulse">
+                        <span className="text-[10px] font-bold text-pink-400">REVIEW (3)</span>
+                      </div>
+                    </div>
+                    <h3 className="text-lg font-bold text-white mb-2">Icebreaker AI</h3>
+                    <p className="text-sm text-gray-400 mb-4">Hyper-personalized openers</p>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-xs text-gray-500">Generated</span>
+                        <span className="text-sm font-bold text-pink-400">1,204</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-xs text-gray-500">Success Rate</span>
+                        <span className="text-sm font-bold text-green-400">42%</span>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* Objection Handler Agent */}
+                <motion.div
+                  whileHover={{ scale: 1.02, y: -4 }}
+                  onClick={() => setShowObjectionModal(true)}
+                  className="relative group overflow-hidden bg-gradient-to-br from-indigo-900/40 to-indigo-950/60 backdrop-blur-xl rounded-2xl p-6 border border-indigo-500/20 shadow-xl cursor-pointer"
+                >
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl"></div>
+                  <div className="relative z-10">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="p-3 bg-indigo-500/20 rounded-xl border border-indigo-500/30">
+                        <ShieldCheckIcon className="w-6 h-6 text-indigo-400" />
+                      </div>
+                      <div className="px-2 py-1 bg-green-500/20 border border-green-500/30 rounded-full flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                        <span className="text-[10px] font-bold text-green-400">ONLINE</span>
+                      </div>
+                    </div>
+                    <h3 className="text-lg font-bold text-white mb-2">Objection Handler</h3>
+                    <p className="text-sm text-gray-400 mb-4">RAG-powered responses</p>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-xs text-gray-500">Handled</span>
+                        <span className="text-sm font-bold text-indigo-400">--</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-xs text-gray-500">Conversion</span>
+                        <span className="text-sm font-bold text-green-400">--</span>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+
+              {/* NEW: LEAD INTELLIGENCE HUB (Sentiment Heat Map) */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.3, duration: 0.8 }}
+                className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8"
+              >
+                {/* Sentiment Heat Map Gauge */}
+                <div className="lg:col-span-2 bg-slate-900/40 backdrop-blur-xl rounded-[2.5rem] p-8 border border-white/5 shadow-2xl relative overflow-hidden">
+                  <div className="relative z-10">
+                    <div className="flex items-center justify-between mb-8">
+                      <div>
+                        <h3 className="text-2xl font-black text-white tracking-tight">Lead Intelligence Hub</h3>
+                        <p className="text-gray-400 text-sm">Real-time sentiment distribution across your funnel</p>
+                      </div>
+                      <div className="p-3 bg-purple-500/10 rounded-2xl border border-purple-500/20">
+                        <SparklesIcon className="w-6 h-6 text-purple-400" />
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col md:flex-row items-center gap-10">
+                      {/* Circular Gauge Representation */}
+                      <div className="relative w-48 h-48 flex items-center justify-center">
+                        <svg className="w-full h-full -rotate-90">
+                          {/* Angry / Critical (Red) */}
+                          <circle cx="96" cy="96" r="80" stroke="currentColor" strokeWidth="16" fill="transparent" className="text-red-500/20" />
+                          <circle cx="96" cy="96" r="80" stroke="currentColor" strokeWidth="16" fill="transparent" strokeDasharray="502" strokeDashoffset="450" className="text-red-500" />
+
+                          {/* Cold (Gray/Blue) */}
+                          <circle cx="96" cy="96" r="80" stroke="currentColor" strokeWidth="16" fill="transparent" strokeDasharray="502" strokeDashoffset="350" className="text-slate-600" />
+
+                          {/* Warm / Curious (Yellow) */}
+                          <circle cx="96" cy="96" r="80" stroke="currentColor" strokeWidth="16" fill="transparent" strokeDasharray="502" strokeDashoffset="200" className="text-amber-400" />
+
+                          {/* Hot / Ready (Green) */}
+                          <circle cx="96" cy="96" r="80" stroke="currentColor" strokeWidth="16" fill="transparent" strokeDasharray="502" strokeDashoffset="50" className="text-green-400" />
+                        </svg>
+                        <div className="absolute inset-0 flex flex-col items-center justify-center">
+                          <span className="text-4xl font-black text-white">92</span>
+                          <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Global Score</span>
+                        </div>
+                      </div>
+
+                      {/* Legend & Stats */}
+                      <div className="flex-1 grid grid-cols-2 gap-4 w-full">
+                        <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
+                          <div className="flex items-center gap-2 mb-1">
+                            <div className="w-2 h-2 rounded-full bg-green-400"></div>
+                            <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Ready to Buy</span>
+                          </div>
+                          <div className="text-2xl font-black text-white">42%</div>
+                        </div>
+                        <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
+                          <div className="flex items-center gap-2 mb-1">
+                            <div className="w-2 h-2 rounded-full bg-amber-400"></div>
+                            <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Curious</span>
+                          </div>
+                          <div className="text-2xl font-black text-white">31%</div>
+                        </div>
+                        <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
+                          <div className="flex items-center gap-2 mb-1">
+                            <div className="w-2 h-2 rounded-full bg-slate-500"></div>
+                            <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Cold Leads</span>
+                          </div>
+                          <div className="text-2xl font-black text-white">18%</div>
+                        </div>
+                        <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
+                          <div className="flex items-center gap-2 mb-1">
+                            <div className="w-2 h-2 rounded-full bg-red-500"></div>
+                            <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Critical</span>
+                          </div>
+                          <div className="text-2xl font-black text-white">9%</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* AI Opportunity Card */}
+                <div className="bg-gradient-to-br from-purple-600/20 to-pink-600/20 backdrop-blur-xl rounded-[2.5rem] p-8 border border-white/10 shadow-2xl relative overflow-hidden group border-purple-500/30">
+                  <div className="relative z-10">
+                    <h3 className="text-xl font-bold text-white mb-6">Top AI Opportunity</h3>
+                    <div className="space-y-6">
+                      <div className="flex items-start gap-4 p-4 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors cursor-pointer">
+                        <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+                          <span className="text-lg">🏢</span>
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-white">TechFlow Solutions</p>
+                          <p className="text-xs text-gray-400 mt-1 line-clamp-2">"Interested in scaling but worried about onboarding speed..."</p>
+                          <div className="flex items-center gap-2 mt-2">
+                            <span className="px-2 py-0.5 rounded-full bg-green-500/20 text-[10px] font-bold text-green-400">98% Match</span>
+                            <span className="px-2 py-0.5 rounded-full bg-purple-500/20 text-[10px] font-bold text-purple-400">High Intent</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <button className="w-full py-4 bg-white text-black font-black rounded-2xl text-sm shadow-xl shadow-white/10 hover:scale-[1.02] transition-transform flex items-center justify-center gap-2">
+                        <SparklesIcon className="w-4 h-4" />
+                        Generate AI Response
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Lead Engine Hero Widget - Enhanced for Platform Feel */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.4, duration: 0.8 }}
+                className="mb-8"
+              >
+                <div className="relative group overflow-hidden bg-gradient-to-br from-[#1e293b] to-[#0f172a] rounded-[2rem] p-8 md:p-12 border border-white/10 shadow-2xl transition-all hover:border-blue-500/30">
+                  <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <RocketLaunchIcon className="w-48 h-48 text-blue-400 rotate-12 transition-transform group-hover:scale-110" />
+                  </div>
+
+                  <div className="relative z-10 flex flex-col md:flex-row items-center gap-10">
+                    <div className="flex-1 text-center md:text-left">
+                      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 mb-6">
+                        <SparklesIcon className="w-4 h-4 text-blue-400" />
+                        <span className="text-xs font-bold text-blue-400 uppercase tracking-widest">Core Feature</span>
+                      </div>
+                      <h2 className="text-3xl md:text-5xl font-black text-white mb-6 tracking-tight leading-tight">
+                        Unlock <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">High-Performance</span> <br />
+                        Lead Generation
+                      </h2>
+                      <p className="text-gray-400 text-lg mb-8 max-w-xl leading-relaxed">
+                        Experience our unique neural scraping technology. Find thousands of hyper-targeted leads in minutes, not days.
+                      </p>
+
+                      <div className="flex flex-wrap justify-center md:justify-start gap-4">
+                        <button
+                          onClick={() => navigate('/leads')}
+                          className="px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-2xl shadow-lg shadow-blue-600/30 transition-all hover:-translate-y-1 active:scale-95 flex items-center gap-3"
+                        >
+                          <RocketLaunchIcon className="w-5 h-5" />
+                          Launch Lead Engine
+                        </button>
+                        <div className="flex items-center gap-4 px-6 border-l border-white/10 ml-2">
+                          <div className="flex flex-col">
+                            <span className="text-2xl font-black text-white">50k+</span>
+                            <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Leads Found Today</span>
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-2xl font-black text-white">99.2%</span>
+                            <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Accuracy Rate</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="hidden md:block flex-shrink-0">
+                      <div className="relative w-64 h-64">
+                        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-indigo-500/20 rounded-3xl rotate-6 blur-xl"></div>
+                        <div className="relative bg-gradient-to-br from-slate-800 to-slate-900 border border-white/10 rounded-3xl p-6 flex flex-col justify-between h-full">
+                          <div className="flex items-center justify-between mb-4">
+                            <SparklesIcon className="w-8 h-8 text-blue-400" />
+                            <div className="px-3 py-1 bg-green-500/20 border border-green-500/30 rounded-full">
+                              <span className="text-xs font-bold text-green-400">LIVE</span>
+                            </div>
+                          </div>
+                          <div className="space-y-3">
+                            <div className="flex items-center gap-2 text-gray-300">
+                              <div className="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></div>
+                              <span className="text-sm">Scanning 1,240 sources</span>
+                            </div>
+                            <div className="flex items-center gap-2 text-gray-300">
+                              <div className="w-2 h-2 rounded-full bg-purple-400 animate-pulse"></div>
+                              <span className="text-sm">AI filtering active</span>
+                            </div>
+                            <div className="flex items-center gap-2 text-gray-300">
+                              <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+                              <span className="text-sm">Quality verified ✓</span>
+                            </div>
+                          </div>
+                          <div className="mt-6 pt-4 border-t border-white/10">
+                            <div className="text-3xl font-black text-white mb-1">2,489</div>
+                            <div className="text-xs text-gray-500 uppercase tracking-widest font-bold">New Leads This Hour</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* AI-powered Industry Selection Section */}
+              <div className="relative py-10 px-4 md:px-8 rounded-3xl bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-blue-900 shadow-xl mb-8 overflow-hidden">
+                {/* AI feeling animated background */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 0.25 }}
+                  className="absolute inset-0 pointer-events-none z-0"
+                  style={{
+                    background: 'radial-gradient(circle at 60% 40%, #3b82f6 0%, #a855f7 40%, transparent 80%)',
+                    filter: 'blur(60px)',
                   }}
-                  gmailEmail={gmailEmail}
                 />
-                {/* Upgrade Banner for Real Estate lock (FOMO) */}
-                {lockedIndustries.includes('Real Estate') && (
-                  <div className="max-w-4xl mx-auto w-full mb-8">
-                    <div className="flex flex-col items-center justify-center bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 dark:from-blue-900 dark:via-purple-900 dark:to-pink-900 border border-blue-200 dark:border-blue-800 rounded-2xl shadow-lg px-6 py-4 gap-3">
-                      <div className="text-lg font-semibold text-blue-900 dark:text-white font-poppins flex items-center gap-2">
-                        <span className="mr-2">⏳</span>Real Estate just locked. <span className="font-bold text-purple-700 dark:text-purple-300 ml-1">Upgrade now to unlock it + 10 more premium industries.</span>
+                {renderIndustryGrid()}
+                {/* Highlighted Start Button */}
+                <motion.div
+                  initial={{ opacity: 0.7 }}
+                  animate={selectedIndustry ? { opacity: 1 } : {}}
+                  transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                  className="flex justify-center mt-8 z-10"
+                >
+                  <button
+                    onClick={() => handleDashboardStartCampaign(selectedIndustry)}
+                    disabled={!selectedIndustry}
+                    className={`px-8 py-3 rounded-full text-lg font-bold font-poppins transition-all duration-300 shadow-lg
+              ${selectedIndustry ? 'bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white ring-4 ring-blue-300/40 hover:brightness-110 hover:shadow-2xl' : 'bg-gray-300 dark:bg-gray-700 text-gray-400 cursor-not-allowed'}
+            `}
+                  >
+                    {selectedIndustry ? `Start ${selectedIndustry} Campaign` : 'Select Industry to Start'}
+                  </button>
+                </motion.div>
+                {/* Premium Industries Card (moved below industry selection) */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.7, type: 'spring' }}
+                  className="mt-10 flex justify-center"
+                >
+                  <div className="relative bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 p-1 rounded-2xl shadow-xl w-full max-w-xl">
+                    <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-4">
+                      <div className="flex items-center gap-4">
+                        <span className="text-4xl">🌐</span>
+                        <div>
+                          <div className="text-lg md:text-xl font-bold text-gray-900 dark:text-white font-poppins">Unlock 10+ Premium Industries</div>
+                          <div className="text-sm text-gray-600 dark:text-gray-300 font-poppins">Upgrade to access Healthcare, Finance, Manufacturing, and more!</div>
+                        </div>
                       </div>
                       <button
-                        onClick={() => navigate('/pricing-payment')}
-                        className="px-8 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold shadow hover:shadow-lg transition-all text-lg font-poppins"
+                        onClick={() => navigate('/pricing')}
+                        className="mt-4 md:mt-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:brightness-110 transition-all font-poppins"
                       >
                         Upgrade Now
                       </button>
                     </div>
                   </div>
-                )}
-                {/* Show form error if present */}
-                {formError && (
-                  <div className="w-full mb-2 px-4 py-2 rounded-lg bg-red-100 text-red-700 font-semibold text-sm text-center shadow font-poppins">
-                    {formError}
+                </motion.div>
+              </div>
+              {/* Stats Cards with Icons */}
+              <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-4xl mx-auto mb-8 relative"
+              >
+                {[
+                  {
+                    label: t('totalEmails'),
+                    value: stats.totalEmails,
+                    color: 'bg-blue-500 dark:bg-blue-600',
+                    icon: <EnvelopeIcon className="h-6 w-6 text-white" />
+                  },
+                  {
+                    label: t('sent'),
+                    value: stats.sent,
+                    color: 'bg-green-500 dark:bg-green-600',
+                    icon: <PaperAirplaneIcon className="h-6 w-6 text-white" />
+                  },
+                  {
+                    label: t('replies'),
+                    value: stats.replies,
+                    color: 'bg-yellow-500 dark:bg-yellow-600',
+                    icon: <ChatBubbleLeftRightIcon className="h-6 w-6 text-white" />
+                  },
+                  {
+                    label: t('successRate'),
+                    value: '85%',
+                    color: 'bg-purple-500 dark:bg-purple-600',
+                    icon: <ChartBarIcon className="h-6 w-6 text-white" />
+                  },
+                ].map((stat) => (
+                  <motion.div
+                    key={stat.label}
+                    variants={itemVariants}
+                    className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 hover:shadow-lg transition-shadow duration-300"
+                  >
+                    <div className="flex items-center">
+                      <div className={`${stat.color} p-3 rounded-full shadow-md`}>
+                        {stat.icon}
+                      </div>
+                      <div className="ml-4">
+                        <p className="text-sm font-medium text-gray-500 dark:text-gray-300">{stat.label}</p>
+                        <p className="text-2xl font-semibold text-gray-900 dark:text-white">{stat.value}</p>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </motion.div>
+
+              {/* Chart */}
+              <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 transition-colors duration-300"
+                style={{ minHeight: 350, height: 350 }}
+              >
+                <Line data={chartData} options={chartOptions} />
+              </motion.div>
+
+              {/* Recent Activity */}
+              <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 transition-colors duration-300"
+              >
+                <h2 className="text-xl font-semibold mb-4 dark:text-white">{t('recentActivity')}</h2>
+                <div className="space-y-4">
+                  {[
+                    { type: 'positive', message: t('positiveReply') },
+                    { type: 'negative', message: t('negativeReply') },
+                    { type: 'neutral', message: t('neutralReply') },
+                  ].map((activity, index) => (
+                    <motion.div
+                      key={index}
+                      variants={itemVariants}
+                      className={`p-4 rounded-lg transition-colors duration-300 ${activity.type === 'positive'
+                        ? 'bg-green-50 text-green-700 dark:bg-green-900 dark:text-green-200'
+                        : activity.type === 'negative'
+                          ? 'bg-red-50 text-red-700 dark:bg-red-900 dark:text-red-200'
+                          : 'bg-gray-50 text-gray-700 dark:bg-gray-900 dark:text-gray-200'
+                        }`}
+                    >
+                      {activity.message}
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+            </>
+        )}
+            <ConnectGmailModal
+              open={showConnectGmailModal}
+              onClose={() => setShowConnectGmailModal(false)}
+              onConnected={email => {
+                setGmailJustConnected(true);
+                refreshGmailStatus();
+                setShowConnectGmailModal(false);
+                // After connecting Gmail, if there was a pending campaign, create it now
+                if (pendingCampaign) {
+                  setShowStartModal(false);
+                  setLoading(false);
+                  setPendingCampaign(null);
+                }
+              }}
+              gmailEmail={gmailEmail}
+            />
+            {/* Upgrade Banner for Real Estate lock (FOMO) */}
+            {lockedIndustries.includes('Real Estate') && (
+              <div className="max-w-4xl mx-auto w-full mb-8">
+                <div className="flex flex-col items-center justify-center bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 dark:from-blue-900 dark:via-purple-900 dark:to-pink-900 border border-blue-200 dark:border-blue-800 rounded-2xl shadow-lg px-6 py-4 gap-3">
+                  <div className="text-lg font-semibold text-blue-900 dark:text-white font-poppins flex items-center gap-2">
+                    <span className="mr-2">⏳</span>Real Estate just locked. <span className="font-bold text-purple-700 dark:text-purple-300 ml-1">Upgrade now to unlock it + 10 more premium industries.</span>
                   </div>
-                )}
-                <div className="mt-auto">
-                  <Footer />
+                  <button
+                    onClick={() => navigate('/pricing-payment')}
+                    className="px-8 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold shadow hover:shadow-lg transition-all text-lg font-poppins"
+                  >
+                    Upgrade Now
+                  </button>
                 </div>
               </div>
+            )}
+            {/* Show form error if present */}
+            {formError && (
+              <div className="w-full mb-2 px-4 py-2 rounded-lg bg-red-100 text-red-700 font-semibold text-sm text-center shadow font-poppins">
+                {formError}
+              </div>
+            )}
+            <div className="mt-auto">
+              <Footer />
+            </div>
+
+            <IcebreakerReviewModal
+              open={showIcebreakerModal}
+              onClose={() => setShowIcebreakerModal(false)}
+            />
+            <ObjectionHandlerModal
+              open={showObjectionModal}
+              onClose={() => setShowObjectionModal(false)}
+            />
           </div>
-          );
+      </div>
+      );
 };
 
-          export default Dashboard; 
+      export default Dashboard; 
