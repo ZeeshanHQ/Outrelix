@@ -1243,61 +1243,62 @@ const Dashboard = () => {
                   ))}
                 </div>
               </motion.div>
-            </>
+            </motion.div>
+          </>
         )}
-            <ConnectGmailModal
-              open={showConnectGmailModal}
-              onClose={() => setShowConnectGmailModal(false)}
-              onConnected={email => {
-                setGmailJustConnected(true);
-                refreshGmailStatus();
-                setShowConnectGmailModal(false);
-                // After connecting Gmail, if there was a pending campaign, create it now
-                if (pendingCampaign) {
-                  setShowStartModal(false);
-                  setLoading(false);
-                  setPendingCampaign(null);
-                }
-              }}
-              gmailEmail={gmailEmail}
-            />
-            {/* Upgrade Banner for Real Estate lock (FOMO) */}
-            {lockedIndustries.includes('Real Estate') && (
-              <div className="max-w-4xl mx-auto w-full mb-8">
-                <div className="flex flex-col items-center justify-center bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 dark:from-blue-900 dark:via-purple-900 dark:to-pink-900 border border-blue-200 dark:border-blue-800 rounded-2xl shadow-lg px-6 py-4 gap-3">
-                  <div className="text-lg font-semibold text-blue-900 dark:text-white font-poppins flex items-center gap-2">
-                    <span className="mr-2">⏳</span>Real Estate just locked. <span className="font-bold text-purple-700 dark:text-purple-300 ml-1">Upgrade now to unlock it + 10 more premium industries.</span>
-                  </div>
-                  <button
-                    onClick={() => navigate('/pricing-payment')}
-                    className="px-8 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold shadow hover:shadow-lg transition-all text-lg font-poppins"
-                  >
-                    Upgrade Now
-                  </button>
-                </div>
+        <ConnectGmailModal
+          open={showConnectGmailModal}
+          onClose={() => setShowConnectGmailModal(false)}
+          onConnected={email => {
+            setGmailJustConnected(true);
+            refreshGmailStatus();
+            setShowConnectGmailModal(false);
+            // After connecting Gmail, if there was a pending campaign, create it now
+            if (pendingCampaign) {
+              setShowStartModal(false);
+              setLoading(false);
+              setPendingCampaign(null);
+            }
+          }}
+          gmailEmail={gmailEmail}
+        />
+        {/* Upgrade Banner for Real Estate lock (FOMO) */}
+        {lockedIndustries.includes('Real Estate') && (
+          <div className="max-w-4xl mx-auto w-full mb-8">
+            <div className="flex flex-col items-center justify-center bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 dark:from-blue-900 dark:via-purple-900 dark:to-pink-900 border border-blue-200 dark:border-blue-800 rounded-2xl shadow-lg px-6 py-4 gap-3">
+              <div className="text-lg font-semibold text-blue-900 dark:text-white font-poppins flex items-center gap-2">
+                <span className="mr-2">⏳</span>Real Estate just locked. <span className="font-bold text-purple-700 dark:text-purple-300 ml-1">Upgrade now to unlock it + 10 more premium industries.</span>
               </div>
-            )}
-            {/* Show form error if present */}
-            {formError && (
-              <div className="w-full mb-2 px-4 py-2 rounded-lg bg-red-100 text-red-700 font-semibold text-sm text-center shadow font-poppins">
-                {formError}
-              </div>
-            )}
-            <div className="mt-auto">
-              <Footer />
+              <button
+                onClick={() => navigate('/pricing-payment')}
+                className="px-8 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold shadow hover:shadow-lg transition-all text-lg font-poppins"
+              >
+                Upgrade Now
+              </button>
             </div>
-
-            <IcebreakerReviewModal
-              open={showIcebreakerModal}
-              onClose={() => setShowIcebreakerModal(false)}
-            />
-            <ObjectionHandlerModal
-              open={showObjectionModal}
-              onClose={() => setShowObjectionModal(false)}
-            />
           </div>
+        )}
+        {/* Show form error if present */}
+        {formError && (
+          <div className="w-full mb-2 px-4 py-2 rounded-lg bg-red-100 text-red-700 font-semibold text-sm text-center shadow font-poppins">
+            {formError}
+          </div>
+        )}
+        <div className="mt-auto">
+          <Footer />
+        </div>
+
+        <IcebreakerReviewModal
+          open={showIcebreakerModal}
+          onClose={() => setShowIcebreakerModal(false)}
+        />
+        <ObjectionHandlerModal
+          open={showObjectionModal}
+          onClose={() => setShowObjectionModal(false)}
+        />
       </div>
-      );
+    </div>
+  );
 };
 
-      export default Dashboard; 
+export default Dashboard; 
