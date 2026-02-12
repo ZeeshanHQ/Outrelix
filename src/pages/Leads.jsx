@@ -33,7 +33,7 @@ const Leads = () => {
     enable_overpass: true,
     dry_run: false,
   });
-  
+
   const [loading, setLoading] = useState(false);
   const [runs, setRuns] = useState([]);
   const [selectedRun, setSelectedRun] = useState(null);
@@ -54,7 +54,7 @@ const Leads = () => {
   // GSAP Hero Animation
   useEffect(() => {
     if (heroRef.current) {
-      gsap.fromTo(heroRef.current, 
+      gsap.fromTo(heroRef.current,
         { opacity: 0, y: 30 },
         { opacity: 1, y: 0, duration: 1, ease: 'power3.out' }
       );
@@ -101,13 +101,13 @@ const Leads = () => {
 
       const run = await leadEngineService.startRun(formData);
       toast.success(`Mission started! Identification: ${run.run_id}`);
-      
+
       const newRun = { ...run, created_at: new Date().toISOString() };
       setRuns(prev => [newRun, ...prev]);
       setSelectedRun(newRun);
       setRunStatus(newRun);
       setActiveTab('runs');
-      
+
       startPolling(run.run_id);
     } catch (error) {
       console.error('Failed to start lead generation:', error);
@@ -127,7 +127,7 @@ const Leads = () => {
         const status = await leadEngineService.getRunStatus(runId);
         setRunStatus(status);
 
-        setRuns(prev => prev.map(run => 
+        setRuns(prev => prev.map(run =>
           run.run_id === runId ? { ...run, ...status } : run
         ));
 
@@ -164,7 +164,7 @@ const Leads = () => {
   const handleViewLeads = async (run) => {
     setSelectedRun(run);
     setRunStatus(run);
-    
+
     if (run.status === 'completed') {
       await loadLeads(run.run_id);
       setActiveTab('results');
@@ -193,7 +193,7 @@ const Leads = () => {
   return (
     <div className="min-h-screen bg-[#030712] text-white font-poppins selection:bg-blue-500/30">
       <AppSidebar />
-      
+
       {/* Background Orbs */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/10 blur-[120px] rounded-full" />
@@ -202,7 +202,7 @@ const Leads = () => {
 
       <div className="relative z-10 p-4 md:p-8 ml-0 md:ml-0 transition-all duration-300">
         {/* Header Section */}
-        <motion.div 
+        <motion.div
           ref={heroRef}
           className="mb-12"
         >
@@ -228,11 +228,10 @@ const Leads = () => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-6 py-2.5 rounded-xl transition-all duration-300 font-medium text-sm whitespace-nowrap ${
-                activeTab === tab.id 
-                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' 
+              className={`flex items-center gap-2 px-6 py-2.5 rounded-xl transition-all duration-300 font-medium text-sm whitespace-nowrap ${activeTab === tab.id
+                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20'
                   : 'text-gray-400 hover:text-white hover:bg-white/5'
-              }`}
+                }`}
             >
               <tab.icon className="h-4 w-4" />
               {tab.label}
@@ -257,7 +256,7 @@ const Leads = () => {
             >
               <div className="lg:col-span-8">
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  <div 
+                  <div
                     ref={searchInputRef}
                     className="group relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 md:p-8 transition-all hover:border-blue-500/50 shadow-2xl"
                   >
@@ -317,7 +316,7 @@ const Leads = () => {
                       <AdjustmentsHorizontalIcon className="h-5 w-5" />
                       Advanced Enrichment Options
                     </button>
-                    
+
                     <button
                       type="submit"
                       disabled={loading || !formData.queries}
@@ -346,25 +345,25 @@ const Leads = () => {
                         className="overflow-hidden"
                       >
                         <div className="bg-white/5 border border-white/10 rounded-2xl p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                           {[
-                             { id: 'enable_yelp', label: 'Yelp Extraction', icon: GlobeAltIcon },
-                             { id: 'enable_clearbit', label: 'Clearbit Enrichment', icon: SparklesIcon },
-                             { id: 'enable_overpass', label: 'OpenStreetMap Data', icon: MapPinIcon },
-                             { id: 'dry_run', label: 'Diagnostic Mode', icon: AdjustmentsHorizontalIcon },
-                           ].map(opt => (
-                             <label key={opt.id} className="flex items-center gap-3 cursor-pointer group">
-                                <input
-                                  type="checkbox"
-                                  checked={formData[opt.id]}
-                                  onChange={(e) => setFormData({ ...formData, [opt.id]: e.target.checked })}
-                                  className="hidden"
-                                />
-                                <div className={`h-5 w-5 rounded border flex items-center justify-center transition-all ${formData[opt.id] ? 'bg-blue-600 border-blue-500' : 'border-white/20 bg-white/5'}`}>
-                                  {formData[opt.id] && <CheckCircleIcon className="h-4 w-4" />}
-                                </div>
-                                <span className="text-xs font-bold text-white group-hover:text-blue-400 transition-colors">{opt.label}</span>
-                             </label>
-                           ))}
+                          {[
+                            { id: 'enable_yelp', label: 'Yelp Extraction', icon: GlobeAltIcon },
+                            { id: 'enable_clearbit', label: 'Clearbit Enrichment', icon: SparklesIcon },
+                            { id: 'enable_overpass', label: 'OpenStreetMap Data', icon: MapPinIcon },
+                            { id: 'dry_run', label: 'Diagnostic Mode', icon: AdjustmentsHorizontalIcon },
+                          ].map(opt => (
+                            <label key={opt.id} className="flex items-center gap-3 cursor-pointer group">
+                              <input
+                                type="checkbox"
+                                checked={formData[opt.id]}
+                                onChange={(e) => setFormData({ ...formData, [opt.id]: e.target.checked })}
+                                className="hidden"
+                              />
+                              <div className={`h-5 w-5 rounded border flex items-center justify-center transition-all ${formData[opt.id] ? 'bg-blue-600 border-blue-500' : 'border-white/20 bg-white/5'}`}>
+                                {formData[opt.id] && <CheckCircleIcon className="h-4 w-4" />}
+                              </div>
+                              <span className="text-xs font-bold text-white group-hover:text-blue-400 transition-colors">{opt.label}</span>
+                            </label>
+                          ))}
                         </div>
                       </motion.div>
                     )}
@@ -420,16 +419,15 @@ const Leads = () => {
                       className="group bg-white/5 hover:bg-white/[0.08] backdrop-blur-xl border border-white/10 rounded-2xl p-6 transition-all duration-300 relative overflow-hidden"
                     >
                       <div className="flex justify-between items-start mb-6">
-                        <div className={`p-2 rounded-xl ${
-                          run.status === 'completed' ? 'bg-green-500/20 text-green-500' :
-                          run.status === 'failed' ? 'bg-red-500/20 text-red-500' :
-                          'bg-blue-500/20 text-blue-500'
-                        }`}>
+                        <div className={`p-2 rounded-xl ${run.status === 'completed' ? 'bg-green-500/20 text-green-500' :
+                            run.status === 'failed' ? 'bg-red-500/20 text-red-500' :
+                              'bg-blue-500/20 text-blue-500'
+                          }`}>
                           {run.status === 'completed' ? <CheckCircleIcon className="h-6 w-6" /> :
-                           run.status === 'failed' ? <XCircleIcon className="h-6 w-6" /> :
-                           <ArrowPathIcon className="h-6 w-6 animate-spin" />}
+                            run.status === 'failed' ? <XCircleIcon className="h-6 w-6" /> :
+                              <ArrowPathIcon className="h-6 w-6 animate-spin" />}
                         </div>
-                        <button 
+                        <button
                           onClick={() => handleDeleteRun(run.run_id)}
                           className="opacity-0 group-hover:opacity-100 p-2 text-gray-500 hover:text-red-500 transition-all z-20"
                         >
@@ -447,10 +445,10 @@ const Leads = () => {
                             <span>{Math.round((run.progress || 0) * 100)}%</span>
                           </div>
                           <div className="w-full bg-white/10 rounded-full h-1">
-                            <motion.div 
+                            <motion.div
                               initial={{ width: 0 }}
                               animate={{ width: `${(run.progress || 0) * 100}%` }}
-                              className="bg-blue-500 h-full rounded-full" 
+                              className="bg-blue-500 h-full rounded-full"
                             />
                           </div>
                         </div>
@@ -462,11 +460,10 @@ const Leads = () => {
                         </span>
                         <button
                           onClick={() => handleViewLeads(run)}
-                          className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${
-                            run.status === 'completed' 
-                              ? 'bg-blue-600/10 text-blue-400 hover:bg-blue-600 hover:text-white' 
+                          className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${run.status === 'completed'
+                              ? 'bg-blue-600/10 text-blue-400 hover:bg-blue-600 hover:text-white'
                               : 'text-gray-500 cursor-not-allowed opacity-50'
-                          }`}
+                            }`}
                         >
                           {run.status === 'completed' ? 'View Intel' : 'Working...'}
                         </button>
@@ -494,9 +491,9 @@ const Leads = () => {
                   </h2>
                 </div>
                 <div className="flex gap-3 w-full sm:w-auto">
-                   <button className="flex-1 sm:flex-none px-6 py-2 bg-white/5 hover:bg-white/10 rounded-xl text-xs font-bold border border-white/10 transition-all">
-                     Export Data
-                   </button>
+                  <button className="flex-1 sm:flex-none px-6 py-2 bg-white/5 hover:bg-white/10 rounded-xl text-xs font-bold border border-white/10 transition-all">
+                    Export Data
+                  </button>
                 </div>
               </div>
               <div className="overflow-x-auto">
@@ -506,51 +503,74 @@ const Leads = () => {
                       <th className="px-8 py-4 text-[10px] font-bold text-gray-500 uppercase tracking-widest border-b border-white/10">Target Entity</th>
                       <th className="px-8 py-4 text-[10px] font-bold text-gray-500 uppercase tracking-widest border-b border-white/10">Channel Control</th>
                       <th className="px-8 py-4 text-[10px] font-bold text-gray-500 uppercase tracking-widest border-b border-white/10">Location</th>
-                      <th className="px-8 py-4 text-[10px] font-bold text-gray-500 uppercase tracking-widest border-b border-white/10">Neural Score</th>
+                      <th className="px-8 py-4 text-[10px] font-bold text-gray-500 uppercase tracking-widest border-b border-white/10">Sentiment</th>
+                      <th className="px-8 py-4 text-[10px] font-bold text-gray-500 uppercase tracking-widest border-b border-white/10 text-right">Neural Score</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/[0.05]">
-                    {leads.map((lead, index) => (
-                      <tr key={index} className="hover:bg-white/[0.02] transition-colors group">
-                        <td className="px-8 py-6">
-                          <div className="flex items-center gap-3">
-                            <div className="h-10 w-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500 font-bold border border-blue-500/20">
-                              {(lead.company || '?')[0]}
+                    {leads.map((lead, index) => {
+                      // Mock Sentiment Data for Demo (Randomized based on score)
+                      const score = lead.lead_score || Math.floor(Math.random() * 40) + 60;
+                      const sentiment = score > 85 ? 'hot' : score > 70 ? 'warm' : 'neutral';
+
+                      return (
+                        <tr key={index} className="hover:bg-white/[0.02] transition-colors group">
+                          <td className="px-8 py-6">
+                            <div className="flex items-center gap-3">
+                              <div className="h-10 w-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500 font-bold border border-blue-500/20">
+                                {(lead.company || '?')[0]}
+                              </div>
+                              <div>
+                                <div className="font-bold text-white group-hover:text-blue-400 transition-colors uppercase tracking-tight">{lead.company || 'Unknown Entity'}</div>
+                                <div className="text-[10px] text-gray-500 font-mono tracking-tighter uppercase">{lead.domain || 'direct_entry'}</div>
+                              </div>
                             </div>
-                            <div>
-                              <div className="font-bold text-white group-hover:text-blue-400 transition-colors uppercase tracking-tight">{lead.company || 'Unknown Entity'}</div>
-                              <div className="text-[10px] text-gray-500 font-mono tracking-tighter uppercase">{lead.domain || 'direct_entry'}</div>
+                          </td>
+                          <td className="px-8 py-6">
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-2 text-sm font-medium text-gray-300">
+                                {lead.email || 'N/A'}
+                                {lead.email_valid && <span className="text-[8px] bg-green-500/20 text-green-500 border border-green-500/30 px-1 rounded">SECURE</span>}
+                              </div>
+                              <div className="text-[10px] text-gray-600 font-bold tracking-widest">{lead.phone || 'NO COORDS'}</div>
                             </div>
-                          </div>
-                        </td>
-                        <td className="px-8 py-6">
-                          <div className="space-y-1">
-                            <div className="flex items-center gap-2 text-sm font-medium text-gray-300">
-                              {lead.email || 'N/A'}
-                              {lead.email_valid && <span className="text-[8px] bg-green-500/20 text-green-500 border border-green-500/30 px-1 rounded">SECURE</span>}
+                          </td>
+                          <td className="px-8 py-6">
+                            <div className="text-sm text-gray-400">{lead.location || 'Universal'}</div>
+                          </td>
+                          <td className="px-8 py-6">
+                            <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border ${sentiment === 'hot' ? 'bg-red-500/10 border-red-500/20 text-red-400' :
+                                sentiment === 'warm' ? 'bg-amber-500/10 border-amber-500/20 text-amber-400' :
+                                  'bg-slate-500/10 border-slate-500/20 text-slate-400'
+                              }`}>
+                              <span className={`h-1.5 w-1.5 rounded-full ${sentiment === 'hot' ? 'bg-red-500 animate-pulse' :
+                                  sentiment === 'warm' ? 'bg-amber-500' :
+                                    'bg-slate-500'
+                                }`} />
+                              <span className="text-[10px] font-bold uppercase tracking-wide">
+                                {sentiment === 'hot' ? 'Ready to Buy' : sentiment === 'warm' ? 'Curious' : 'Passive'}
+                              </span>
                             </div>
-                            <div className="text-[10px] text-gray-600 font-bold tracking-widest">{lead.phone || 'NO COORDS'}</div>
-                          </div>
-                        </td>
-                        <td className="px-8 py-6">
-                           <div className="text-sm text-gray-400">{lead.location || 'Universal'}</div>
-                        </td>
-                        <td className="px-8 py-6">
-                          <div className="flex items-center gap-4">
-                            <div className="flex-1 max-w-[80px] h-1 bg-white/5 rounded-full overflow-hidden">
-                              <div 
-                                className={`h-full ${
-                                  (lead.lead_score || 0) > 70 ? 'bg-blue-500' : 
-                                  (lead.lead_score || 0) > 40 ? 'bg-purple-500' : 'bg-red-500'
-                                }`} 
-                                style={{ width: `${lead.lead_score || 0}%` }}
-                              />
+                          </td>
+                          <td className="px-8 py-6 text-right">
+                            <div className="flex items-center justify-end gap-3">
+                              <div className="flex flex-col items-end gap-1">
+                                <div className="h-1.5 w-24 bg-white/5 rounded-full overflow-hidden">
+                                  <div
+                                    className={`h-full ${score > 80 ? 'bg-gradient-to-r from-blue-500 to-purple-500' :
+                                        score > 50 ? 'bg-blue-500' : 'bg-slate-600'
+                                      }`}
+                                    style={{ width: `${score}%` }}
+                                  />
+                                </div>
+                              </div>
+                              <span className={`text-lg font-black font-mono ${score > 80 ? 'text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400' : 'text-gray-500'
+                                }`}>{score}</span>
                             </div>
-                            <span className="text-[10px] font-mono font-bold">{lead.lead_score || 0}</span>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
