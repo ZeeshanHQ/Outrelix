@@ -1,6 +1,0 @@
-company_id,email,source,validation,DRY_RUN
-04dba1ab58e57b10,info0@epsilonai.ai,contact_page_extractor,"{'is_valid': True, 'is_disposable': False, 'mx_found': True, 'deliverability': 'medium'}",True
-73af1fe0085b1a26,info0@etasystems.com,contact_page_extractor,"{'is_valid': False, 'is_disposable': False, 'mx_found': False, 'deliverability': 'unknown'}",True
-9ae26bdfe474b3b9,info0@tausuite.com,contact_page_extractor,"{'is_valid': True, 'is_disposable': False, 'mx_found': True, 'deliverability': 'medium'}",True
-9ae26bdfe474b3b9,info1@tausuite.com,contact_page_extractor,"{'is_valid': False, 'is_disposable': False, 'mx_found': False, 'deliverability': 'unknown'}",True
-9ae26bdfe474b3b9,bad-email-at-tausuite.com,contact_page_extractor,"{'is_valid': False, 'is_disposable': False, 'mx_found': False, 'deliverability': 'unknown'}",True

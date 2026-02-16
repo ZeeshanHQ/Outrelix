@@ -1,6 +1,0 @@
-company_id,email,source,validation,DRY_RUN
-7e6a76bce8617270,hello@bestroofing.com,hunter,"{'is_valid': True, 'is_disposable': False, 'mx_found': True, 'deliverability': 'high'}",True
-7e6a76bce8617270,sales@bestroofing.com,hunter,"{'is_valid': True, 'is_disposable': False, 'mx_found': True, 'deliverability': 'medium'}",True
-ff0ca495183ca692,hello@dependableroofing.com,hunter,"{'is_valid': False, 'is_disposable': False, 'mx_found': False, 'deliverability': 'unknown'}",True
-ff0ca495183ca692,sales@dependableroofing.com,hunter,"{'is_valid': True, 'is_disposable': False, 'mx_found': True, 'deliverability': 'high'}",True
-3361936f80e9ce92,hello@premierroofing.com,hunter,"{'is_valid': True, 'is_disposable': False, 'mx_found': True, 'deliverability': 'medium'}",True

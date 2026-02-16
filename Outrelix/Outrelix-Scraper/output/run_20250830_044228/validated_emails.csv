@@ -1,6 +1,0 @@
-company_id,email,source,validation,DRY_RUN
-6d7254a79a81d40e,info0@phiintegrations.com,contact_page_extractor,"{'is_valid': True, 'is_disposable': False, 'mx_found': True, 'deliverability': 'medium'}",True
-6d7254a79a81d40e,info1@phiintegrations.com,contact_page_extractor,"{'is_valid': True, 'is_disposable': False, 'mx_found': True, 'deliverability': 'medium'}",True
-46d10635ef2870db,info0@acmecrm.com,contact_page_extractor,"{'is_valid': True, 'is_disposable': False, 'mx_found': True, 'deliverability': 'medium'}",True
-46d10635ef2870db,info1@acmecrm.com,contact_page_extractor,"{'is_valid': True, 'is_disposable': False, 'mx_found': True, 'deliverability': 'high'}",True
-46d10635ef2870db,info2@acmecrm.com,contact_page_extractor,"{'is_valid': False, 'is_disposable': False, 'mx_found': False, 'deliverability': 'unknown'}",True

@@ -1,11 +1,50 @@
-fastapi==0.68.2
-uvicorn==0.15.0
+# Outrelix Backend - Consolidated Requirements
+# Combines scraper dependencies + API dependencies
+
+# Core Framework
+fastapi==0.111.0
+uvicorn[standard]==0.30.0
+gunicorn==21.2.0
+
+# Data Processing
+pandas
+openpyxl
 requests==2.31.0
+httpx[socks]
 python-dotenv==1.0.0
 python-multipart==0.0.6
 pydantic==1.8.2
-httpx==0.24.1
+
+# Scraper Core
+beautifulsoup4
+lxml
+regex
+phonenumbers
+rapidfuzz
+tqdm
+tenacity
+schedule
+dnspython
+
+# AI/ML
+transformers
+torch
+sentence-transformers
+scikit-learn
+
+# Google Services
+gspread
+gspread_dataframe
+oauth2client
 google-auth-oauthlib==1.1.0
 google-auth-httplib2==0.2.0
 google-api-python-client==2.108.0
-gunicorn==21.2.0
+
+# Email
+aiosmtplib
+
+# Authentication
+PyJWT==2.9.0
+
+# Browser Automation
+playwright
