@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { 
+import { useRouter } from 'next/navigation';
+import {
   ChevronDownIcon,
   ChevronUpIcon,
   QuestionMarkCircleIcon,
@@ -98,7 +98,7 @@ const FAQSection = ({ title, icon: Icon, faqs, delay = 0 }) => {
 };
 
 const ContactForm = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -111,7 +111,7 @@ const ContactForm = () => {
     // Handle form submission here
     console.log('Form submitted:', formData);
     // Navigate to contact page or show success message
-    navigate('/contact');
+    router.push('/contact');
   };
 
   const handleChange = (e) => {
@@ -230,7 +230,7 @@ const ContactForm = () => {
 };
 
 const FAQ = () => {
-  const location = useLocation();
+  const pathname = typeof window !== 'undefined' ? window.location.hash : '';
   const generalFAQs = [
     {
       question: "What is Outrelix and how does it work?",
@@ -321,18 +321,18 @@ const FAQ = () => {
 
   // Handle anchor links when page loads
   useEffect(() => {
-    if (location.hash) {
-      const element = document.querySelector(location.hash);
+    if (typeof window !== 'undefined' && window.location.hash) {
+      const element = document.querySelector(window.location.hash);
       if (element) {
         setTimeout(() => {
-          element.scrollIntoView({ 
+          element.scrollIntoView({
             behavior: 'smooth',
             block: 'start'
           });
-        }, 500); // Small delay to ensure page is loaded
+        }, 500);
       }
     }
-  }, [location.hash]);
+  }, []);
 
   return (
     <>
@@ -360,7 +360,7 @@ const FAQ = () => {
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-purple-50 to-green-50 dark:from-blue-950 dark:via-purple-950 dark:to-green-950 animate-pulse opacity-30"></div>
           </div>
-          
+
           <div className="relative z-10 w-full px-4 sm:px-6 lg:px-8 text-center">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -372,11 +372,11 @@ const FAQ = () => {
                 <QuestionMarkCircleIcon className="w-4 h-4" />
                 Frequently Asked Questions
               </div>
-              
+
               <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6 font-poppins leading-tight">
                 Everything You Need to Know
               </h1>
-              
+
               <p className="text-xl lg:text-2xl text-gray-600 dark:text-gray-300 font-poppins leading-relaxed max-w-3xl mx-auto">
                 Find answers to common questions about Outrelix, our features, pricing, and how to get started with AI-powered email automation.
               </p>
@@ -396,7 +396,7 @@ const FAQ = () => {
                   delay={0.1}
                 />
               </div>
-              
+
               <div id="pricing">
                 <FAQSection
                   title="Pricing & Billing"
@@ -405,7 +405,7 @@ const FAQ = () => {
                   delay={0.2}
                 />
               </div>
-              
+
               <div id="technical">
                 <FAQSection
                   title="Technical & Features"
@@ -414,7 +414,7 @@ const FAQ = () => {
                   delay={0.3}
                 />
               </div>
-              
+
               <div id="security">
                 <FAQSection
                   title="Security & Privacy"
@@ -423,7 +423,7 @@ const FAQ = () => {
                   delay={0.4}
                 />
               </div>
-              
+
               {/* Contact Form Section */}
               <ContactForm />
             </div>

@@ -3,8 +3,8 @@ import logging
 from typing import Dict, List, Optional
 import httpx
 
-from src.utils.http_client import HttpClient
-from src.utils.mocks import generate_mock_companies
+from utils.http_client import HttpClient
+from utils.mocks import generate_mock_companies
 
 logger = logging.getLogger(__name__)
 

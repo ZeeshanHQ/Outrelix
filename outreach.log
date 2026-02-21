@@ -1,0 +1,12 @@
+2026-02-21 11:20:16,106 - asyncio - ERROR - Task exception was never retrieved
+future: <Task finished name='Task-3' coro=<gmail_status_background_checker() done, defined at S:\3D Objects\Outrelix\backend\api\main_api.py:1264> exception=NameError("name 'supabase' is not defined")>
+Traceback (most recent call last):
+  File "S:\3D Objects\Outrelix\backend\api\main_api.py", line 1266, in gmail_status_background_checker
+    users = supabase.table('users').select('id, gmail_token').execute().data
+NameError: name 'supabase' is not defined
+2026-02-21 11:24:25,438 - core.pipeline - INFO - FREE MODE: Using GoogleMapsDirectExtractor (Playwright)
+2026-02-21 11:24:25,451 - extractors.google_maps_direct - INFO - DRY_RUN: Mocking Direct Google Maps Search
+2026-02-21 11:24:25,458 - core.merge - INFO - Merging sources: gmaps=0 yelp=0 yellowpages=0 overpass=0
+2026-02-21 11:24:25,461 - utils.fuzzy - INFO - DRY_RUN: fuzzy dedupe will simulate name collisions
+2026-02-21 11:24:25,461 - core.merge - INFO - Merge summary: {'input_total': 0, 'normalized': 0, 'merged_total': 0, 'groups': 0, 'merged_count': 0, 'kept': 0, 'source_counts': {'gmaps': 0, 'yelp': 0, 'yellowpages': 0, 'overpass': 0}}
+2026-02-21 11:24:25,465 - core.pipeline - INFO - SOURCING metrics: {'input_total': 0, 'normalized': 0, 'merged_total': 0, 'groups': 0, 'merged_count': 0, 'kept': 0, 'source_counts': {'gmaps': 0, 'yelp': 0, 'yellowpages': 0, 'overpass': 0}}

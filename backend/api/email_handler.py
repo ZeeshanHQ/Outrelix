@@ -11,7 +11,7 @@ from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 
-from config import (
+from api.config import (
     SCOPES, CREDENTIALS_FILE, TOKEN_FILE, LEADS_FILE,
     DEFAULT_EMAIL_SUBJECT, DEFAULT_EMAIL_TEMPLATE
 )

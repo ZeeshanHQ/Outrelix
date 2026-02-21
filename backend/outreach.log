@@ -1,0 +1,42 @@
+2026-02-16 17:12:45,045 - asyncio - ERROR - Task exception was never retrieved
+future: <Task finished name='Task-3' coro=<gmail_status_background_checker() done, defined at S:\3D Objects\Outrelix\backend\api\main_api.py:1203> exception=NameError("name 'supabase' is not defined")>
+Traceback (most recent call last):
+  File "S:\3D Objects\Outrelix\backend\api\main_api.py", line 1205, in gmail_status_background_checker
+    users = supabase.table('users').select('id, gmail_token').execute().data
+NameError: name 'supabase' is not defined
+2026-02-16 20:37:28,440 - asyncio - ERROR - Task exception was never retrieved
+future: <Task finished name='Task-3' coro=<gmail_status_background_checker() done, defined at S:\3D Objects\Outrelix\backend\api\main_api.py:1203> exception=NameError("name 'supabase' is not defined")>
+Traceback (most recent call last):
+  File "S:\3D Objects\Outrelix\backend\api\main_api.py", line 1205, in gmail_status_background_checker
+    users = supabase.table('users').select('id, gmail_token').execute().data
+NameError: name 'supabase' is not defined
+2026-02-17 18:02:13,318 - asyncio - ERROR - Task exception was never retrieved
+future: <Task finished name='Task-3' coro=<gmail_status_background_checker() done, defined at S:\3D Objects\Outrelix\backend\api\main_api.py:1203> exception=NameError("name 'supabase' is not defined")>
+Traceback (most recent call last):
+  File "S:\3D Objects\Outrelix\backend\api\main_api.py", line 1205, in gmail_status_background_checker
+    users = supabase.table('users').select('id, gmail_token').execute().data
+NameError: name 'supabase' is not defined
+2026-02-21 06:34:08,699 - asyncio - ERROR - Task exception was never retrieved
+future: <Task finished name='Task-3' coro=<gmail_status_background_checker() done, defined at S:\3D Objects\Outrelix\backend\api\main_api.py:1208> exception=NameError("name 'supabase' is not defined")>
+Traceback (most recent call last):
+  File "S:\3D Objects\Outrelix\backend\api\main_api.py", line 1210, in gmail_status_background_checker
+    users = supabase.table('users').select('id, gmail_token').execute().data
+NameError: name 'supabase' is not defined
+2026-02-21 11:27:21,788 - asyncio - ERROR - Task exception was never retrieved
+future: <Task finished name='Task-3' coro=<gmail_status_background_checker() done, defined at S:\3D Objects\Outrelix\backend\api\main_api.py:1264> exception=NameError("name 'supabase' is not defined")>
+Traceback (most recent call last):
+  File "S:\3D Objects\Outrelix\backend\api\main_api.py", line 1266, in gmail_status_background_checker
+    users = supabase.table('users').select('id, gmail_token').execute().data
+NameError: name 'supabase' is not defined
+2026-02-21 12:56:28,920 - asyncio - ERROR - Task exception was never retrieved
+future: <Task finished name='Task-3' coro=<gmail_status_background_checker() done, defined at S:\3D Objects\Outrelix\backend\api\main_api.py:1264> exception=NameError("name 'supabase' is not defined")>
+Traceback (most recent call last):
+  File "S:\3D Objects\Outrelix\backend\api\main_api.py", line 1266, in gmail_status_background_checker
+    users = supabase.table('users').select('id, gmail_token').execute().data
+NameError: name 'supabase' is not defined
+2026-02-21 13:22:07,461 - asyncio - ERROR - Task exception was never retrieved
+future: <Task finished name='Task-3' coro=<gmail_status_background_checker() done, defined at S:\3D Objects\Outrelix\backend\api\main_api.py:1264> exception=NameError("name 'supabase' is not defined")>
+Traceback (most recent call last):
+  File "S:\3D Objects\Outrelix\backend\api\main_api.py", line 1266, in gmail_status_background_checker
+    users = supabase.table('users').select('id, gmail_token').execute().data
+NameError: name 'supabase' is not defined

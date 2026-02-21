@@ -1,4 +1,4 @@
-"""Google Sheets integration utilities for the Outrelix Lead Engine."""
+﻿"""Google Sheets integration utilities for the Outrelix Lead Engine."""
 
 import json
 import logging

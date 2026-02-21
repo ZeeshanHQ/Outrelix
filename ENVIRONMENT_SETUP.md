@@ -66,7 +66,11 @@ The analyzer feature uses Supabase Edge Functions. To deploy:
 1. Install Supabase CLI: `npm install -g supabase`
 2. Login: `supabase login`
 3. Link project: `supabase link --project-ref bfoggljxtwoloxthtocy`
-4. Deploy function: `supabase functions deploy fetch_page`
+4. Deploy functions: 
+   - `supabase functions deploy fetch_page`
+   - `supabase functions deploy ai_complete`
+5. Configure Secrets:
+   - `supabase secrets set OPENROUTER_API_KEY=your_key_here`
 
 ## Database Migrations
 

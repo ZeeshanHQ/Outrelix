@@ -1,8 +1,11 @@
+'use client';
 import React, { useState, useRef, useEffect } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import Link from 'next/link';
+import { useRouter, usePathname } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { GlobeAltIcon, SunIcon, MoonIcon, UserCircleIcon } from '@heroicons/react/24/outline';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useSession, signOut } from 'next-auth/react';
 
 const LANGUAGES = [
   { code: 'en', label: 'English', flag: '/flags/us.png', fallback: '🇺🇸' },
@@ -12,19 +15,22 @@ const LANGUAGES = [
 
 const Navbar = () => {
   const { t, i18n } = useTranslation();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const [dark, setDark] = useState(() => document.documentElement.classList.contains('dark'));
+  const router = useRouter();
+  const pathname = usePathname();
+  const { data: session } = useSession();
+  const [dark, setDark] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const profileDropdownRef = useRef(null);
-  const [user, setUser] = useState(() => {
-    const savedUser = localStorage.getItem('user');
-    return savedUser ? JSON.parse(savedUser) : null;
-  });
   const [showNavbar, setShowNavbar] = useState(true);
-  const lastScrollY = useRef(window.scrollY);
+  const lastScrollY = useRef(0);
+
+  useEffect(() => {
+    setDark(document.documentElement.classList.contains('dark'));
+    lastScrollY.current = window.scrollY;
+  }, []);
 
   const currentLang = LANGUAGES.find(l => l.code === i18n.language) || LANGUAGES[0];
 
@@ -38,7 +44,7 @@ const Navbar = () => {
     '/campaigns',
     '/analytics',
     '/settings',
-  ].some((route) => location.pathname.startsWith(route));
+  ].some((route) => pathname?.startsWith(route));
 
   const toggleDark = () => {
     setDark((prev) => {
@@ -52,11 +58,8 @@ const Navbar = () => {
     });
   };
 
-  const handleSignOut = () => {
-    localStorage.removeItem('isAuthenticated');
-    localStorage.removeItem('user');
-    setUser(null);
-    navigate('/');
+  const handleSignOut = async () => {
+    await signOut({ callbackUrl: '/' });
   };
 
   // Close dropdowns on outside click
@@ -75,6 +78,7 @@ const Navbar = () => {
 
   useEffect(() => {
     const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
       if (window.scrollY < 40) {
         setShowNavbar(true);
         lastScrollY.current = window.scrollY;
@@ -91,38 +95,23 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  useEffect(() => {
-    const handleUserUpdate = () => {
-      const savedUser = localStorage.getItem('user');
-      setUser(savedUser ? JSON.parse(savedUser) : null);
-    };
-    window.addEventListener('user-updated', handleUserUpdate);
-    window.addEventListener('storage', handleUserUpdate);
-    handleUserUpdate();
-    return () => {
-      window.removeEventListener('user-updated', handleUserUpdate);
-      window.removeEventListener('storage', handleUserUpdate);
-    };
-  }, []);
+  const navClassName = `fixed w-full z-[100] transition-all duration-500 ${showNavbar ? 'translate-y-0' : '-translate-y-full'
+    } ${scrolled
+      ? 'bg-black/60 backdrop-blur-md border-b border-white/5 py-3'
+      : 'bg-transparent py-5'
+    }`;
 
   return (
-    <nav
-      className={`fixed w-full z-[100] transition-all duration-500 ${showNavbar ? 'translate-y-0' : '-translate-y-full'
-        } ${window.scrollY > 20
-          ? 'bg-black/60 backdrop-blur-md border-b border-white/5 py-3'
-          : 'bg-transparent py-5'
-        }`}
-    >
+    <nav className={navClassName}>
       <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <button
             onClick={() => {
-              // Smart navigation: go to dashboard if on dashboard routes, otherwise go to landing
               if (isDashboardRoute) {
-                navigate('/dashboard');
+                router.push('/dashboard');
               } else {
-                navigate('/');
+                router.push('/');
               }
             }}
             className="flex items-center h-full mr-6 pl-2 focus:outline-none"
@@ -145,14 +134,14 @@ const Navbar = () => {
           <div className="hidden md:flex items-center space-x-8 flex-1 justify-center">
             {isDashboardRoute ? (
               [
-                { to: '/dashboard', label: 'Dashboard' },
-                { to: '/campaigns', label: 'Campaigns' },
-                { to: '/analytics', label: 'Analytics' },
-                { to: '/settings', label: 'Settings' },
-              ].map((nav, idx) => (
+                { href: '/dashboard', label: 'Dashboard' },
+                { href: '/campaigns', label: 'Campaigns' },
+                { href: '/analytics', label: 'Analytics' },
+                { href: '/settings', label: 'Settings' },
+              ].map((nav) => (
                 <Link
-                  key={nav.to}
-                  to={nav.to}
+                  key={nav.href}
+                  href={nav.href}
                   className="relative px-4 py-2 rounded-full font-light text-sm tracking-wide font-poppins text-gray-900 dark:text-white transition-all duration-300 group hover:text-primary-600 dark:hover:text-primary-400 focus:outline-none"
                   style={{ textShadow: '0 1px 4px rgba(0,0,0,0.08)' }}
                 >
@@ -163,21 +152,18 @@ const Navbar = () => {
               ))
             ) : (
               [
-                { to: '/#features', label: 'Features', sectionId: 'features' },
-                { to: '/pricing-page', label: 'Pricing' },
-                { to: '/faq', label: 'FAQ' },
-                { to: '/contact', label: 'Contact' },
-              ].map((nav, idx) => (
+                { href: '/#features', label: 'Features', sectionId: 'features' },
+                { href: '/pricing-page', label: 'Pricing' },
+                { href: '/faq', label: 'FAQ' },
+                { href: '/contact', label: 'Contact' },
+              ].map((nav) => (
                 nav.sectionId ? (
                   <button
-                    key={nav.to}
+                    key={nav.href}
                     onClick={() => {
                       const element = document.getElementById(nav.sectionId);
                       if (element) {
-                        element.scrollIntoView({
-                          behavior: 'smooth',
-                          block: 'start'
-                        });
+                        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
                       }
                     }}
                     className="relative px-4 py-2 rounded-full font-light text-sm tracking-wide font-poppins text-gray-900 dark:text-white transition-all duration-300 group hover:text-primary-600 dark:hover:text-primary-400 focus:outline-none"
@@ -189,8 +175,8 @@ const Navbar = () => {
                   </button>
                 ) : (
                   <Link
-                    key={nav.to}
-                    to={nav.to}
+                    key={nav.href}
+                    href={nav.href}
                     className="relative px-4 py-2 rounded-full font-light text-sm tracking-wide font-poppins text-gray-900 dark:text-white transition-all duration-300 group hover:text-primary-600 dark:hover:text-primary-400 focus:outline-none"
                     style={{ textShadow: '0 1px 4px rgba(0,0,0,0.08)' }}
                   >
@@ -218,7 +204,7 @@ const Navbar = () => {
               )}
             </button>
 
-            {/* Enhanced Language Selector */}
+            {/* Language Selector */}
             <div className="relative" ref={dropdownRef}>
               <button
                 className="flex items-center focus:outline-none px-3 py-2 rounded-lg hover:bg-gray-100/30 dark:hover:bg-gray-700/30 transition-colors duration-200 border border-gray-200/50 dark:border-gray-600/50"
@@ -267,23 +253,23 @@ const Navbar = () => {
             </div>
 
             {/* User Profile */}
-            {user && (
+            {session?.user && (
               <div className="relative" ref={profileDropdownRef}>
                 <button
                   onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
                   className="flex items-center space-x-2 focus:outline-none px-2 py-1 rounded-lg hover:bg-gray-100/30 dark:hover:bg-gray-700/30 transition-colors duration-200"
                 >
-                  {user.photoURL ? (
+                  {session.user.image ? (
                     <img
-                      src={user.photoURL}
-                      alt={user.name || user.displayName}
+                      src={session.user.image}
+                      alt={session.user.name}
                       className="w-8 h-8 rounded-full object-cover ring-2 ring-primary-500"
                     />
                   ) : (
                     <UserCircleIcon className="w-8 h-8 text-gray-600 dark:text-gray-300" />
                   )}
                   <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
-                    {user?.name || user?.displayName || (user?.email ? user.email.split('@')[0] : 'User')}
+                    {session.user.name || (session.user.email ? session.user.email.split('@')[0] : 'User')}
                   </span>
                 </button>
                 <AnimatePresence>
@@ -296,14 +282,14 @@ const Navbar = () => {
                     >
                       <div className="py-1">
                         <Link
-                          to="/dashboard"
+                          href="/dashboard"
                           className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
                           onClick={() => setProfileDropdownOpen(false)}
                         >
                           {t('nav_dashboard')}
                         </Link>
                         <Link
-                          to="/settings"
+                          href="/settings"
                           className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
                           onClick={() => setProfileDropdownOpen(false)}
                         >
@@ -328,4 +314,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar; 
+export default Navbar;

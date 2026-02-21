@@ -6,7 +6,7 @@ from typing import Any, Dict, Optional
 import httpx
 from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
 
-from src.utils.rate_limiter import get_rate_limiter
+from utils.rate_limiter import get_rate_limiter
 
 logger = logging.getLogger(__name__)
 

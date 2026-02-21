@@ -6,27 +6,27 @@ from typing import Dict, List, Tuple
 
 import pandas as pd
 
-from src.apis.clearbit import ClearbitClient
-from src.apis.contact_extractor import ContactExtractor
-from src.apis.email_validator_arjos import ArjosEmailValidator
-from src.apis.email_validator_rapid import RapidEmailValidator
-from src.apis.google_maps_extractor import GoogleMapsExtractor
-from src.apis.google_maps_direct import GoogleMapsDirectExtractor
-from src.apis.contact_extractor_direct import ContactExtractorDirect
-from src.apis.hunter import HunterClient
-from src.apis.yelp import YelpClient
-from src.apis.yellowpages import YellowPagesClient
-from src.apis.linkedin_data import LinkedInDataApi
-from src.apis.overpass import OverpassClient
-from src.core.ai_enrich import enrich_records
-from src.core.merge import merge_sources
-from src.utils.selection import choose_primary_email
-from src.utils.writers import write_csv, write_excel
-from src.engine.email_validator import validate_batch as local_validate_batch
-from src.utils.sheets import create_sheets_writer
-from src.utils.analytics import create_analytics_engine
-from src.utils.enrichment_cache import get_enrichment_cache, set_enrichment_cache
-from src.storage.db import dedupe_conn
+from extractors.clearbit import ClearbitClient
+from extractors.contact_extractor import ContactExtractor
+from extractors.email_validator_arjos import ArjosEmailValidator
+from extractors.email_validator_rapid import RapidEmailValidator
+from extractors.google_maps_extractor import GoogleMapsExtractor
+from extractors.google_maps_direct import GoogleMapsDirectExtractor
+from extractors.contact_extractor_direct import ContactExtractorDirect
+from extractors.hunter import HunterClient
+from extractors.yelp import YelpClient
+from extractors.yellowpages import YellowPagesClient
+from extractors.linkedin_data import LinkedInDataApi
+from extractors.overpass import OverpassClient
+from core.ai_enrich import enrich_records
+from core.merge import merge_sources
+from utils.selection import choose_primary_email
+from utils.writers import write_csv, write_excel
+from engine.email_validator import validate_batch as local_validate_batch
+from utils.sheets import create_sheets_writer
+from utils.analytics import create_analytics_engine
+from utils.enrichment_cache import get_enrichment_cache, set_enrichment_cache
+from storage.db import dedupe_conn
 
 logger = logging.getLogger(__name__)
 
@@ -402,7 +402,7 @@ class Pipeline:
         # Add rate limit statistics
         rate_limit_stats = {}
         if not self.config.dry_run:
-            from src.utils.rate_limiter import get_rate_limiter
+            from utils.rate_limiter import get_rate_limiter
             limiter = get_rate_limiter()
             providers = ["google_maps", "yelp", "contact_extractor", "email_validator", "yellowpages"]
             for provider in providers:

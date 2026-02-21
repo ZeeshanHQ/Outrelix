@@ -2,8 +2,8 @@ import asyncio
 import logging
 from typing import Dict, List, Optional
 
-from src.utils.http_client import HttpClient
-from src.utils.mocks import generate_mock_companies
+from utils.http_client import HttpClient
+from utils.mocks import generate_mock_companies
 
 logger = logging.getLogger(__name__)
 

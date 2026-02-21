@@ -3,7 +3,7 @@ from typing import Dict, Optional
 
 import httpx
 from tenacity import retry, stop_after_attempt, wait_exponential
-from src.utils.hashing import hash_email
+from utils.hashing import hash_email
 
 logger = logging.getLogger(__name__)
 

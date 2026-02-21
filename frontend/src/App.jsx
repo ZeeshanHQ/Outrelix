@@ -29,6 +29,8 @@ import BrandGeneratorPage from './pages/BrandGeneratorPage';
 import SEOOptimizerPage from './pages/SEOOptimizerPage';
 import { GmailStatusProvider } from './utils/GmailStatusContext';
 import { auth } from './supabase';
+import { SidebarProvider } from './contexts/SidebarContext';
+import DashboardLayout from './components/DashboardLayout';
 
 const RequireAuth = ({ children }) => {
   const [isReady, setIsReady] = useState(false);
@@ -88,6 +90,16 @@ const RequireAuth = ({ children }) => {
   return isAuthed ? children : <Navigate to="/" replace />;
 };
 
+const PublicLayout = ({ children }) => (
+  <>
+    <Navbar />
+    <main className="container mx-auto px-4 py-8 pt-20">
+      {children}
+    </main>
+    <Footer />
+  </>
+);
+
 const App = () => {
   useEffect(() => {
     // Global listener to keep localStorage in sync with Supabase
@@ -116,138 +128,61 @@ const App = () => {
       subscription?.unsubscribe();
     };
   }, []);
+
   return (
     <I18nextProvider i18n={i18n}>
       <GmailStatusProvider>
-        <Router>
-          <div className="min-h-screen flex flex-col bg-white dark:bg-gray-900 transition-colors duration-300">
-            <style>
-              {`
-                nav[data-navbar-id="main-navbar"]:not(:first-of-type) {
-                  display: none !important;
-                }
-                nav[data-navbar-id="main-navbar"] {
-                  height: auto !important;
-                  padding: 0.5rem 0;
-                }
-                nav[data-navbar-id="main-navbar"] img {
-                  width: 5rem !important;
-                  height: 5rem !important;
-                  margin: 0.5rem 0;
-                }
-                nav[data-navbar-id="main-navbar"] .logo-text {
-                  font-size: 2.5rem !important;
-                  font-family: 'Pacifico', cursive;
-                  background: linear-gradient(135deg, #22c55e, #3b82f6, #a855f7);
-                  -webkit-background-clip: text;
-                  -webkit-text-fill-color: transparent;
-                  background-clip: text;
-                }
-              `}
-            </style>
-            <Navbar />
-            <main className="container mx-auto px-4 py-8 pt-20">
+        <SidebarProvider>
+          <Router>
+            <div className="min-h-screen flex flex-col bg-white dark:bg-gray-900 transition-colors duration-300">
+              <style>
+                {`
+                  nav[data-navbar-id="main-navbar"]:not(:first-of-type) { display: none !important; }
+                  nav[data-navbar-id="main-navbar"] { height: auto !important; padding: 0.5rem 0; }
+                  nav[data-navbar-id="main-navbar"] img { width: 5rem !important; height: 5rem !important; margin: 0.5rem 0; }
+                  nav[data-navbar-id="main-navbar"] .logo-text { font-size: 2.5rem !important; font-family: 'Pacifico', cursive; background: linear-gradient(135deg, #22c55e, #3b82f6, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+                `}
+              </style>
+
               <Routes>
-                <Route path="/" element={<Landing />} />
-                <Route
-                  path="/dashboard"
-                  element={
-                    <RequireAuth>
-                      <Dashboard />
-                    </RequireAuth>
-                  }
-                />
-                <Route
-                  path="/analyze"
-                  element={
-                    <RequireAuth>
-                      <AnalyzePage />
-                    </RequireAuth>
-                  }
-                />
-                <Route
-                  path="/writer"
-                  element={
-                    <RequireAuth>
-                      <WriterPage />
-                    </RequireAuth>
-                  }
-                />
-                <Route
-                  path="/brand-generator"
-                  element={
-                    <RequireAuth>
-                      <BrandGeneratorPage />
-                    </RequireAuth>
-                  }
-                />
-                <Route
-                  path="/seo-optimizer"
-                  element={
-                    <RequireAuth>
-                      <SEOOptimizerPage />
-                    </RequireAuth>
-                  }
-                />
-                <Route
-                  path="/campaigns"
-                  element={
-                    <RequireAuth>
-                      <Campaigns />
-                    </RequireAuth>
-                  }
-                />
-                <Route
-                  path="/campaigns/:jobId"
-                  element={
-                    <RequireAuth>
-                      <Campaigns />
-                    </RequireAuth>
-                  }
-                />
-                <Route
-                  path="/leads"
-                  element={
-                    <RequireAuth>
-                      <Leads />
-                    </RequireAuth>
-                  }
-                />
-                <Route
-                  path="/analytics"
-                  element={
-                    <RequireAuth>
-                      <Analytics />
-                    </RequireAuth>
-                  }
-                />
-                <Route
-                  path="/settings"
-                  element={
-                    <RequireAuth>
-                      <Settings />
-                    </RequireAuth>
-                  }
-                />
-                <Route path="/about" element={<About />} />
-                <Route path="/blog" element={<Blog />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/faq" element={<FAQ />} />
-                <Route path="/privacy" element={<PrivacyPolicy />} />
-                <Route path="/terms" element={<TermsOfService />} />
-                <Route path="/cookies" element={<CookiePolicy />} />
-                <Route path="/data-deletion" element={<DataDeletion />} />
-                <Route path="/pricing-payment" element={<PricingPayment />} />
-                <Route path="/pricing-page" element={<PricingPage />} />
+                {/* Public Routes */}
+                <Route path="/" element={<PublicLayout><Landing /></PublicLayout>} />
+                <Route path="/about" element={<PublicLayout><About /></PublicLayout>} />
+                <Route path="/blog" element={<PublicLayout><Blog /></PublicLayout>} />
+                <Route path="/contact" element={<PublicLayout><Contact /></PublicLayout>} />
+                <Route path="/faq" element={<PublicLayout><FAQ /></PublicLayout>} />
+                <Route path="/privacy" element={<PublicLayout><PrivacyPolicy /></PublicLayout>} />
+                <Route path="/terms" element={<PublicLayout><TermsOfService /></PublicLayout>} />
+                <Route path="/cookies" element={<PublicLayout><CookiePolicy /></PublicLayout>} />
+                <Route path="/data-deletion" element={<PublicLayout><DataDeletion /></PublicLayout>} />
+                <Route path="/pricing-payment" element={<PublicLayout><PricingPayment /></PublicLayout>} />
+
+                {/* Dashboard Routes (Wrapped in DashboardLayout) */}
+                <Route element={<RequireAuth><DashboardLayout /></RequireAuth>}>
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/analyze" element={<AnalyzePage />} />
+                  <Route path="/writer" element={<WriterPage />} />
+                  <Route path="/brand-generator" element={<BrandGeneratorPage />} />
+                  <Route path="/seo-optimizer" element={<SEOOptimizerPage />} />
+                  <Route path="/campaigns" element={<Campaigns />} />
+                  <Route path="/campaigns/:jobId" element={<Campaigns />} />
+                  <Route path="/leads" element={<Leads />} />
+                  <Route path="/analytics" element={<Analytics />} />
+                  <Route path="/settings" element={<Settings />} />
+                  <Route path="/billing" element={<PricingPage />} />
+                  <Route path="/pricing-page" element={<PricingPage />} />
+                </Route>
+
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
-            </main>
-            <ToastContainer />
-          </div>
-        </Router>
+
+              <ToastContainer />
+            </div>
+          </Router>
+        </SidebarProvider>
       </GmailStatusProvider>
     </I18nextProvider>
   );
 };
 
-export default App; 
+export default App;

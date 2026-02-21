@@ -6,9 +6,22 @@ import BACKEND_URL from '../config/backend';
 axios.defaults.withCredentials = false;
 axios.defaults.baseURL = BACKEND_URL;
 
-// Add request interceptor for debugging
+// Add request interceptor for debugging and token injection
 axios.interceptors.request.use(
   (config) => {
+    // Try to get token from localStorage (Supabase standard key)
+    const supabaseKey = Object.keys(localStorage).find(key => key.startsWith('sb-') && key.endsWith('-auth-token'));
+    if (supabaseKey) {
+      try {
+        const authData = JSON.parse(localStorage.getItem(supabaseKey));
+        if (authData && authData.access_token) {
+          config.headers.Authorization = `Bearer ${authData.access_token}`;
+        }
+      } catch (e) {
+        console.error('[AXIOS] Failed to parse auth token:', e);
+      }
+    }
+
     console.log(`[AXIOS] ${config.method?.toUpperCase()} ${config.url}`);
     return config;
   },

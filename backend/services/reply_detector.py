@@ -3,7 +3,7 @@ from typing import Dict, List, Set, Tuple
 import requests
 from textblob import TextBlob
 
-from config import (
+from api.config import (
     POSITIVE_KEYWORDS, NEGATIVE_KEYWORDS,
     PUSHOVER_USER_KEY, PUSHOVER_API_TOKEN
 )

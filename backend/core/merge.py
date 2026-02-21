@@ -1,9 +1,9 @@
 import logging
 from typing import Dict, List, Tuple
 
-from src.utils.fuzzy import dedupe_companies
-from src.utils.hashing import generate_company_id
-from src.utils.phone import normalize_phone
+from utils.fuzzy import dedupe_companies
+from utils.hashing import generate_company_id
+from utils.phone import normalize_phone
 
 logger = logging.getLogger(__name__)
 

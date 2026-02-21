@@ -12,8 +12,8 @@ openpyxl
 requests==2.31.0
 httpx[socks]
 python-dotenv==1.0.0
-python-multipart==0.0.6
-pydantic==1.8.2
+python-multipart>=0.0.7
+pydantic>=1.10.0
 
 # Scraper Core
 beautifulsoup4
@@ -31,6 +31,12 @@ transformers
 torch
 sentence-transformers
 scikit-learn
+openai
+instagrapi
+textblob
+
+# Database & Utils
+postgrest
 
 # Google Services
 gspread

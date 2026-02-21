@@ -18,12 +18,23 @@ export const aiApi = {
       },
       body: JSON.stringify({
         messages,
-        model: 'meta-llama/llama-3.3-8b-instruct:free',
+        model: opts.model || 'meta-llama/llama-3.1-8b-instruct:free',
         ...opts,
       }),
     });
-    const json = await res.json();
-    if (!res.ok) throw new Error(json?.error || 'AI request failed');
+    let json;
+    try {
+      json = await res.json();
+    } catch (e) {
+      // Handle non-JSON responses (404/500 HTML)
+      if (res.status === 404) throw new Error(`AI Function Not Found (404). Please ensure 'ai_complete' is deployed.`);
+      throw new Error(`AI Request failed with status ${res.status}: ${res.statusText}`);
+    }
+
+    if (!res.ok) {
+      const errorMsg = typeof json?.error === 'object' ? JSON.stringify(json.error) : (json?.error || 'AI request failed');
+      throw new Error(errorMsg);
+    }
     return json.content || '';
   }
 };
@@ -31,7 +42,7 @@ export const aiApi = {
 // Analyzer helper functions
 export const analyzerApi = {
   // Fetch page content via Edge Function
-  async fetchPageContent(url) {
+  async fetchPageContent(url, mode = 'standard') {
     try {
       const response = await fetch(`${supabaseUrl}/functions/v1/fetch_page`, {
         method: 'POST',
@@ -39,11 +50,19 @@ export const analyzerApi = {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${supabaseAnonKey}`,
         },
-        body: JSON.stringify({ url }),
+        body: JSON.stringify({ url, mode }),
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to fetch page: ${response.statusText}`);
+        let errJson = {};
+        try {
+          errJson = await response.json();
+        } catch (e) {
+          // Handle non-JSON (HTML 500)
+          throw new Error(`Edge Function error ${response.status}: ${response.statusText || 'Internal Server Error'}`);
+        }
+        const msg = errJson.message || errJson.error || response.statusText;
+        throw new Error(`Failed to fetch page: ${msg}`);
       }
 
       return await response.json();

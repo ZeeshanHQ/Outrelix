@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-toastify';
 import supabase, { aiApi } from '../lib/supabaseClient';
-import { Palette, Sparkles, Copy, Globe, FileText, RefreshCw } from 'lucide-react';
+import { Palette, Sparkles, Copy, Globe, FileText, RefreshCw, Eye, Trash2 } from 'lucide-react';
 
 const BrandGenerator = () => {
   const [inputMode, setInputMode] = useState('brand'); // 'brand' | 'business'
@@ -87,7 +87,8 @@ const BrandGenerator = () => {
         const bt = businessType || 'AI-powered email marketing platform';
         const messages = [
           { role: 'system', content: 'You are a brand strategist and web copywriter.' },
-          { role: 'user', content: `Create a brand identity and hero section HTML for brand "${bn}" in the ${bt} space.
+          {
+            role: 'user', content: `Create a brand identity and hero section HTML for brand "${bn}" in the ${bt} space.
 Return strict JSON with: brandName, tagline, colorPalette (array of 3 hex), tone, heroSection (HTML string), features (array of 3-5 strings).` }
         ];
         const content = await aiApi.complete(messages, { temperature: 0.7, max_tokens: 700 });
@@ -117,7 +118,7 @@ Return strict JSON with: brandName, tagline, colorPalette (array of 3 hex), tone
       if (user) {
         const { error } = await supabase
           .from('brand_generations')
-          .insert([{ 
+          .insert([{
             user_id: user.id,
             brand_name: generated.brandName,
             business_type: businessType || null,
@@ -152,179 +153,311 @@ Return strict JSON with: brandName, tagline, colorPalette (array of 3 hex), tone
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto p-6">
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8">
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-3">
-            <div className="p-3 bg-gradient-to-br from-purple-500 to-blue-500 rounded-xl">
-              <Palette className="w-8 h-8 text-white" />
-            </div>
+    <div className="w-full max-w-5xl mx-auto space-y-12">
+      {/* Search Section */}
+      <div className="bg-white rounded-[24px] border border-slate-100 shadow-sm p-10">
+        <div className="max-w-2xl">
+          <div className="flex items-center justify-between mb-8">
             <div>
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Brand Generator</h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400">AI-powered brand identity & landing content</p>
+              <h2 className="text-2xl font-black text-slate-800 tracking-tight mb-2">
+                Brand Identity Engine
+              </h2>
+              <p className="text-slate-500 text-sm leading-relaxed">
+                Forge a legendary brand in seconds. Our AI crafts high-converting identities, color palettes, and landing page blueprints.
+              </p>
+            </div>
+            <div className="text-right">
+              <div className="text-xl font-black text-slate-800">
+                {dailyCount}/{dailyLimit}
+              </div>
+              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Daily Credits</div>
             </div>
           </div>
-          <div className="text-right">
-            <div className="text-2xl font-bold text-gray-900 dark:text-white">{dailyCount}/{dailyLimit}</div>
-            <div className="text-sm text-gray-500 dark:text-gray-400">generations today</div>
-          </div>
-        </div>
 
-        {/* Segmented control */}
-        <div className="mb-6 flex gap-3">
-          <button
-            onClick={() => setInputMode('brand')}
-            className={`px-4 py-2 rounded-lg font-medium transition-all ${inputMode==='brand' ? 'bg-purple-600 text-white shadow-lg' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}`}
-          >
-            Brand Name
-          </button>
-          <button
-            onClick={() => setInputMode('business')}
-            className={`px-4 py-2 rounded-lg font-medium transition-all ${inputMode==='business' ? 'bg-purple-600 text-white shadow-lg' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}`}
-          >
-            Business Type
-          </button>
-        </div>
-
-        {/* Inputs */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Brand Name</label>
-            <input
-              value={brandName}
-              onChange={(e)=>setBrandName(e.target.value)}
-              placeholder="Outrelix"
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div className="space-y-2">
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Brand Name</label>
+              <input
+                type="text"
+                value={brandName}
+                onChange={(e) => setBrandName(e.target.value)}
+                placeholder="e.g. Outrelix"
+                className="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all outline-none text-slate-700 placeholder:text-slate-400 font-medium"
+                disabled={isGenerating}
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Business Niche</label>
+              <input
+                type="text"
+                value={businessType}
+                onChange={(e) => setBusinessType(e.target.value)}
+                placeholder="e.g. AI SaaS, Fitness"
+                className="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all outline-none text-slate-700 placeholder:text-slate-400 font-medium"
+                disabled={isGenerating}
+              />
+            </div>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Business Type</label>
-            <input
-              value={businessType}
-              onChange={(e)=>setBusinessType(e.target.value)}
-              placeholder="AI-powered email marketing platform"
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-            />
-          </div>
-        </div>
 
-        {/* Generate */}
-        <div className="mb-6">
           <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            whileHover={{ scale: 1.01, y: -2 }}
+            whileTap={{ scale: 0.99 }}
             onClick={handleGenerate}
             disabled={isGenerating || dailyCount >= dailyLimit}
-            className="px-8 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:from-purple-700 hover:to-blue-700 transition-all shadow-lg flex items-center gap-2"
+            className="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold hover:bg-slate-800 transition-all disabled:opacity-30 flex items-center justify-center gap-3"
           >
-            {isGenerating ? 'Generating...' : 'Generate Brand'}
-            {!isGenerating && <Sparkles className="w-4 h-4" />}
+            {isGenerating ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                <span>Forging Identity...</span>
+              </>
+            ) : (
+              <>
+                <Palette className="w-4 h-4 text-purple-400" />
+                <span>Generate Brand Blueprint</span>
+              </>
+            )}
           </motion.button>
         </div>
 
-        {/* Progress */}
+        {/* Neural Progress */}
         <AnimatePresence>
           {isGenerating && progress && (
-            <motion.div initial={{opacity:0,y:-10}} animate={{opacity:1,y:0}} exit={{opacity:0}} className="mb-6 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
-              <div className="flex items-center gap-3">
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-purple-600"></div>
-                <span className="text-purple-700 dark:text-purple-300">{progress}</span>
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className="mt-8 flex items-center gap-4 text-xs font-bold text-purple-600 uppercase tracking-widest"
+            >
+              <div className="flex gap-1">
+                {[...Array(3)].map((_, i) => (
+                  <motion.div
+                    key={i}
+                    animate={{ scale: [1, 1.5, 1], opacity: [0.5, 1, 0.5] }}
+                    transition={{ repeat: Infinity, duration: 1, delay: i * 0.2 }}
+                    className="w-1 h-1 bg-purple-500 rounded-full"
+                  />
+                ))}
               </div>
+              {progress}
             </motion.div>
           )}
         </AnimatePresence>
+      </div>
 
-        {/* Results */}
-        <AnimatePresence>
-          {results && (
-            <motion.div initial={{opacity:0,y:20}} animate={{opacity:1,y:0}} exit={{opacity:0}} className="space-y-6">
-              {/* Brand Identity */}
-              <div className="p-6 rounded-lg bg-gray-50 dark:bg-gray-700">
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Brand Identity</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">Brand Name</div>
-                    <div className="text-lg font-semibold text-gray-900 dark:text-white">{results.brandName}</div>
-                  </div>
-                  <div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">Tagline</div>
-                    <div className="text-lg font-semibold text-gray-900 dark:text-white">{results.tagline}</div>
-                  </div>
-                  <div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">Tone</div>
-                    <div className="text-lg font-semibold text-gray-900 dark:text-white">{results.tone}</div>
-                  </div>
-                  <div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">Color Palette</div>
-                    <div className="flex gap-2">
-                      {results.colorPalette.map((c, i) => (
-                        <div key={i} className="w-10 h-10 rounded-lg border" style={{ backgroundColor: c }} title={c}></div>
-                      ))}
-                    </div>
-                  </div>
+      {/* Results Document: Brand Blueprint */}
+      <AnimatePresence>
+        {results && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white rounded-[32px] border border-slate-100 shadow-2xl shadow-slate-200/40 overflow-hidden"
+          >
+            {/* Header */}
+            <div className="p-10 border-b border-slate-50 flex items-center justify-between bg-slate-50/50">
+              <div className="flex items-center gap-6">
+                <div
+                  className="w-16 h-16 rounded-3xl flex items-center justify-center text-2xl font-black text-white shadow-xl"
+                  style={{ backgroundColor: results.colorPalette?.[0] || '#000' }}
+                >
+                  {results.brandName?.[0]}
+                </div>
+                <div>
+                  <span className="text-[10px] font-bold text-purple-600 uppercase tracking-[0.2em] mb-1 block">
+                    Strategic Blueprint 2026
+                  </span>
+                  <h3 className="text-3xl font-black text-slate-800 uppercase tracking-tight">
+                    {results.brandName}
+                  </h3>
                 </div>
               </div>
-
-              {/* Landing Preview */}
-              <div className="p-6 rounded-lg bg-blue-50 dark:bg-blue-900/20">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Landing Page Preview</h3>
-                  <button onClick={()=>copyToClipboard(results.heroSection)} className="px-4 py-2 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors flex items-center gap-2">
-                    <Copy className="w-4 h-4" /> Copy HTML
-                  </button>
-                </div>
-                <div className="rounded-lg border bg-white dark:bg-gray-800 p-6" dangerouslySetInnerHTML={{ __html: results.heroSection }} />
-              </div>
-
-              {/* Features */}
-              <div className="p-6 rounded-lg bg-purple-50 dark:bg-purple-900/20">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Feature Highlights</h3>
-                  <button onClick={()=>copyToClipboard(results.features.join('\n'))} className="px-4 py-2 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-lg hover:bg-purple-200 dark:hover:bg-purple-900/50 transition-colors flex items-center gap-2">
-                    <Copy className="w-4 h-4" /> Copy All
-                  </button>
-                </div>
-                <ul className="list-disc pl-5 text-gray-800 dark:text-gray-200">
-                  {results.features.map((f, i) => (
-                    <li key={i}>{f}</li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Generate Again */}
-              <div className="flex justify-end">
-                <button onClick={handleGenerate} className="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 transition-colors flex items-center gap-2">
-                  <RefreshCw className="w-4 h-4" /> Generate Again
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setResults(null)}
+                  className="px-5 py-2.5 text-slate-400 font-bold text-xs hover:text-red-500 transition-all"
+                >
+                  Discard
                 </button>
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+            </div>
 
-        {/* Recent History */}
-        {history.length > 0 && (
-          <div className="mt-8">
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Recent Generations</h3>
-            <div className="space-y-3">
-              {history.map((h) => (
-                <div key={h.id} className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="font-medium text-gray-900 dark:text-white flex items-center gap-2">
-                        <Palette className="w-4 h-4" /> {h.brand_name || 'Brand'}
+            <div className="p-10 grid grid-cols-1 lg:grid-cols-12 gap-12">
+              {/* Left Column: Brand Pillars */}
+              <div className="lg:col-span-8 space-y-12">
+                {/* Tagline & Tone */}
+                <section className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                  <div>
+                    <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 bg-blue-500 rounded-full" />
+                      Primary Tagline
+                    </h4>
+                    <p className="text-2xl font-black text-slate-800 leading-tight">"{results.tagline}"</p>
+                  </div>
+                  <div>
+                    <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 bg-purple-500 rounded-full" />
+                      Voice & Tone
+                    </h4>
+                    <span className="px-4 py-1.5 bg-slate-50 border border-slate-100 rounded-full text-xs font-black text-purple-600 uppercase tracking-widest">
+                      {results.tone}
+                    </span>
+                  </div>
+                </section>
+
+                {/* Features */}
+                <section>
+                  <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-8 flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full" />
+                    Value Propositions
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {results.features?.map((feature, i) => (
+                      <div key={i} className="p-6 bg-slate-50/50 border border-slate-100 rounded-3xl flex items-start gap-4">
+                        <div className="w-8 h-8 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-xs font-black text-slate-400 shadow-sm">
+                          0{i + 1}
+                        </div>
+                        <div className="text-sm font-bold text-slate-800 leading-relaxed">{feature}</div>
                       </div>
-                      <div className="text-sm text-gray-500 dark:text-gray-400">{h.business_type || '—'} • {new Date(h.created_at).toLocaleDateString()}</div>
+                    ))}
+                  </div>
+                </section>
+
+                {/* Landing Preview */}
+                <section>
+                  <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-8 flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
+                    Hero Blueprint
+                  </h4>
+                  <div className="bg-slate-900 rounded-[32px] overflow-hidden shadow-2xl relative group">
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent pointer-events-none" />
+                    <div className="p-2 bg-slate-800 flex items-center gap-1.5 px-6">
+                      <div className="w-2 h-2 rounded-full bg-red-400" />
+                      <div className="w-2 h-2 rounded-full bg-amber-400" />
+                      <div className="w-2 h-2 rounded-full bg-green-400" />
                     </div>
-                    <button onClick={()=>copyToClipboard(h.hero_html)} className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded text-sm hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors">
-                      Copy HTML
-                    </button>
+                    <div className="p-12 relative z-10 text-white" dangerouslySetInnerHTML={{ __html: results.heroSection }} />
+
+                    {/* Copy Overlay */}
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center backdrop-blur-sm">
+                      <button
+                        onClick={() => copyToClipboard(results.heroSection)}
+                        className="px-8 py-3 bg-white text-slate-900 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center gap-2 shadow-2xl"
+                      >
+                        <Copy className="w-4 h-4" />
+                        Copy HTML Draft
+                      </button>
+                    </div>
+                  </div>
+                </section>
+              </div>
+
+              {/* Right Column: Palette */}
+              <div className="lg:col-span-4 space-y-12">
+                <div>
+                  <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-6">Visual Palette</h4>
+                  <div className="space-y-3">
+                    {results.colorPalette?.map((c, i) => (
+                      <div key={i} className="p-4 bg-slate-50 border border-slate-100 rounded-2xl flex items-center justify-between group">
+                        <div className="flex items-center gap-4">
+                          <div className="w-10 h-10 rounded-xl shadow-lg border border-white/20" style={{ backgroundColor: c }} />
+                          <div>
+                            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Hex Code</div>
+                            <div className="font-mono text-xs font-bold text-slate-800 uppercase tracking-widest">{c}</div>
+                          </div>
+                        </div>
+                        <button onClick={() => copyToClipboard(c)} className="opacity-0 group-hover:opacity-100 transition-all p-2 hover:bg-white rounded-lg">
+                          <Copy className="w-3.5 h-3.5 text-slate-400" />
+                        </button>
+                      </div>
+                    ))}
                   </div>
                 </div>
-              ))}
+
+                <div className="p-8 bg-slate-900 rounded-[32px] text-white">
+                  <h4 className="text-[10px] font-bold text-blue-400 uppercase tracking-[0.2em] mb-6">Strategic Positioning</h4>
+                  <p className="text-xs font-medium text-slate-400 leading-relaxed">
+                    This brand has been engineered to occupy a {results.tone?.toLowerCase()} market segment,
+                    prioritizing cognitive trust and visual authority.
+                  </p>
+                  <div className="mt-8 pt-8 border-t border-white/5 grid grid-cols-2 gap-4">
+                    <div>
+                      <div className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1">Impact</div>
+                      <div className="text-xl font-black text-white">High</div>
+                    </div>
+                    <div>
+                      <div className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1">Market</div>
+                      <div className="text-xl font-black text-white">Elite</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
+          </motion.div>
         )}
-      </div>
+      </AnimatePresence>
+
+      {/* History Vault */}
+      {history.length > 0 && (
+        <div className="mt-24">
+          <div className="flex items-center justify-between mb-10">
+            <h2 className="text-2xl font-bold text-slate-800 tracking-tight">
+              Branding Vault
+            </h2>
+            <div className="h-px flex-1 bg-slate-100 mx-8" />
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {history.map((h) => (
+              <motion.div
+                key={h.id}
+                whileHover={{ y: -5 }}
+                className="bg-white rounded-3xl border border-slate-100 p-8 hover:shadow-2xl hover:shadow-slate-200/50 transition-all group"
+              >
+                <div className="mb-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div
+                      className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-black text-xs shadow-lg"
+                      style={{ backgroundColor: h.color_palette?.[0] || '#000' }}
+                    >
+                      {h.brand_name?.[0]}
+                    </div>
+                    <div>
+                      <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate">
+                        {h.business_type || 'Brand Asset'}
+                      </div>
+                      <h4 className="text-lg font-bold text-slate-800 line-clamp-1">
+                        {h.brand_name}
+                      </h4>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between pt-6 border-t border-slate-50">
+                  <div className="text-xs font-bold text-purple-600 uppercase tracking-widest">
+                    {new Date(h.created_at).toLocaleDateString()}
+                  </div>
+                  <button
+                    onClick={() => {
+                      setResults({
+                        brandName: h.brand_name,
+                        tagline: h.tagline,
+                        colorPalette: h.color_palette,
+                        tone: h.tone,
+                        heroSection: h.hero_html,
+                        features: h.features
+                      });
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="p-3 bg-slate-50 rounded-xl hover:bg-purple-600 hover:text-white transition-all text-slate-400"
+                  >
+                    <Eye className="w-5 h-5" />
+                  </button>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

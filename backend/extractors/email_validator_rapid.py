@@ -1,8 +1,8 @@
 import logging
 from typing import Dict
 
-from src.utils.hashing import hash_email
-from src.utils.http_client import HttpClient
+from utils.hashing import hash_email
+from utils.http_client import HttpClient
 
 logger = logging.getLogger(__name__)
 

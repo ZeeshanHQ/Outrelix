@@ -1,7 +1,10 @@
+'use client';
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, Link } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { signIn } from 'next-auth/react';
 import {
   RocketLaunchIcon,
   ChartBarIcon,
@@ -189,7 +192,7 @@ async function getCountryAndTimezone() {
   let timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   try {
     // Get browser locale for fallback - default to PK for Pakistan
-    const locale = navigator.language.split('-')[1] || 'PK';
+    const locale = typeof navigator !== 'undefined' ? (navigator.language.split('-')[1] || 'PK') : 'PK';
     const res = await fetch(`${BACKEND_URL}/api/geoip?locale=${locale}`);
     const data = await res.json();
     country = data.country;
@@ -202,9 +205,11 @@ async function getCountryAndTimezone() {
 
 // Add helpers for login call deduplication
 function isLoginCalled(email) {
+  if (typeof window === 'undefined') return false;
   return localStorage.getItem('loginCalled:' + email) === 'true';
 }
 function setLoginCalled(email) {
+  if (typeof window === 'undefined') return;
   localStorage.setItem('loginCalled:' + email, 'true');
 }
 
@@ -214,7 +219,7 @@ const SignupModal = ({ isOpen, onClose, onSignupSuccess, onEmailVerified, pendin
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+  const router = useRouter();
   const [verificationSent, setVerificationSent] = useState(false);
   const [emailNotVerified, setEmailNotVerified] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
@@ -229,15 +234,7 @@ const SignupModal = ({ isOpen, onClose, onSignupSuccess, onEmailVerified, pendin
   const handleGoogleSignIn = async () => {
     setLoading(true);
     try {
-      const { data, error } = await auth.signInWithGoogle();
-
-      if (error) {
-        throw error;
-      }
-
-      // The user will be redirected to dashboard after successful authentication
-      // Supabase will handle the OAuth flow
-
+      await signIn('google', { callbackUrl: '/dashboard' });
     } catch (error) {
       console.error('Google sign-in error:', error);
       let errorMessage = 'Google sign-in failed. Please try again.';

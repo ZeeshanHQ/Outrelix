@@ -1,73 +1,47 @@
 import { createClient } from '@supabase/supabase-js';
+import { getSession, signIn as nextAuthSignIn, signOut as nextAuthSignOut } from 'next-auth/react';
 
 // Supabase configuration
-const supabaseUrl = process.env.REACT_APP_SUPABASE_URL || 'https://bfoggljxtwoloxthtocy.supabase.co';
-const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJmb2dnbGp4dHdvbG94dGh0b2N5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk5MDM2MTYsImV4cCI6MjA2NTQ3OTYxNn0.aNc3yGc5KEVWyTUZzVuCLyALdnZgkFfs83IaI5cctcA';
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://bfoggljxtwoloxthtocy.supabase.co';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 // Create Supabase client
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: true
-  }
-});
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// Auth helper functions
+// Auth helper functions (bridged to NextAuth)
 export const auth = {
-  // Sign up with email and password
   signUp: async (email, password, metadata = {}) => {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: metadata
-      }
-    });
-    return { data, error };
+    console.warn("Supabase Email Signup is legacy. Use Google Login.");
+    return { data: null, error: new Error("Signup is restricted to Google Social Login") };
   },
 
-  // Sign in with email and password
   signIn: async (email, password) => {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
-    return { data, error };
+    console.warn("Supabase Email Signin is legacy. Use Google Login.");
+    return { data: null, error: new Error("Signin is restricted to Google Social Login") };
   },
 
-  // Sign in with Google
   signInWithGoogle: async () => {
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/dashboard`
-      }
-    });
-    return { data, error };
+    return nextAuthSignIn('google', { callbackUrl: '/dashboard' });
   },
 
-  // Sign out
   signOut: async () => {
-    const { error } = await supabase.auth.signOut();
-    return { error };
+    return nextAuthSignOut({ callbackUrl: '/' });
   },
 
-  // Get current user
   getCurrentUser: async () => {
-    const { data: { user }, error } = await supabase.auth.getUser();
-    return { user, error };
+    const session = await getSession();
+    return { user: session?.user, error: null };
   },
 
-  // Get current session
   getSession: async () => {
-    const { data: { session }, error } = await supabase.auth.getSession();
-    return { session, error };
+    const session = await getSession();
+    return { session, error: null };
   },
 
-  // Listen to auth changes
   onAuthStateChange: (callback) => {
-    return supabase.auth.onAuthStateChange(callback);
+    // Bridging Supabase's event listener to NextAuth's session-based flow
+    // NextAuth handles this via SessionProvider, but we provide a dummy for compatibility
+    return { data: { subscription: { unsubscribe: () => { } } } };
   }
 };
 
@@ -121,6 +95,57 @@ export const db = {
       .select('*')
       .eq('user_id', userId)
       .order('created_at', { ascending: false });
+    return { data, error };
+  }
+};
+
+// Storage helper functions
+export const storage = {
+  uploadAvatar: async (userId, file) => {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${userId}/${Math.random()}.${fileExt}`;
+    const filePath = `${fileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('avatars')
+      .upload(filePath, file);
+
+    if (uploadError) return { error: uploadError };
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('avatars')
+      .getPublicUrl(filePath);
+
+    return { url: publicUrl, error: null };
+  }
+};
+
+// MFA helper functions
+export const mfa = {
+  enroll: async () => {
+    const { data, error } = await supabase.auth.mfa.enroll({
+      factorType: 'totp'
+    });
+    return { data, error };
+  },
+  challenge: async (factorId) => {
+    const { data, error } = await supabase.auth.mfa.challenge({ factorId });
+    return { data, error };
+  },
+  verify: async (factorId, challengeId, code) => {
+    const { data, error } = await supabase.auth.mfa.verify({
+      factorId,
+      challengeId,
+      code
+    });
+    return { data, error };
+  },
+  listFactors: async () => {
+    const { data, error } = await supabase.auth.mfa.listFactors();
+    return { data, error };
+  },
+  unenroll: async (factorId) => {
+    const { data, error } = await supabase.auth.mfa.unenroll({ factorId });
     return { data, error };
   }
 };

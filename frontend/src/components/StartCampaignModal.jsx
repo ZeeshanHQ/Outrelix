@@ -8,29 +8,28 @@ import { useGmailStatus } from '../utils/GmailStatusContext';
 
 // Industry options with icons
 const industries = [
-  { name: 'Technology', icon: '💻', color: 'bg-blue-500' },
-  { name: 'Marketing', icon: '📢', color: 'bg-indigo-500' },
-  { name: 'E-commerce', icon: '🛍️', color: 'bg-pink-500' },
-  { name: 'Real Estate', icon: '🏠', color: 'bg-red-500' },
-  { name: 'Education', icon: '📚', color: 'bg-purple-500' },
-  { name: 'Healthcare', icon: '🏥', color: 'bg-green-500' },
-  { name: 'Finance', icon: '💰', color: 'bg-yellow-500' },
-  { name: 'Manufacturing', icon: '🏭', color: 'bg-gray-500' },
-  { name: 'Legal', icon: '⚖️', color: 'bg-orange-500' },
-  { name: 'Consulting', icon: '💼', color: 'bg-teal-500' },
-  { name: 'Non-Profit', icon: '🤝', color: 'bg-emerald-500' },
-  { name: 'Government', icon: '🏛️', color: 'bg-slate-500' },
+  { name: 'Technology', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>, color: 'bg-blue-500' },
+  { name: 'Marketing', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 0113 11z" /></svg>, color: 'bg-indigo-500' },
+  { name: 'E-commerce', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>, color: 'bg-pink-500' },
+  { name: 'Real Estate', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>, color: 'bg-red-500' },
+  { name: 'Education', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>, color: 'bg-purple-500' },
+  { name: 'Healthcare', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>, color: 'bg-green-500' },
+  { name: 'Finance', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3 1.343 3 3-1.343 3-3 3m0-13a9 9 0 110 18 9 9 0 010-18zm0 0V3m0 18v-3" /></svg>, color: 'bg-yellow-500' },
+  { name: 'Manufacturing', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>, color: 'bg-gray-500' },
+  { name: 'Legal', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" /></svg>, color: 'bg-orange-500' },
+  { name: 'Consulting', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>, color: 'bg-teal-500' },
+  { name: 'Non-Profit', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>, color: 'bg-emerald-500' },
+  { name: 'Government', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>, color: 'bg-slate-500' },
 ];
 
 // Template options
 const templates = [
-  { name: 'Basic Template', description: 'Simple and clean email template', isPro: false, icon: '📧' },
-  { name: 'Professional Template', description: 'Polished and business-ready', isPro: true, icon: '💼' },
-  { name: 'Power Template', description: 'Advanced with dynamic content', isPro: true, icon: '⚡' },
+  { name: 'Basic Template', description: 'Simple and clean email template', isPro: false, icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg> },
+  { name: 'Professional Template', description: 'Polished and business-ready', isPro: true, icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg> },
+  { name: 'Power Template', description: 'Advanced with dynamic content', isPro: true, icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg> },
 ];
 
 const StartCampaignModal = ({ open, onClose, industry = '', onStart, isLoading, formError, setFormError, isGmailConnected }) => {
-  console.log('onStart prop:', onStart);
   const [campaignName, setCampaignName] = useState('');
   const [campaignGoal, setCampaignGoal] = useState('');
   const [csvFile, setCsvFile] = useState(null);
@@ -80,10 +79,10 @@ const StartCampaignModal = ({ open, onClose, industry = '', onStart, isLoading, 
       .split(/[ ,;\n\t]+/)
       .map(e => e.trim())
       .filter(e => e.length > 0);
-    
+
     const valids = [];
     const invalids = [];
-    
+
     emails.forEach(email => {
       if (emailRegex.test(email)) {
         valids.push(email);
@@ -91,7 +90,7 @@ const StartCampaignModal = ({ open, onClose, industry = '', onStart, isLoading, 
         invalids.push(email);
       }
     });
-    
+
     setValidManualEmails(valids);
     setInvalidEmails(invalids);
   };
@@ -122,8 +121,6 @@ const StartCampaignModal = ({ open, onClose, industry = '', onStart, isLoading, 
   };
 
   const handleStart = () => {
-    console.log('StartCampaignModal handleStart called');
-    console.log('About to call onStart:', onStart, typeof onStart);
     // BYPASS ALL VALIDATION FOR TESTING
     onStart && onStart({
       campaignName: campaignName || 'Test Campaign',
@@ -139,7 +136,7 @@ const StartCampaignModal = ({ open, onClose, industry = '', onStart, isLoading, 
   // Add this effect to clear error when valid emails or CSV are present
   useEffect(() => {
     if ((validManualEmails.length > 0 || csvFile) && formError) {
-    setFormError("");
+      setFormError("");
     }
   }, [validManualEmails, csvFile, formError]);
 
@@ -150,29 +147,29 @@ const StartCampaignModal = ({ open, onClose, industry = '', onStart, isLoading, 
     const ms = new Date().getTime() - new Date(signupDate).getTime();
     return Math.floor(ms / (1000 * 60 * 60 * 24)) + 1;
   };
-  
+
   const daysSinceSignup = getDaysSinceSignup();
-  
+
   // Determine which industries are locked (one more every 3 days)
   const LOCK_ORDER = ['Real Estate', 'E-commerce', 'Marketing', 'Education', 'Technology'];
   const getLockedIndustries = () => {
     const lockedCount = Math.max(0, Math.floor((daysSinceSignup - 1) / 3));
     return LOCK_ORDER.slice(0, lockedCount);
   };
-  
+
   const lockedIndustries = getLockedIndustries();
-  
+
   // Define which industries are open for Starter plan and which are locked
   const OPEN_INDUSTRIES = ['Technology', 'Marketing', 'E-commerce', 'Real Estate', 'Education'];
   const LOCKED_INDUSTRIES = ['Healthcare', 'Finance', 'Manufacturing', 'Legal', 'Consulting', 'Non-Profit', 'Government'];
-  
+
   // Dynamic industry filtering based on time-based locking
   const openIndustries = industries.filter(ind => {
     const isOpen = OPEN_INDUSTRIES.includes(ind.name);
     const isLocked = lockedIndustries.includes(ind.name);
     return isOpen && !isLocked;
   });
-  
+
   const premiumIndustries = industries.filter(ind => {
     const isOpen = OPEN_INDUSTRIES.includes(ind.name);
     const isLocked = lockedIndustries.includes(ind.name);
@@ -188,7 +185,7 @@ const StartCampaignModal = ({ open, onClose, industry = '', onStart, isLoading, 
           <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-blue-600 dark:hover:text-blue-300 bg-white/70 dark:bg-gray-800/70 rounded-full p-2 shadow-md z-20 border border-blue-100 dark:border-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-400">
             <XMarkIcon className="w-7 h-7" />
           </button>
-          
+
           {/* Left: Campaign Info */}
           <div className="flex-1 flex flex-col pt-10 pb-8 px-8 gap-4 min-w-[380px] max-w-[480px] relative" style={{ justifyContent: 'flex-start' }}>
             {/* Decorative gradient at the top */}
@@ -198,23 +195,23 @@ const StartCampaignModal = ({ open, onClose, industry = '', onStart, isLoading, 
               <h2 className="text-2xl font-extrabold text-left bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent font-poppins dark:from-blue-300 dark:via-purple-300 dark:to-pink-300">Start Your Campaign</h2>
             </div>
             <div className="text-sm text-gray-500 dark:text-gray-300 font-poppins mb-6 z-10">Launch a powerful campaign with advanced features and beautiful emails.</div>
-            
+
             {/* Show form error if present */}
             {formError && (
               <div className="w-full mb-2 px-4 py-2 rounded-lg bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 font-semibold text-sm text-center shadow font-poppins">
                 {formError}
               </div>
             )}
-            
+
             <label className="block text-xs font-medium text-gray-700 dark:text-gray-200 mb-0.5">Campaign Name</label>
-            <input 
-              type="text" 
-              className="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white/80 dark:bg-gray-900/80 px-3 py-2 font-poppins text-base mb-1 shadow-sm focus:ring-2 focus:ring-blue-400 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500" 
-              value={campaignName} 
-              onChange={e => setCampaignName(e.target.value)} 
-              placeholder="e.g. Tech Outreach Q2" 
+            <input
+              type="text"
+              className="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white/80 dark:bg-gray-900/80 px-3 py-2 font-poppins text-base mb-1 shadow-sm focus:ring-2 focus:ring-blue-400 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+              value={campaignName}
+              onChange={e => setCampaignName(e.target.value)}
+              placeholder="e.g. Tech Outreach Q2"
             />
-            
+
             {/* Campaign Goal Input */}
             <label className="block text-xs font-medium text-gray-700 dark:text-gray-200 mb-0.5">📝 What do you want to achieve with this campaign?</label>
             <textarea
@@ -227,7 +224,7 @@ const StartCampaignModal = ({ open, onClose, industry = '', onStart, isLoading, 
               <p>AI will generate a basic email template based on your goal.</p>
               <p>Upgrade to Pro to upload files for dynamic content.</p>
             </div>
-            
+
             {/* Industry Selection */}
             <div className="space-y-2">
               <label className="block text-xs font-medium text-gray-700 dark:text-gray-200">Industry</label>
@@ -239,7 +236,7 @@ const StartCampaignModal = ({ open, onClose, industry = '', onStart, isLoading, 
                   <div className="flex items-center gap-2">
                     {selectedIndustry ? (
                       <>
-                        <span className="text-lg">{industries.find(ind => ind.name === selectedIndustry)?.icon}</span>
+                        <span className="text-blue-500">{industries.find(ind => ind.name === selectedIndustry)?.icon}</span>
                         <span className="font-medium text-gray-900 dark:text-white">{selectedIndustry}</span>
                       </>
                     ) : (
@@ -248,7 +245,7 @@ const StartCampaignModal = ({ open, onClose, industry = '', onStart, isLoading, 
                   </div>
                   {showIndustryDropdown ? <ChevronUpIcon className="w-5 h-5" /> : <ChevronDownIcon className="w-5 h-5" />}
                 </button>
-                
+
                 {showIndustryDropdown && (
                   <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-lg z-30 max-h-80 overflow-y-auto">
                     {/* Free Industries */}
@@ -258,29 +255,29 @@ const StartCampaignModal = ({ open, onClose, industry = '', onStart, isLoading, 
                         const idx = LOCK_ORDER.indexOf(ind.name);
                         const lockDay = idx !== -1 ? 1 + idx * 3 + 3 : null;
                         const daysLeft = lockDay ? lockDay - daysSinceSignup : null;
-                        
+
                         return (
-                        <button
-                          key={ind.name}
-                          onClick={() => {
-                            setSelectedIndustry(ind.name);
-                            setShowIndustryDropdown(false);
-                          }}
+                          <button
+                            key={ind.name}
+                            onClick={() => {
+                              setSelectedIndustry(ind.name);
+                              setShowIndustryDropdown(false);
+                            }}
                             className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/30 text-left text-gray-900 dark:text-white relative"
-                        >
-                          <span className="text-lg">{ind.icon}</span>
-                          <span className="font-medium">{ind.name}</span>
-                          <CheckCircleIcon className="w-4 h-4 text-green-500 ml-auto" />
+                          >
+                            <span className="text-blue-500">{ind.icon}</span>
+                            <span className="font-medium">{ind.name}</span>
+                            <CheckCircleIcon className="w-4 h-4 text-green-500 ml-auto" />
                             {daysLeft && daysLeft > 0 && daysLeft <= 3 && (
                               <span className="absolute top-0 right-0 text-[10px] font-semibold text-white bg-gradient-to-r from-orange-500 to-red-500 px-2 py-0.5 rounded-full shadow-sm">
                                 {daysLeft} day{daysLeft === 1 ? '' : 's'} left
                               </span>
                             )}
-                        </button>
+                          </button>
                         );
                       })}
                     </div>
-                    
+
                     {/* Recently Locked Industries */}
                     {lockedIndustries.length > 0 && (
                       <div className="p-2 border-t border-gray-200 dark:border-gray-700">
@@ -290,7 +287,7 @@ const StartCampaignModal = ({ open, onClose, industry = '', onStart, isLoading, 
                             key={ind}
                             className="w-full flex items-center gap-3 p-2 rounded-lg opacity-60 cursor-not-allowed text-gray-900 dark:text-gray-300 relative"
                           >
-                            <span className="text-lg">{industries.find(i => i.name === ind)?.icon}</span>
+                            <span className="text-gray-400">{industries.find(i => i.name === ind)?.icon}</span>
                             <span className="font-medium">{ind}</span>
                             <LockClosedIcon className="w-4 h-4 text-orange-400 ml-auto" />
                             <span className="absolute top-0 right-0 text-[10px] font-semibold text-white bg-gradient-to-r from-orange-500 to-red-500 px-2 py-0.5 rounded-full shadow-sm">
@@ -300,7 +297,7 @@ const StartCampaignModal = ({ open, onClose, industry = '', onStart, isLoading, 
                         ))}
                       </div>
                     )}
-                    
+
                     {/* Premium Industries */}
                     <div className="p-2 border-t border-gray-200 dark:border-gray-700">
                       <div className="text-xs font-semibold text-purple-600 dark:text-purple-400 mb-2 px-2 flex items-center gap-1">
@@ -311,7 +308,7 @@ const StartCampaignModal = ({ open, onClose, industry = '', onStart, isLoading, 
                           key={ind.name}
                           className="w-full flex items-center gap-3 p-2 rounded-lg opacity-60 cursor-not-allowed text-gray-900 dark:text-gray-300"
                         >
-                          <span className="text-lg">{ind.icon}</span>
+                          <span className="text-gray-400">{ind.icon}</span>
                           <span className="font-medium">{ind.name}</span>
                           <LockClosedIcon className="w-4 h-4 text-gray-400 ml-auto" />
                         </div>
@@ -365,9 +362,9 @@ const StartCampaignModal = ({ open, onClose, industry = '', onStart, isLoading, 
               <div className="flex items-center gap-1 mt-1 text-gray-400 text-xs">
                 <LockClosedIcon className="w-4 h-4" />
                 <span className="font-semibold">AI Scrape Data <span className="text-xs">(Pro)</span></span>
-                <span 
-                  className="ml-1 cursor-pointer underline" 
-                  onMouseEnter={() => setShowTooltip('ai-scrape')} 
+                <span
+                  className="ml-1 cursor-pointer underline"
+                  onMouseEnter={() => setShowTooltip('ai-scrape')}
                   onMouseLeave={() => setShowTooltip('')}
                 >
                   ?
@@ -379,8 +376,8 @@ const StartCampaignModal = ({ open, onClose, industry = '', onStart, isLoading, 
                 )}
               </div>
             </div>
-            
-            <button 
+
+            <button
               onClick={() => { console.log('Start button clicked'); handleStart(); }}
               className="w-full py-3 rounded-xl bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 text-white font-semibold font-poppins text-base shadow-lg hover:shadow-2xl transition-all duration-200 tracking-tight focus:outline-none focus:ring-2 focus:ring-blue-400 flex items-center justify-center gap-2"
               disabled={false}
@@ -401,10 +398,10 @@ const StartCampaignModal = ({ open, onClose, industry = '', onStart, isLoading, 
               )}
             </button>
           </div>
-          
+
           {/* Divider */}
           <div className="w-px bg-gradient-to-b from-blue-200 via-purple-200 to-pink-200 dark:from-blue-900 dark:via-purple-900 dark:to-pink-900 opacity-60 mx-0" />
-          
+
           {/* Right: Features Grid - split into Current and Pro Features */}
           <div className="flex-1 flex flex-col justify-between p-6 bg-gradient-to-br from-blue-50/80 via-white/90 to-purple-50/80 dark:from-gray-900/90 dark:via-gray-800/90 dark:to-blue-900/80 min-w-[380px] max-w-[480px] gap-1">
             {/* Current Features */}
@@ -448,10 +445,10 @@ const StartCampaignModal = ({ open, onClose, industry = '', onStart, isLoading, 
                 </div>
               </div>
             </div>
-            
+
             {/* Divider */}
             <div className="my-3 border-t border-blue-100 dark:border-blue-800 opacity-60" />
-            
+
             {/* Pro Features */}
             <div>
               <h3 className="text-base font-bold font-poppins mb-3 text-purple-700 dark:text-purple-200 flex items-center gap-1">
@@ -466,9 +463,9 @@ const StartCampaignModal = ({ open, onClose, industry = '', onStart, isLoading, 
                     </div>
                     <div className="text-xs text-gray-500 dark:text-gray-300 font-poppins flex items-center gap-1">
                       <span className="opacity-60 dark:text-gray-400">🔒 Locked</span>
-                      <span 
-                        className="ml-1 cursor-pointer underline text-blue-700 dark:text-blue-200" 
-                        onMouseEnter={() => setShowTooltip('ai-scrape')} 
+                      <span
+                        className="ml-1 cursor-pointer underline text-blue-700 dark:text-blue-200"
+                        onMouseEnter={() => setShowTooltip('ai-scrape')}
                         onMouseLeave={() => setShowTooltip('')}
                       >
                         ?
@@ -484,7 +481,7 @@ const StartCampaignModal = ({ open, onClose, industry = '', onStart, isLoading, 
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center gap-2 p-3 rounded-lg bg-white/90 dark:bg-gray-800/90 border border-blue-100 dark:border-blue-800 shadow-sm relative">
                   <LockClosedIcon className="w-4 h-4 text-gray-400 flex-shrink-0" />
                   <div>
@@ -493,9 +490,9 @@ const StartCampaignModal = ({ open, onClose, industry = '', onStart, isLoading, 
                     </div>
                     <div className="text-xs text-gray-500 dark:text-gray-300 font-poppins flex items-center gap-1">
                       <span className="opacity-60 dark:text-gray-400">🔒 Locked</span>
-                      <span 
-                        className="ml-1 cursor-pointer underline text-blue-700 dark:text-blue-200" 
-                        onMouseEnter={() => setShowTooltip('ai')} 
+                      <span
+                        className="ml-1 cursor-pointer underline text-blue-700 dark:text-blue-200"
+                        onMouseEnter={() => setShowTooltip('ai')}
                         onMouseLeave={() => setShowTooltip('')}
                       >
                         ?
@@ -511,7 +508,7 @@ const StartCampaignModal = ({ open, onClose, industry = '', onStart, isLoading, 
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center gap-2 p-3 rounded-lg bg-white/90 dark:bg-gray-800/90 border border-blue-100 dark:border-blue-800 shadow-sm">
                   <LockClosedIcon className="w-4 h-4 text-gray-400 flex-shrink-0" />
                   <div>

@@ -1,7 +1,7 @@
 import logging
 from typing import Dict
 
-from src.utils.hashing import hash_email
+from utils.hashing import hash_email
 
 logger = logging.getLogger(__name__)
 

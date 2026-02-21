@@ -13,7 +13,7 @@ const SEOOptimizer = ({ onOptimizationComplete }) => {
   const [dailyCount, setDailyCount] = useState(0);
   const [dailyLimit, setDailyLimit] = useState(10);
   const [optimizations, setOptimizations] = useState([]);
-  
+
   // Results state
   const [results, setResults] = useState(null);
 
@@ -81,7 +81,7 @@ const SEOOptimizer = ({ onOptimizationComplete }) => {
 
     try {
       let contentToAnalyze = '';
-      
+
       if (inputMode === 'url') {
         setProgress('Fetching page content...');
         // Use the Supabase Edge Function (project URL from shared client)
@@ -111,7 +111,7 @@ const SEOOptimizer = ({ onOptimizationComplete }) => {
       try {
         const messages = [
           { role: 'system', content: 'You are an SEO expert. Improve content and produce meta tags and keywords.' },
-          { role: 'user', content: `Optimize this content for SEO. Return JSON with keys: optimizedContent, metaTitle, metaDescription, keywords (array). Content:\n\n${contentToAnalyze}`}
+          { role: 'user', content: `Optimize this content for SEO. Return JSON with keys: optimizedContent, metaTitle, metaDescription, keywords (array). Content:\n\n${contentToAnalyze}` }
         ];
         const content = await aiApi.complete(messages, { temperature: 0.5, max_tokens: 900 });
         // Attempt to extract JSON object even if wrapped in prose
@@ -132,7 +132,7 @@ const SEOOptimizer = ({ onOptimizationComplete }) => {
       } catch (e) {
         seoResults = await simulateAISEO(contentToAnalyze);
       }
-      
+
       setResults(seoResults);
       setProgress('Saving results...');
 
@@ -158,14 +158,14 @@ const SEOOptimizer = ({ onOptimizationComplete }) => {
         // Increment daily count
         await supabase.rpc('increment_seo_count', { uid: user.id });
         setDailyCount(prev => prev + 1);
-        
+
         // Reload recent optimizations
         loadRecentOptimizations();
       }
 
       setProgress('');
       toast.success('SEO optimization completed successfully!');
-      
+
       if (onOptimizationComplete) {
         onOptimizationComplete({
           inputMode,
@@ -188,11 +188,11 @@ const SEOOptimizer = ({ onOptimizationComplete }) => {
   const safeParseAiJson = (text) => {
     if (!text) return null;
     // First, try strict JSON
-    try { return JSON.parse(text); } catch {}
+    try { return JSON.parse(text); } catch { }
     // Fallback: find the first {...} block
     const match = text.match(/\{[\s\S]*\}/);
     if (match) {
-      try { return JSON.parse(match[0]); } catch {}
+      try { return JSON.parse(match[0]); } catch { }
     }
     return null;
   };
@@ -228,13 +228,13 @@ const SEOOptimizer = ({ onOptimizationComplete }) => {
     });
 
     const topKeywords = Object.entries(wordFreq)
-      .sort(([,a], [,b]) => b - a)
+      .sort(([, a], [, b]) => b - a)
       .slice(0, 5)
       .map(([word]) => word);
 
     // Generate optimized content
     const optimizedContent = optimizeTextForSEO(content);
-    
+
     // Generate meta title and description
     const metaTitle = generateMetaTitle(content);
     const metaDescription = generateMetaDescription(content);
@@ -271,7 +271,7 @@ const SEOOptimizer = ({ onOptimizationComplete }) => {
   const generateMetaDescription = (content) => {
     const sentences = content.split('. ');
     const description = sentences.slice(0, 2).join('. ');
-    return description.length > 155 
+    return description.length > 155
       ? description.substring(0, 152) + '...'
       : description + ' Discover expert insights and actionable tips.';
   };
@@ -309,293 +309,326 @@ const SEOOptimizer = ({ onOptimizationComplete }) => {
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto p-6">
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8">
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-3">
-            <div className="p-3 bg-gradient-to-br from-green-500 to-blue-500 rounded-xl">
-              <Search className="w-8 h-8 text-white" />
-            </div>
+    <div className="w-full max-w-5xl mx-auto space-y-12">
+      {/* Search Section */}
+      <div className="bg-white rounded-[24px] border border-slate-100 shadow-sm p-10">
+        <div className="max-w-2xl">
+          <div className="flex items-center justify-between mb-8">
             <div>
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-                SEO Optimizer
+              <h2 className="text-2xl font-black text-slate-800 tracking-tight mb-2">
+                SEO Intelligence
               </h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400">AI-powered SEO optimization</p>
+              <p className="text-slate-500 text-sm leading-relaxed">
+                Optimize your digital footprint. Our AI audits your content and provides an instant strategy for ranking dominance.
+              </p>
+            </div>
+            <div className="text-right">
+              <div className="text-xl font-black text-slate-800">
+                {dailyCount}/{dailyLimit}
+              </div>
+              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Daily Credits</div>
             </div>
           </div>
-          <div className="text-right">
-            <div className="text-2xl font-bold text-gray-900 dark:text-white">
-              {dailyCount}/{dailyLimit}
-            </div>
-            <div className="text-sm text-gray-500 dark:text-gray-400">optimizations today</div>
+
+          {/* Input Mode */}
+          <div className="flex gap-2 mb-8 bg-slate-50 p-1.5 rounded-2xl w-fit">
+            {[
+              { id: 'url', label: 'Website URL', icon: Globe },
+              { id: 'text', label: 'Copy & Paste', icon: FileText }
+            ].map((mode) => (
+              <button
+                key={mode.id}
+                onClick={() => setInputMode(mode.id)}
+                className={`px-6 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${inputMode === mode.id ? 'bg-white text-slate-900 shadow-sm border border-slate-100' : 'text-slate-500 hover:text-slate-700'}`}
+              >
+                <mode.icon className="w-4 h-4" />
+                {mode.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="space-y-4">
+            {inputMode === 'url' ? (
+              <input
+                type="url"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                placeholder="https://example.com"
+                className="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all outline-none text-slate-700 placeholder:text-slate-400 font-medium"
+                disabled={isOptimizing}
+              />
+            ) : (
+              <textarea
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value)}
+                placeholder="Paste your content here..."
+                className="w-full h-40 px-5 py-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all outline-none text-slate-700 placeholder:text-slate-400 font-medium resize-none"
+                disabled={isOptimizing}
+              />
+            )}
+
+            <motion.button
+              whileHover={{ scale: 1.01, y: -2 }}
+              whileTap={{ scale: 0.99 }}
+              onClick={optimizeContent}
+              disabled={isOptimizing || dailyCount >= dailyLimit}
+              className="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold hover:bg-slate-800 transition-all disabled:opacity-30 flex items-center justify-center gap-3"
+            >
+              {isOptimizing ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                  <span>Crafting Strategy...</span>
+                </>
+              ) : (
+                <>
+                  <Zap className="w-4 h-4 text-amber-400" />
+                  <span>Generate Growth Strategy</span>
+                </>
+              )}
+            </motion.button>
           </div>
         </div>
 
-        {/* Input Mode Selection */}
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-            Choose Input Method
-          </label>
-          <div className="flex gap-4">
-            <button
-              onClick={() => setInputMode('url')}
-              className={`px-6 py-3 rounded-lg font-medium transition-all flex items-center gap-2 ${
-                inputMode === 'url'
-                  ? 'bg-green-600 text-white shadow-lg'
-                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-              }`}
-            >
-              <Globe className="w-5 h-5" />
-              Website URL
-            </button>
-            <button
-              onClick={() => setInputMode('text')}
-              className={`px-6 py-3 rounded-lg font-medium transition-all flex items-center gap-2 ${
-                inputMode === 'text'
-                  ? 'bg-green-600 text-white shadow-lg'
-                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-              }`}
-            >
-              <FileText className="w-5 h-5" />
-              Paste Content
-            </button>
-          </div>
-        </div>
-
-        {/* Input Section */}
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            {inputMode === 'url' ? 'Website URL' : 'Content to Optimize'}
-          </label>
-          {inputMode === 'url' ? (
-            <input
-              type="url"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              placeholder="https://example.com"
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-              disabled={isOptimizing}
-            />
-          ) : (
-            <textarea
-              value={inputText}
-              onChange={(e) => setInputText(e.target.value)}
-              placeholder="Paste your content here to optimize for SEO..."
-              className="w-full h-32 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent dark:bg-gray-700 dark:text-white resize-none"
-              disabled={isOptimizing}
-            />
-          )}
-        </div>
-
-        {/* Optimize Button */}
-        <div className="mb-6">
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={optimizeContent}
-            disabled={isOptimizing || dailyCount >= dailyLimit}
-            className="px-8 py-3 bg-gradient-to-r from-green-600 to-blue-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:from-green-700 hover:to-blue-700 transition-all shadow-lg"
-          >
-            {isOptimizing ? 'Optimizing...' : 'Optimize for SEO'}
-          </motion.button>
-        </div>
-
-        {/* Progress Indicator */}
+        {/* Neural Progress */}
         <AnimatePresence>
           {isOptimizing && progress && (
             <motion.div
-              initial={{ opacity: 0, y: -10 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
-              className="mb-6 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg"
+              className="mt-8 flex items-center gap-4 text-xs font-bold text-blue-600 uppercase tracking-widest"
             >
-              <div className="flex items-center gap-3">
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
-                <span className="text-green-700 dark:text-green-300">{progress}</span>
+              <div className="flex gap-1">
+                {[...Array(3)].map((_, i) => (
+                  <motion.div
+                    key={i}
+                    animate={{ scale: [1, 1.5, 1], opacity: [0.5, 1, 0.5] }}
+                    transition={{ repeat: Infinity, duration: 1, delay: i * 0.2 }}
+                    className="w-1 h-1 bg-blue-500 rounded-full"
+                  />
+                ))}
               </div>
+              {progress}
             </motion.div>
           )}
         </AnimatePresence>
+      </div>
 
-        {/* Results Section */}
-        <AnimatePresence>
-          {results && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              className="space-y-6"
-            >
-              {/* Optimized Content */}
-              <div className="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                    <FileText className="w-6 h-6" />
-                    Optimized Content
-                  </h3>
-                  <button
-                    onClick={() => copyToClipboard(results.optimizedContent)}
-                    className="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors flex items-center gap-2"
-                  >
-                    <Copy className="w-4 h-4" />
-                    Copy
-                  </button>
-                </div>
-                <div className="prose dark:prose-invert max-w-none">
-                  <pre className="whitespace-pre-wrap text-gray-700 dark:text-gray-300 font-sans leading-relaxed">
-                    {results.optimizedContent}
-                  </pre>
-                </div>
+      {/* Results Document */}
+      <AnimatePresence>
+        {results && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white rounded-[32px] border border-slate-100 shadow-2xl shadow-slate-200/40 overflow-hidden"
+          >
+            <div className="p-10 border-b border-slate-50 flex items-center justify-between bg-slate-50/50">
+              <div>
+                <span className="text-[10px] font-bold text-blue-600 uppercase tracking-[0.2em] mb-2 block">
+                  Optimization Blueprint
+                </span>
+                <h3 className="text-2xl font-black text-slate-800">
+                  {results.metaTitle.split('|')[0]}
+                </h3>
               </div>
-
-              {/* Meta Tags */}
-              <div className="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-lg">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                    <Settings className="w-6 h-6" />
-                    Meta Tags
-                  </h3>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => copyToClipboard(results.metaTitle)}
-                      className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded text-sm hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors"
-                    >
-                      Copy Title
-                    </button>
-                    <button
-                      onClick={() => copyToClipboard(results.metaDescription)}
-                      className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded text-sm hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors"
-                    >
-                      Copy Description
-                    </button>
-                  </div>
-                </div>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Meta Title ({results.metaTitle.length} characters)
-                    </label>
-                    <div className="p-3 bg-white dark:bg-gray-800 rounded border text-gray-900 dark:text-white">
-                      {results.metaTitle}
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Meta Description ({results.metaDescription.length} characters)
-                    </label>
-                    <div className="p-3 bg-white dark:bg-gray-800 rounded border text-gray-900 dark:text-white">
-                      {results.metaDescription}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Keywords */}
-              <div className="bg-purple-50 dark:bg-purple-900/20 p-6 rounded-lg">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                    <Target className="w-6 h-6" />
-                    Keywords
-                  </h3>
-                  <button
-                    onClick={() => copyToClipboard(results.keywords.join(', '))}
-                    className="px-4 py-2 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-lg hover:bg-purple-200 dark:hover:bg-purple-900/50 transition-colors flex items-center gap-2"
-                  >
-                    <Copy className="w-4 h-4" />
-                    Copy All
-                  </button>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {results.keywords.map((keyword, index) => (
-                    <span
-                      key={index}
-                      className="px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full text-sm"
-                    >
-                      {keyword}
-                    </span>
-                  ))}
-                </div>
-                <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
-                  SEO Score: <span className="font-bold text-green-600">{results.seoScore}/100</span>
-                </div>
-              </div>
-
-              {/* Clear Button */}
-              <div className="flex justify-end">
+              <div className="flex gap-3">
                 <button
                   onClick={clearAll}
-                  className="px-4 py-2 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors"
+                  className="px-5 py-2.5 text-slate-400 font-bold text-xs hover:text-red-500 transition-all"
                 >
-                  Clear All
+                  Discard
                 </button>
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+            </div>
 
-        {/* Recent Optimizations */}
-        {optimizations.length > 0 && (
-          <div className="mt-8">
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-              Recent Optimizations
-            </h3>
-            <div className="space-y-3">
-              {optimizations.map((optimization) => (
-                <div
-                  key={optimization.id}
-                  className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
-                >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="font-medium text-gray-900 dark:text-white">
-                        {optimization.url ? (
-                          <span className="flex items-center gap-2">
-                            <Globe className="w-4 h-4" />
-                            {optimization.url}
-                          </span>
-                        ) : (
-                          <span className="flex items-center gap-2">
-                            <FileText className="w-4 h-4" />
-                            Text Content
-                          </span>
-                        )}
-                      </div>
-                      <div className="text-sm text-gray-500 dark:text-gray-400">
-                        {optimization.word_count} words • SEO Score: {optimization.seo_score}/100 • {new Date(optimization.created_at).toLocaleDateString()}
-                      </div>
-                    </div>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => {
-                          setResults({
-                            optimizedContent: optimization.optimized_text,
-                            metaTitle: optimization.meta_title,
-                            metaDescription: optimization.meta_description,
-                            keywords: optimization.keywords,
-                            wordCount: optimization.word_count,
-                            seoScore: optimization.seo_score
-                          });
-                        }}
-                        className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded text-sm hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors flex items-center gap-1"
-                      >
-                        <Eye className="w-3 h-3" />
-                        View
-                      </button>
-                      <button
-                        onClick={() => deleteOptimization(optimization.id)}
-                        className="px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded text-sm hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors flex items-center gap-1"
-                      >
-                        <Trash2 className="w-3 h-3" />
-                        Delete
+            <div className="p-10 grid grid-cols-1 lg:grid-cols-3 gap-16">
+              <div className="lg:col-span-2 space-y-16">
+                {/* Optimized Content */}
+                <section>
+                  <div className="flex items-center justify-between mb-8">
+                    <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 bg-blue-500 rounded-full" />
+                      Optimized Content
+                    </h4>
+                    <button
+                      onClick={() => copyToClipboard(results.optimizedContent)}
+                      className="text-[10px] font-bold text-blue-600 uppercase tracking-wider hover:underline"
+                    >
+                      Copy Draft
+                    </button>
+                  </div>
+                  <div className="bg-slate-50/50 border border-slate-100 rounded-3xl p-8">
+                    <pre className="whitespace-pre-wrap text-slate-600 text-sm font-medium leading-relaxed font-sans">
+                      {results.optimizedContent}
+                    </pre>
+                  </div>
+                </section>
+
+                {/* Metadata */}
+                <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="space-y-4">
+                    <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 bg-purple-500 rounded-full" />
+                      Brand Title
+                    </h4>
+                    <div className="bg-white border border-slate-100 rounded-2xl p-5 text-sm font-bold text-slate-800 shadow-sm relative group">
+                      {results.metaTitle}
+                      <button onClick={() => copyToClipboard(results.metaTitle)} className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all text-blue-500">
+                        <Copy className="w-4 h-4" />
                       </button>
                     </div>
                   </div>
+                  <div className="space-y-4">
+                    <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full" />
+                      Search Snippet
+                    </h4>
+                    <div className="bg-white border border-slate-100 rounded-2xl p-5 text-xs font-medium text-slate-500 shadow-sm relative group line-clamp-3">
+                      {results.metaDescription}
+                      <button onClick={() => copyToClipboard(results.metaDescription)} className="absolute right-4 top-4 opacity-0 group-hover:opacity-100 transition-all text-blue-500">
+                        <Copy className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                </section>
+              </div>
+
+              {/* Sidebar stats */}
+              <aside className="space-y-12">
+                {/* Score */}
+                <div className="text-center p-8 bg-slate-50 rounded-[40px] border border-slate-100">
+                  <div className="relative inline-flex items-center justify-center mb-6">
+                    <svg className="w-32 h-32 transform -rotate-90">
+                      <circle cx="64" cy="64" r="56" fill="transparent" stroke="#e2e8f0" strokeWidth="8" />
+                      <motion.circle
+                        cx="64"
+                        cy="64"
+                        r="56"
+                        fill="transparent"
+                        stroke="#3b82f6"
+                        strokeWidth="8"
+                        strokeDasharray={351.8}
+                        initial={{ strokeDashoffset: 351.8 }}
+                        animate={{ strokeDashoffset: 351.8 - (351.8 * results.seoScore) / 100 }}
+                        transition={{ duration: 2, ease: "easeOut" }}
+                      />
+                    </svg>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                      <span className="text-3xl font-black text-slate-800">{results.seoScore}%</span>
+                      <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Score</span>
+                    </div>
+                  </div>
+                  <h5 className="text-xs font-bold text-slate-800 mb-2">Health Grade</h5>
+                  <p className="text-[10px] text-slate-400 font-medium px-4 leading-relaxed">
+                    Based on readability, keyword density, and search relevance metrics.
+                  </p>
                 </div>
-              ))}
+
+                {/* Keywords sidebar */}
+                <div>
+                  <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-6 px-2">
+                    Prime Keywords
+                  </h4>
+                  <div className="flex flex-wrap gap-2">
+                    {results.keywords.map((keyword, i) => (
+                      <span
+                        key={i}
+                        className="px-4 py-2 bg-slate-900 border border-slate-800 text-white rounded-xl text-xs font-bold shadow-lg shadow-slate-200"
+                      >
+                        {keyword}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="p-6 bg-blue-50 border border-blue-100 rounded-3xl">
+                  <div className="flex items-center gap-3 mb-4">
+                    <Target className="w-5 h-5 text-blue-500" />
+                    <span className="text-xs font-bold text-blue-900">Optimization Goal</span>
+                  </div>
+                  <p className="text-[10px] text-blue-700 leading-relaxed font-medium">
+                    Content has been restructured to prioritize semantic relevance and entity-based ranking triggers.
+                  </p>
+                </div>
+              </aside>
             </div>
-          </div>
+          </motion.div>
         )}
-      </div>
+      </AnimatePresence>
+
+      {/* Optimization History */}
+      {optimizations.length > 0 && (
+        <div className="mt-24">
+          <div className="flex items-center justify-between mb-10">
+            <h2 className="text-2xl font-bold text-slate-800 tracking-tight">
+              Intelligence History
+            </h2>
+            <div className="h-px flex-1 bg-slate-100 mx-8" />
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {optimizations.map((optimization) => (
+              <motion.div
+                key={optimization.id}
+                whileHover={{ y: -5 }}
+                className="bg-white rounded-3xl border border-slate-100 p-8 hover:shadow-2xl hover:shadow-slate-200/50 transition-all group"
+              >
+                <div className="mb-6">
+                  {optimization.url ? (
+                    <div className="flex items-center gap-2 mb-2">
+                      <Globe className="w-4 h-4 text-blue-500" />
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate">
+                        {optimization.url}
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2 mb-2">
+                      <FileText className="w-4 h-4 text-purple-500" />
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                        Text Strategy
+                      </span>
+                    </div>
+                  )}
+                  <h4 className="text-lg font-bold text-slate-800 line-clamp-2">
+                    {optimization.meta_title?.split('|')[0] || 'Untitled Strategy'}
+                  </h4>
+                </div>
+
+                <div className="flex items-center justify-between pt-6 border-t border-slate-50">
+                  <div className="text-center">
+                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Score</div>
+                    <div className="text-lg font-black text-blue-600">{optimization.seo_score}</div>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => {
+                        setResults({
+                          optimizedContent: optimization.optimized_text,
+                          metaTitle: optimization.meta_title,
+                          metaDescription: optimization.meta_description,
+                          keywords: optimization.keywords,
+                          wordCount: optimization.word_count,
+                          seoScore: optimization.seo_score
+                        });
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                      className="p-3 bg-slate-50 rounded-xl hover:bg-blue-600 hover:text-white transition-all text-slate-400"
+                    >
+                      <Eye className="w-5 h-5" />
+                    </button>
+                    <button
+                      onClick={() => deleteOptimization(optimization.id)}
+                      className="p-3 bg-slate-50 rounded-xl hover:bg-red-500 hover:text-white transition-all text-slate-400"
+                    >
+                      <Trash2 className="w-5 h-5" />
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

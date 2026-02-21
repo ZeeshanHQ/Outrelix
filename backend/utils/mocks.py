@@ -2,8 +2,8 @@ import logging
 import random
 from typing import Dict, List
 
-from src.utils.hashing import generate_company_id
-from src.utils.phone import normalize_phone
+from utils.hashing import generate_company_id
+from utils.phone import normalize_phone
 
 logger = logging.getLogger(__name__)
 

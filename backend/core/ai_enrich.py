@@ -1,7 +1,7 @@
 import logging
 from typing import Dict, List
 
-from src.utils.relevance import relevance_score
+from utils.relevance import relevance_score
 
 logger = logging.getLogger(__name__)
 

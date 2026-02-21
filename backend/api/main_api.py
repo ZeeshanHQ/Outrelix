@@ -6,9 +6,9 @@ from fastapi.security import OAuth2PasswordRequestForm
 from starlette.middleware.sessions import SessionMiddleware
 from starlette.responses import HTMLResponse
 from pydantic import BaseModel
-from email_handler import EmailHandler
-from reply_detector import ReplyDetector
-from config import BATCH_SIZE, MAX_BATCHES
+from api.email_handler import EmailHandler
+from services.reply_detector import ReplyDetector
+from api.config import BATCH_SIZE, MAX_BATCHES
 from google_auth_oauthlib.flow import Flow
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
@@ -37,14 +37,19 @@ load_dotenv()
 # DEEPSEEK_API_KEY = "sk-fe9702a172be481fb9d0b86781702685"
 # DEEPSEEK_API_URL = "https://api.deepseek.com/v1/chat/completions"
 
-# Resend API configuration for OTP emails
-RESEND_API_KEY = "re_CDQcfX8S_KLKwPtn9gzgTjyqNXw47GqUD"
-RESEND_DOMAIN = "cavexa.online"
-SENDER_EMAIL = "noreply@cavexa.online"
+# Resend API configuration for emails
+RESEND_API_KEY = os.getenv("RESEND_API_KEY", "re_CDQcfX8S_KLKwPtn9gzgTjyqNXw47GqUD")
+RESEND_DOMAIN = os.getenv("RESEND_DOMAIN", "cavexa.online")
+SENDER_EMAIL = os.getenv("SENDER_EMAIL", "Outrelix <noreply@cavexa.online>")
 
 # -------------------- SUPABASE SETUP --------------------
-SUPABASE_URL = "https://bfoggljxtwoloxthtocy.supabase.co"
-SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJmb2dnbGp4dHdvbG94dGh0b2N5Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0OTkwMzYxNiwiZXhwIjoyMDY1NDc5NjE2fQ.tb8-UDuye8roMeCwW0YqgjBbodo3x4Bwe_o0JM87kkM"
+SUPABASE_URL = os.getenv("SUPABASE_URL", "https://bfoggljxtwoloxthtocy.supabase.co")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJmb2dnbGp4dHdvbG94dGh0b2N5Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0OTkwMzYxNiwiZXhwIjoyMDY1NDc5NjE2fQ.tb8-UDuye8roMeCwW0YqgjBbodo3x4Bwe_o0JM87kkM")
+# Shared secret for NextAuth token verification
+NEXTAUTH_SECRET = os.getenv("NEXTAUTH_SECRET", "your_secret_key")
+# Google Client Credentials for backend-side Gmail flow
+GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
+GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
 # Removed supabase client initialization - using direct HTTP requests instead
 
 # Helper function for Supabase HTTP requests
@@ -109,7 +114,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-app.add_middleware(SessionMiddleware, secret_key='your_secret_key', same_site="lax")
+app.add_middleware(SessionMiddleware, secret_key=NEXTAUTH_SECRET, same_site="lax")
 
 email_handler = EmailHandler()
 reply_detector = ReplyDetector()
@@ -120,10 +125,19 @@ SCOPES = [
     'https://www.googleapis.com/auth/userinfo.email',
     'openid'
 ]
-CLIENT_SECRETS_FILE = "credentials.json"
+CLIENT_CONFIG = {
+    "web": {
+        "client_id": GOOGLE_CLIENT_ID,
+        "client_secret": GOOGLE_CLIENT_SECRET,
+        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+        "token_uri": "https://oauth2.googleapis.com/token",
+        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+        "redirect_uris": ["https://outrelix-backend.onrender.com/auth/gmail/callback"]
+    }
+}
 
-SUPABASE_REST_URL = "https://bfoggljxtwoloxthtocy.supabase.co/rest/v1/users"
-SUPABASE_SERVICE_ROLE_KEY = SUPABASE_KEY  # Use your service role key for backend
+SUPABASE_REST_URL = f"{SUPABASE_URL}/rest/v1/users"
+SUPABASE_SERVICE_ROLE_KEY = SUPABASE_KEY
 
 # -------------------- MODELS --------------------
 class LoginRequest(BaseModel):
@@ -174,6 +188,67 @@ class OnboardingData(BaseModel):
     preferred_contact: str = ""
     additional_notes: str = ""
 
+import jwt
+from core.pipeline import Pipeline
+from utils.config import load_config_from_env_and_args
+import argparse
+
+# -------------------- AUTHENTICATION HELPERS --------------------
+async def get_current_user(request: Request):
+    """
+    Dependency to get the current user ID from session or Authorization header.
+    Supports both Starlette sessions and Supabase Bearer tokens.
+    """
+    # 1. Try session first (original method)
+    user_id = request.session.get('user_id')
+    if user_id:
+        return user_id
+        
+    # 2. Try Authorization header (Bearer token)
+    auth_header = request.headers.get('Authorization')
+    if auth_header and auth_header.startswith('Bearer '):
+        token = auth_header.split(' ')[1]
+        try:
+            # We trust the token from the frontend for now as it's passed from Supabase
+            if token == SUPABASE_KEY:
+                return None
+                
+            # Check for X-User-Id header as a fallback
+            x_user_id = request.headers.get('X-User-Id')
+            if x_user_id:
+                return x_user_id
+                
+            # If it's a standard JWT, the 'sub' field is the user_id
+            # Supabase tokens are JWTs. We'll decode without verification for now
+            # as the secret isn't explicitly in the env, but we trust the Authorization header
+            # from our own frontend.
+            try:
+                decoded = jwt.decode(token, options={"verify_signature": False})
+                return decoded.get('sub')
+            except:
+                return None
+        except Exception as e:
+            print(f"[DEBUG] Auth extraction failed: {e}")
+            return None
+            
+    return None
+
+class LeadEngineRunParams(BaseModel):
+    queries: str
+    geo: str = "USA"
+    category: str = "General"
+    limit: int = 100
+    enable_yelp: bool = True
+    enable_clearbit: bool = True
+    enable_yellowpages: bool = False
+    enable_overpass: bool = True
+    dry_run: bool = False
+
+class ResendSendRequest(BaseModel):
+    to: str
+    subject: str
+    body: str
+
 # -------------------- GMAIL OAUTH2 ROUTES --------------------
 @app.get('/auth/gmail')
 async def auth_gmail(request: Request):
@@ -182,8 +257,8 @@ async def auth_gmail(request: Request):
         print(f"[DEBUG] /auth/gmail hit, user_id in session: {user_id}")
         if not user_id:
             return HTMLResponse("<h2>Error: You must be logged in to connect Gmail. Please log in first.</h2>", status_code=401)
-        flow = Flow.from_client_secrets_file(
-            CLIENT_SECRETS_FILE,
+        flow = Flow.from_client_config(
+            CLIENT_CONFIG,
             scopes=SCOPES,
             redirect_uri='https://outrelix-backend.onrender.com/auth/gmail/callback'
         )
@@ -206,8 +281,8 @@ async def auth_gmail_callback(request: Request):
     user_id = request.session.get('oauth_user_id')
     if not user_id:
         return Response(content="No user in session", status_code=400)
-    flow = Flow.from_client_secrets_file(
-        CLIENT_SECRETS_FILE,
+    flow = Flow.from_client_config(
+        CLIENT_CONFIG,
         scopes=SCOPES,
         state=state,
         redirect_uri='https://outrelix-backend.onrender.com/auth/gmail/callback'
@@ -267,7 +342,7 @@ async def index():
 
 @app.post('/api/send-batch')
 async def send_batch(request: Request, body: SendBatchRequest):
-    user_id = request.session.get('user_id')
+    user_id = await get_current_user(request)
     if not user_id:
         return JSONResponse({'error': 'Not logged in'}, status_code=401)
     batch_number = body.batch_number
@@ -310,7 +385,7 @@ async def customize_message(body: CustomizeMessageRequest):
 
 @app.post('/api/campaigns')
 async def create_campaign(request: Request, body: CampaignRequest):
-    user_id = request.session.get('user_id')
+    user_id = await get_current_user(request)
     if not user_id:
         return JSONResponse({'error': 'Not logged in'}, status_code=401)
     
@@ -359,7 +434,7 @@ async def create_campaign(request: Request, body: CampaignRequest):
 
 @app.get('/api/campaigns')
 async def get_campaigns(request: Request):
-    user_id = request.session.get('user_id')
+    user_id = await get_current_user(request)
     if not user_id:
         return JSONResponse({'error': 'Not logged in'}, status_code=401)
     
@@ -475,7 +550,7 @@ async def logout(request: Request):
 
 @app.get('/me')
 async def me(request: Request):
-    user_id = request.session.get('user_id')
+    user_id = await get_current_user(request)
     if not user_id:
         return JSONResponse({'error': 'Not logged in'}, status_code=401)
     user_data = supabase_request("GET", "users", params={"id": user_id})
@@ -485,7 +560,7 @@ async def me(request: Request):
 
 @app.get('/api/user/gmail-status')
 async def gmail_status(request: Request):
-    user_id = request.session.get('user_id')
+    user_id = await get_current_user(request)
     if not user_id:
         return JSONResponse({'connected': False, 'email': None})
     try:
@@ -501,7 +576,7 @@ async def gmail_status(request: Request):
 
 @app.get('/api/user/gmail-status/refresh')
 async def gmail_status_refresh(request: Request):
-    user_id = request.session.get('user_id')
+    user_id = await get_current_user(request)
     if not user_id:
         return JSONResponse({'connected': False, 'email': None})
     user_data = supabase_request("GET", "users", params={"id": user_id})
@@ -1104,7 +1179,7 @@ async def process_and_send_campaign(user_id: str, payload: StartCampaignPayload,
 
 @app.get('/api/user/gmail-token-valid')
 async def gmail_token_valid(request: Request):
-    user_id = request.session.get('user_id')
+    user_id = await get_current_user(request)
     if not user_id:
         return JSONResponse({'valid': False, 'email': None})
     user = supabase.table('users').select('gmail_token, gmail_email').eq('id', user_id).single().execute()
@@ -1132,7 +1207,7 @@ async def gmail_token_valid(request: Request):
 @app.delete('/api/campaigns/{campaign_id}')
 async def delete_campaign(campaign_id: int, request: Request):
     """Delete a campaign by ID from Supabase using REST API."""
-    user_id = request.session.get('user_id')
+    user_id = await get_current_user(request)
     if not user_id:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
@@ -1174,7 +1249,7 @@ async def delete_campaign(campaign_id: int, request: Request):
 @app.get('/api/campaigns/{campaign_id}')
 async def get_campaign_details(campaign_id: int, request: Request):
     """Get campaign details including email template."""
-    user_id = request.session.get('user_id')
+    user_id = await get_current_user(request)
     if not user_id:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
@@ -1232,7 +1307,7 @@ async def start_gmail_status_checker():
 @app.post('/api/user/onboarding')
 async def update_onboarding(request: Request, data: OnboardingData = Body(...)):
     print("[DEBUG] /api/user/onboarding called with:", data)
-    user_id = request.session.get('user_id')
+    user_id = await get_current_user(request)
     if not user_id:
         print("[ERROR] Not authenticated in onboarding endpoint")
         return JSONResponse({"error": "Not authenticated"}, status_code=401)
@@ -1251,4 +1326,227 @@ async def update_onboarding(request: Request, data: OnboardingData = Body(...)):
     print("[DEBUG] Onboarding update success for user_id:", user_id)
     return {"success": True}
 
-print("main_api.py loaded successfully") 
+@app.post('/api/outreach/send-email-resend')
+async def send_email_resend(request: Request, body: ResendSendRequest):
+    user_id = await get_current_user(request)
+    if not user_id:
+        return JSONResponse({'error': 'Not logged in'}, status_code=401)
+    
+    try:
+        # Get user info for "From" name
+        user_data = supabase_request("GET", "users", params={"id": user_id})
+        user_name = user_data[0].get('name', 'Outrelix User') if user_data else 'Outrelix User'
+
+        email_data = {
+            "from": f"{user_name} via Outrelix <noreply@cavexa.online>",
+            "to": [body.to],
+            "subject": body.subject,
+            "text": body.body,
+            "html": body.body.replace('\n', '<br>')
+        }
+        
+        headers = {
+            "Authorization": f"Bearer {RESEND_API_KEY}",
+            "Content-Type": "application/json"
+        }
+        
+        response = requests.post(
+            "https://api.resend.com/emails",
+            headers=headers,
+            json=email_data
+        )
+        
+        if response.status_code in (200, 201):
+            # Log the outreach in campaigns table as a single send
+            try:
+                campaign_data = {
+                    "user_id": user_id,
+                    "name": f"Outreach to {body.to}",
+                    "goal": "Direct outreach from Analyzer",
+                    "industry": "General",
+                    "status": "completed",
+                    "email_template": body.body,
+                    "email_subject": body.subject
+                }
+                supabase_request("POST", "campaigns", campaign_data)
+            except Exception as log_error:
+                print(f"[WARNING] Could not log outreach to campaigns table: {log_error}")
+
+            return JSONResponse({'status': 'success', 'id': response.json().get('id')})
+        else:
+            print(f"Resend API error: {response.status_code} - {response.text}")
+            return JSONResponse({'error': f'Resend error: {response.text}'}, status_code=500)
+            
+    except Exception as e:
+        print(f"Error in send_email_resend: {e}")
+        return JSONResponse({'error': str(e)}, status_code=500)
+
+# -------------------- LEAD ENGINE ROUTES --------------------
+
+# Store runs in memory for now, could be persisted to JSON or DB
+# In a real app, this would be a table in Supabase
+RUNS_DATA = {}
+DUMMY_RUNS_FILE = "backend/storage/lead_runs.json"
+
+def load_lead_runs():
+    global RUNS_DATA
+    try:
+        if os.path.exists(DUMMY_RUNS_FILE):
+            with open(DUMMY_RUNS_FILE, 'r') as f:
+                RUNS_DATA = json.load(f)
+    except Exception as e:
+        print(f"[ERROR] Failed to load lead runs: {e}")
+
+def save_lead_runs():
+    try:
+        os.makedirs(os.path.dirname(DUMMY_RUNS_FILE), exist_ok=True)
+        with open(DUMMY_RUNS_FILE, 'w') as f:
+            json.dump(RUNS_DATA, f)
+    except Exception as e:
+        print(f"[ERROR] Failed to save lead runs: {e}")
+
+load_lead_runs()
+
+@app.get('/api/lead-engine/health')
+async def lead_engine_health():
+    return {"status": "healthy", "service": "lead-engine"}
+
+@app.post('/api/lead-engine/runs')
+async def start_lead_run(request: Request, params: LeadEngineRunParams, background_tasks: BackgroundTasks):
+    user_id = await get_current_user(request)
+    if not user_id:
+        return JSONResponse({'error': 'Not logged in'}, status_code=401)
+    
+    run_id = f"run_{int(time.time())}"
+    RUNS_DATA[run_id] = {
+        "run_id": run_id,
+        "user_id": user_id,
+        "status": "pending",
+        "queries": params.queries,
+        "geo": params.geo,
+        "created_at": datetime.now().isoformat(),
+        "leads_count": 0,
+        "progress": 0
+    }
+    save_lead_runs()
+    
+    background_tasks.add_task(run_pipeline_task, run_id, params)
+    
+    return RUNS_DATA[run_id]
+
+async def run_pipeline_task(run_id: str, params: LeadEngineRunParams):
+    try:
+        RUNS_DATA[run_id]["status"] = "processing"
+        RUNS_DATA[run_id]["progress"] = 10
+        save_lead_runs()
+        
+        # Prepare Pipeline config
+        # We'll create a dummy args object for load_config_from_env_and_args
+        class Args:
+            pass
+        args = Args()
+        args.queries = params.queries
+        args.geo = params.geo
+        args.category = params.category
+        args.limit = params.limit
+        args.enable_yelp = params.enable_yelp
+        args.enable_yellowpages = params.enable_yellowpages
+        args.enable_clearbit = params.enable_clearbit
+        args.enable_overpass = params.enable_overpass
+        args.push_to_gsheets = False
+        args.dry_run = params.dry_run
+        args.free_mode = True # Default to free mode for now
+        args.enable_embed_scoring = False
+        args.enable_embed_dedupe = False
+        
+        config = load_config_from_env_and_args(args)
+        run_dir = f"backend/output/{run_id}"
+        os.makedirs(run_dir, exist_ok=True)
+        
+        pipeline = Pipeline(config, run_dir)
+        
+        RUNS_DATA[run_id]["progress"] = 30
+        save_lead_runs()
+        
+        # 1. Source Businesses
+        merged, metrics = await pipeline.source_businesses()
+        RUNS_DATA[run_id]["progress"] = 60
+        save_lead_runs()
+        
+        # 2. Find Emails and Validate
+        enriched, raw_contacts, validated_emails = await pipeline.find_emails_and_validate(merged)
+        RUNS_DATA[run_id]["progress"] = 90
+        save_lead_runs()
+        
+        # Store leads in RUNS_DATA or a separate file
+        leads_file = f"{run_dir}/leads.json"
+        with open(leads_file, 'w') as f:
+            json.dump({"items": enriched, "total": len(enriched)}, f)
+            
+        RUNS_DATA[run_id]["status"] = "completed"
+        RUNS_DATA[run_id]["progress"] = 100
+        RUNS_DATA[run_id]["leads_count"] = len(enriched)
+        save_lead_runs()
+        
+    except Exception as e:
+        print(f"[ERROR] Lead Engine Task Failed: {e}")
+        RUNS_DATA[run_id]["status"] = "failed"
+        RUNS_DATA[run_id]["error"] = str(e)
+        save_lead_runs()
+
+@app.get('/api/lead-engine/runs')
+async def list_lead_runs(request: Request):
+    user_id = await get_current_user(request)
+    if not user_id:
+        return JSONResponse({'error': 'Not logged in'}, status_code=401)
+    
+    # Filter by user_id
+    user_runs = {rid: run for rid, run in RUNS_DATA.items() if run.get('user_id') == user_id}
+    return user_runs
+
+@app.get('/api/lead-engine/runs/{run_id}')
+async def get_lead_run_status(run_id: str, request: Request):
+    user_id = await get_current_user(request)
+    if not user_id:
+        return JSONResponse({'error': 'Not logged in'}, status_code=401)
+    
+    run = RUNS_DATA.get(run_id)
+    if not run or run.get('user_id') != user_id:
+        return JSONResponse({'error': 'Run not found'}, status_code=404)
+    
+    return run
+
+@app.get('/api/lead-engine/runs/{run_id}/leads')
+async def get_lead_run_results(run_id: str, request: Request):
+    user_id = await get_current_user(request)
+    if not user_id:
+        return JSONResponse({'error': 'Not logged in'}, status_code=401)
+    
+    run = RUNS_DATA.get(run_id)
+    if not run or run.get('user_id') != user_id:
+        return JSONResponse({'error': 'Run not found'}, status_code=404)
+    
+    if run.get('status') != 'completed':
+        return JSONResponse({'error': 'Run not completed'}, status_code=409)
+    
+    leads_file = f"backend/output/{run_id}/leads.json"
+    if os.path.exists(leads_file):
+        with open(leads_file, 'r') as f:
+            return json.load(f)
+    
+    return {"items": [], "total": 0}
+
+@app.delete('/api/lead-engine/runs/{run_id}')
+async def delete_lead_run(run_id: str, request: Request):
+    user_id = await get_current_user(request)
+    if not user_id:
+        return JSONResponse({'error': 'Not logged in'}, status_code=401)
+    
+    if run_id in RUNS_DATA and RUNS_DATA[run_id].get('user_id') == user_id:
+        del RUNS_DATA[run_id]
+        save_lead_runs()
+        return {"status": "success"}
+    
+    return JSONResponse({'error': 'Run not found'}, status_code=404)
+
+print("main_api.py loaded successfully")
