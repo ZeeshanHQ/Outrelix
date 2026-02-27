@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import BACKEND_URL from '../config/backend';
 import backendManager from './BackendManager';
+import { supabase } from '../supabase';
 
 const GmailStatusContext = createContext();
 
@@ -18,14 +19,23 @@ export const GmailStatusProvider = ({ children }) => {
     } else {
       setInitialLoading(true);
     }
-    
+
     try {
-      const res = await backendManager.fetchWithWakeUp(`${BACKEND_URL}/api/user/gmail-status`, { credentials: 'include' });
-      
+      // Get the Supabase session token for authentication
+      const { data: { session } } = await supabase.auth.getSession();
+      const authHeaders = session?.access_token
+        ? { 'Authorization': `Bearer ${session.access_token}` }
+        : {};
+
+      const res = await backendManager.fetchWithWakeUp(`${BACKEND_URL}/api/user/gmail-status`, {
+        credentials: 'include',
+        headers: { ...authHeaders }
+      });
+
       if (!res.ok) {
         throw new Error(`HTTP ${res.status}: ${res.statusText}`);
       }
-      
+
       const data = await res.json();
       setIsGmailConnected(data.connected);
       setGmailEmail(data.email || '');
@@ -64,12 +74,12 @@ export const GmailStatusProvider = ({ children }) => {
   }, [checkGmailStatus]);
 
   return (
-    <GmailStatusContext.Provider value={{ 
-      isGmailConnected, 
-      gmailEmail, 
-      loading, 
+    <GmailStatusContext.Provider value={{
+      isGmailConnected,
+      gmailEmail,
+      loading,
       initialLoading,
-      refreshGmailStatus 
+      refreshGmailStatus
     }}>
       {children}
     </GmailStatusContext.Provider>

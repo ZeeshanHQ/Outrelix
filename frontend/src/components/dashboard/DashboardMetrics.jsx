@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowUpRight, ArrowDownRight, Users, ShoppingCart, DollarSign, Activity } from 'lucide-react';
+import { ArrowUpRight, ArrowDownRight, Users, ShoppingCart, DollarSign, Activity, Eye, Package } from 'lucide-react';
 
 const MetricCard = ({ title, value, trend, trendUp, icon: Icon, color }) => (
     <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-all duration-300 group cursor-pointer relative overflow-hidden">
@@ -32,10 +32,10 @@ const DashboardMetrics = () => {
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 md:gap-6 2xl:gap-7.5">
             <MetricCard
                 title="Total Views"
-                value="$3.456K"
+                value="3.456K"
                 trend="0.43%"
                 trendUp={true}
-                icon={Users}
+                icon={Eye}
                 color="blue"
             />
             <MetricCard
@@ -43,23 +43,23 @@ const DashboardMetrics = () => {
                 value="$45.2K"
                 trend="4.35%"
                 trendUp={true}
-                icon={ShoppingCart}
+                icon={DollarSign}
                 color="blue"
             />
             <MetricCard
-                title="Total Product"
-                value="2.450"
+                title="Total Products"
+                value="2,450"
                 trend="2.59%"
                 trendUp={true}
-                icon={Activity}
+                icon={Package}
                 color="blue"
             />
             <MetricCard
                 title="Total Users"
-                value="3.456"
+                value="3,456"
                 trend="0.95%"
                 trendUp={false}
-                icon={DollarSign}
+                icon={Users}
                 color="blue"
             />
         </div>

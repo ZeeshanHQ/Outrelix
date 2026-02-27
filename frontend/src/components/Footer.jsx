@@ -1,5 +1,5 @@
 import React from 'react';
-import Link from 'next/link';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -8,28 +8,28 @@ const Footer = () => {
     {
       title: 'Platform',
       links: [
-        { label: 'AI Lead Scraper', href: '/leads' },
-        { label: 'Outreach Writer', href: '/writer' },
-        { label: 'Brand Intelligence', href: '/brand-generator' },
-        { label: 'SEO Analytics', href: '/seo-optimizer' },
+        { label: 'AI Lead Scraper', to: '/leads' },
+        { label: 'Outreach Writer', to: '/writer' },
+        { label: 'Brand Intelligence', to: '/brand-generator' },
+        { label: 'SEO Analytics', to: '/seo-optimizer' },
       ],
     },
     {
       title: 'Resources',
       links: [
-        { label: 'Success Stories', href: '/blog' },
-        { label: 'Sales Playbooks', href: '/blog' },
-        { label: 'Documentation', href: '/faq' },
-        { label: 'API Reference', href: '/faq' },
+        { label: 'Success Stories', to: '/blog' },
+        { label: 'Sales Playbooks', to: '/blog' },
+        { label: 'Documentation', to: '/faq' },
+        { label: 'API Reference', to: '/faq' },
       ],
     },
     {
       title: 'Company',
       links: [
-        { label: 'About Us', href: '/about' },
-        { label: 'Contact Sales', href: '/contact' },
-        { label: 'Privacy Center', href: '/privacy' },
-        { label: 'Security', href: '/terms' },
+        { label: 'About Us', to: '/about' },
+        { label: 'Contact Sales', to: '/contact' },
+        { label: 'Privacy Center', to: '/privacy' },
+        { label: 'Security', to: '/terms' },
       ],
     },
   ];
@@ -69,7 +69,7 @@ const Footer = () => {
                 {group.links.map((link) => (
                   <li key={link.label}>
                     <Link
-                      href={link.href}
+                      to={link.to}
                       className="text-gray-500 hover:text-blue-600 transition-colors text-sm font-medium"
                     >
                       {link.label}
@@ -85,9 +85,9 @@ const Footer = () => {
             © {currentYear} Outrelix Intelligence. All rights reserved.
           </p>
           <div className="flex gap-8">
-            <Link href="/privacy" className="text-gray-400 hover:text-gray-600 text-xs font-medium">Privacy Policy</Link>
-            <Link href="/terms" className="text-gray-400 hover:text-gray-600 text-xs font-medium">Terms of Service</Link>
-            <Link href="/cookies" className="text-gray-400 hover:text-gray-600 text-xs font-medium">Cookie Settings</Link>
+            <Link to="/privacy" className="text-gray-400 hover:text-gray-600 text-xs font-medium">Privacy Policy</Link>
+            <Link to="/terms" className="text-gray-400 hover:text-gray-600 text-xs font-medium">Terms of Service</Link>
+            <Link to="/cookies" className="text-gray-400 hover:text-gray-600 text-xs font-medium">Cookie Settings</Link>
           </div>
         </div>
       </div>

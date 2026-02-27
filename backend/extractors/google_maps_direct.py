@@ -1,7 +1,7 @@
 
 import logging
 import asyncio
-import urllib.parse
+from urllib.parse import urlparse, quote
 from typing import List, Dict, Optional
 import os
 from playwright.async_api import async_playwright
@@ -47,126 +47,199 @@ class GoogleMapsDirectExtractor:
                         break
                         
                     search_term = f"{query} in {geo}"
-                    url = f"https://www.google.com/maps/search/{urllib.parse.quote(search_term)}"
+                    url = f"https://www.google.com/maps/search/{quote(search_term)}"
                     logger.info(f"Direct Scraping: {url}")
                     
                     try:
                         await page.goto(url, timeout=60000, wait_until="domcontentloaded")
                         
-                        # Handle "Accept Cookies" if it appears (common in EU, less so in US/headless)
+                        # Handle "Accept Cookies"
                         try:
-                            # Generic consent button selector
                             await page.click('button[aria-label="Accept all"]', timeout=2000)
                         except:
                             pass
 
                         # Determine if we have a list or a single result
-                        # Selector for the scrollable list of results
                         feed_selector = 'div[role="feed"]'
+                        # Backups for different GMaps UI versions
+                        feed_fallback = 'div.m6QErb.DxyBCb.kA9KIf.dS8AEf'
                         
                         try:
-                            await page.wait_for_selector(feed_selector, timeout=10000)
+                            # Increase timeout to 20s as Maps can be slow to render the feed
+                            await page.wait_for_selector(feed_selector, timeout=20000)
                         except:
-                            logger.info("No result feed found. Checking for single result or empty.")
-                            # TODO: Handle single result case redirect
-                            continue
+                            try:
+                                logger.info("Primary feed selector failed, trying fallback...")
+                                await page.wait_for_selector(feed_fallback, timeout=5000)
+                                feed_selector = feed_fallback
+                            except:
+                                logger.info("No result feed found. Checking for single result redirect or no-results state.")
+                                
+                                # Check for "No results found" text
+                                content = await page.content()
+                                if "Google Maps can't find" in content or "No results found" in content:
+                                    logger.warning(f"Google Maps returned no results for: {query}")
+                                    continue
 
-                        # Infinite Scroll Loop
+                                # Check if we landed on a place page directly
+                                if "/maps/place/" in page.url:
+                                    logger.info(f"Detected single result redirect: {page.url}")
+                                    # Scrape this single item
+                                    record = await self._scrape_current_details(page, page.url)
+                                    if record:
+                                        # Attempt to get name from URL or title
+                                        title = await page.title()
+                                        record["company_name"] = title.split(" - ")[0] if " - " in title else title
+                                        results.append(record)
+                                    continue
+                                else:
+                                    logger.warning(f"No list, no single result, and no clear 'no results' message detected. Page URL: {page.url}")
+                                    continue
+
+                        # Infinite Scroll Loop for list results
                         no_new_results_count = 0
                         previous_count = 0
                         
                         while len(results) < limit and no_new_results_count < 5:
-                            # 1. Scrape current visible items
                             elements = await page.query_selector_all('div[role="article"]')
                             
                             for el in elements:
                                 try:
-                                    # Extract basic info from the card
                                     link_el = await el.query_selector('a[href^="https://www.google.com/maps/place"]')
                                     if not link_el:
                                         continue
                                         
                                     href = await link_el.get_attribute('href')
-                                    if not href:
+                                    if not href or href in unique_ids:
                                         continue
                                         
-                                    # Simple ID extraction from URL
-                                    # Format: .../place/Name+Details/@lat,lng,...
-                                    # Use href as comprehensive ID
-                                    if href in unique_ids:
-                                        continue
-                                    
-                                    # Extract Name (aria-label often has it)
                                     name = await link_el.get_attribute('aria-label')
                                     if not name:
                                         continue
-
-                                    # Attempt to get rating and reviews
-                                    text_content = await el.inner_text()
-                                    lines = text_content.split('\n')
-                                    
-                                    # Very naive parsing - can be improved with specific selectors
-                                    # Usually contained in spans with specific classes, but classes are obfuscated.
-                                    # Aria labels are more reliable.
                                     
                                     unique_ids.add(href)
                                     
-                                    # For "Direct" mode, we might not get phone/website without clicking details.
-                                    # Strategy: Collect URLs now, enrich/click later OR just return basic list.
-                                    # Optimization: Just return what is visible on the list card for speed.
+                                    # Click to open details
+                                    await el.click()
+                                    await page.wait_for_timeout(1500) 
                                     
-                                    # Extract phone (sometimes visible, sometimes not)
-                                    # Extract industry (often visible)
+                                    record = await self._scrape_current_details(page, href)
+                                    if record:
+                                        record["company_name"] = name
+                                        results.append(record)
+                                        logger.info(f"Extracted: {name} | web={record.get('website_url')} | phone={record.get('phone_raw')}")
                                     
-                                    record = {
-                                        "company_id": href, # temporary ID
-                                        "company_name": name,
-                                        "domain": None, # Enriched later
-                                        "website_url": None, # Enriched later
-                                        "phone_raw": None, # Enriched later
-                                        "address": None,
-                                        "source_tags": ["gmaps_direct"],
-                                        "gmaps_url": href
-                                    }
-                                    
-                                    results.append(record)
-                                    
+                                    # Navigate back to list
+                                    try:
+                                        back_btn = await page.query_selector('button[aria-label="Back"]')
+                                        if back_btn:
+                                            await back_btn.click()
+                                        else:
+                                            await page.go_back()
+                                        await page.wait_for_selector(feed_selector, timeout=8000)
+                                        await page.wait_for_timeout(500)
+                                    except Exception as nav_err:
+                                        logger.warning(f"Back navigation failed, re-navigating: {nav_err}")
+                                        await page.goto(url, timeout=60000, wait_until="domcontentloaded")
+                                        await page.wait_for_selector(feed_selector, timeout=10000)
+
                                     if len(results) >= limit:
                                         break
                                 except Exception as e:
-                                    # Skip bad element
+                                    logger.debug(f"Skipping element: {e}")
                                     continue
 
                             if len(results) >= limit:
                                 break
 
-                            # 2. Check overlap
                             if len(unique_ids) == previous_count:
                                 no_new_results_count += 1
                             else:
                                 no_new_results_count = 0
                                 previous_count = len(unique_ids)
 
-                            # 3. Scroll
-                            # Scroll the feed div
-                            await page.evaluate(f'document.querySelector("{feed_selector}").scrollBy(0, 5000)')
-                            await page.wait_for_timeout(2000) # Wait for network
+                            # Scroll the feed div - FIXED SyntaxError (nested quotes)
+                            try:
+                                await page.evaluate(f"document.querySelector('{feed_selector}').scrollBy(0, 10000)")
+                                await page.wait_for_timeout(2500)
+                            except Exception as scroll_err:
+                                logger.error(f"Scroll failed: {scroll_err}")
+                                break
                             
-                            # Check if "You've reached the end of the list" exists
-                            content = await page.content()
-                            if "You've reached the end of the list" in content:
+                            if "You've reached the end of the list" in await page.content():
                                 break
 
                     except Exception as e:
                         logger.error(f"Error scraping query {query}: {e}")
 
                 await browser.close()
-                
             except Exception as e:
                 logger.error(f"Failed to launch browser: {e}")
                 
         return results
 
+    async def _scrape_current_details(self, page, href: str) -> Optional[Dict]:
+        """Helper to scrape details from the currently open side panel or page."""
+        try:
+            # 1. Scrape from side panel
+            website_url = phone_raw = address = category = rating = None
+            
+            # Website
+            website_el = await page.query_selector('a[data-item-id="authority"]')
+            if website_el:
+                website_url = await website_el.get_attribute('href')
+            else:
+                website_el = await page.query_selector('a[aria-label*="website"], a[aria-label*="Website"]')
+                if website_el:
+                    website_url = await website_el.get_attribute('href')
+
+            # Phone
+            phone_el = await page.query_selector('button[data-item-id^="phone:tel:"]')
+            if phone_el:
+                phone_raw = await phone_el.get_attribute('data-item-id')
+                if phone_raw:
+                    phone_raw = phone_raw.replace('phone:tel:', '')
+            else:
+                phone_el = await page.query_selector('button[aria-label*="Phone"], button[aria-label*="phone"]')
+                if phone_el:
+                    phone_aria = await phone_el.get_attribute('aria-label')
+                    if phone_aria:
+                        phone_raw = "".join(filter(str.isdigit, phone_aria.replace('Phone: ', '')))
+
+            # Address
+            address_el = await page.query_selector('button[data-item-id="address"]')
+            address = await address_el.get_attribute('aria-label') if address_el else None
+            if address:
+                address = address.replace('Address: ', '')
+                
+            # Category
+            category_el = await page.query_selector('button[jsaction*="pane.rating.category"]')
+            category = await category_el.inner_text() if category_el else None
+            
+            # Rating
+            try:
+                rating_el = await page.query_selector('div.fontDisplayLarge')
+                if rating_el:
+                    rating_text = await rating_el.inner_text()
+                    rating = float(rating_text.strip())
+            except:
+                pass
+
+            return {
+                "company_id": href,
+                "domain": urlparse(website_url).netloc if website_url else None,
+                "website_url": website_url,
+                "website": website_url,
+                "phone_raw": phone_raw,
+                "address": address,
+                "category": category,
+                "rating": rating,
+                "source_tags": ["gmaps_direct"],
+                "gmaps_url": href
+            }
+        except Exception as e:
+            logger.warning(f"Detail scraping failed: {e}")
+            return None
+
     def _normalize(self, raw: Dict) -> Dict:
-        """Compatibility method if needed."""
         return raw

@@ -1,117 +1,41 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircleIcon } from '@heroicons/react/24/solid';
-import { useRouter } from 'next/navigation';
+import { useNavigate } from 'react-router-dom';
 
-const steps = [
-  {
-    title: 'What is your company name?',
-    emoji: '🏢',
-    options: [],
-    key: 'company_name',
-    type: 'input',
-  },
-  {
-    title: 'Are you an individual or a team?',
-    emoji: '🧑',
-    options: ['Individual', 'Small Team', 'Agency'],
-    key: 'userType',
-    type: 'button',
-  },
-  {
-    title: 'What best describes your role?',
-    emoji: '💼',
-    options: ['Founder', 'Salesperson', 'Marketer', 'Other'],
-    key: 'role',
-    type: 'button',
-  },
-  {
-    title: 'What do you want to achieve with Outrelix?',
-    emoji: '🎯',
-    options: ['Book more demos', 'Automate outreach', 'Replace SDRs', 'Try AI Sales', 'Other'],
-    key: 'goals',
-    type: 'multi',
-  },
-  {
-    title: 'What industry are you in?',
-    emoji: '🏢',
-    options: ['SaaS', 'Real Estate', 'Finance', 'Legal', 'Consulting', 'Other'],
-    key: 'industry',
-    type: 'dropdown',
-  },
-  {
-    title: 'What is your company size?',
-    emoji: '👥',
-    options: ['1-10', '11-50', '51-200', '201-500', '500+'],
-    key: 'companySize',
-    type: 'button',
-  },
-];
-
-const pricingPlans = [
-  {
-    name: 'Starter',
-    price: '$0',
-    features: ['AI Sales Agent', 'Basic Analytics', 'Up to 100 contacts'],
-    recommended: false,
-    trial: true,
-  },
-  {
-    name: 'Pro',
-    price: '$49',
-    features: ['Everything in Starter', 'Advanced Analytics', 'Up to 1,000 contacts', 'Priority Support'],
-    recommended: true,
-    trial: true,
-  },
-  {
-    name: 'Power',
-    price: '$99',
-    features: ['Everything in Pro', 'Unlimited contacts', 'Custom Integrations'],
-    recommended: false,
-    trial: true,
-  },
-];
-
-const totalSteps = steps.length + 2; // +1 for pricing, +1 for card entry
-
+// Onboarding configuration
 const onboardingSteps = [
   {
     title: 'What is your company name?',
-    emoji: '🏢',
     key: 'company_name',
     type: 'input',
   },
   {
     title: 'Are you an individual or a team?',
-    emoji: '🧑',
     options: ['Individual', 'Small Team', 'Agency'],
     key: 'userType',
     type: 'button',
   },
   {
     title: 'What best describes your role?',
-    emoji: '💼',
     options: ['Founder', 'Salesperson', 'Marketer', 'Other'],
     key: 'role',
     type: 'button',
   },
   {
     title: 'What do you want to achieve with Outrelix?',
-    emoji: '🎯',
     options: ['Book more demos', 'Automate outreach', 'Replace SDRs', 'Try AI Sales', 'Other'],
     key: 'goals',
     type: 'button',
   },
   {
     title: 'What industry are you in?',
-    emoji: '🏢',
     options: ['SaaS', 'Real Estate', 'Finance', 'Legal', 'Consulting', 'Other'],
     key: 'industry',
     type: 'dropdown',
   },
   {
     title: 'What is your company size?',
-    emoji: '👥',
     options: ['1-10', '11-50', '51-200', '201-500', '500+'],
     key: 'company_size',
     type: 'button',
@@ -123,7 +47,7 @@ const OnboardingModal = ({ open, onClose, userName }) => {
   const [answers, setAnswers] = useState({});
   const [selectedOption, setSelectedOption] = useState(null);
   const [otherInput, setOtherInput] = useState("");
-  const router = useRouter();
+  const navigate = useNavigate();
 
   if (!open) return null;
 

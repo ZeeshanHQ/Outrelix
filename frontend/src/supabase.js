@@ -1,48 +1,45 @@
 import { createClient } from '@supabase/supabase-js';
-import { getSession, signIn as nextAuthSignIn, signOut as nextAuthSignOut } from 'next-auth/react';
 
 // Supabase configuration
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://bfoggljxtwoloxthtocy.supabase.co';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+export const supabaseUrl = process.env.REACT_APP_SUPABASE_URL || 'https://bfoggljxtwoloxthtocy.supabase.co';
+export const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
 
 // Create Supabase client
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// Auth helper functions (bridged to NextAuth)
+// Auth helper functions
 export const auth = {
-  signUp: async (email, password, metadata = {}) => {
-    console.warn("Supabase Email Signup is legacy. Use Google Login.");
-    return { data: null, error: new Error("Signup is restricted to Google Social Login") };
-  },
+  signUp: (email, password, metadata = {}) =>
+    supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: metadata,
+      },
+    }),
 
-  signIn: async (email, password) => {
-    console.warn("Supabase Email Signin is legacy. Use Google Login.");
-    return { data: null, error: new Error("Signin is restricted to Google Social Login") };
-  },
+  signIn: (email, password) =>
+    supabase.auth.signInWithPassword({
+      email,
+      password,
+    }),
 
-  signInWithGoogle: async () => {
-    return nextAuthSignIn('google', { callbackUrl: '/dashboard' });
-  },
+  signInWithGoogle: () =>
+    supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: window.location.origin + '/dashboard',
+      },
+    }),
 
-  signOut: async () => {
-    return nextAuthSignOut({ callbackUrl: '/' });
-  },
+  signOut: () => supabase.auth.signOut(),
 
-  getCurrentUser: async () => {
-    const session = await getSession();
-    return { user: session?.user, error: null };
-  },
+  getCurrentUser: () => supabase.auth.getUser(),
 
-  getSession: async () => {
-    const session = await getSession();
-    return { session, error: null };
-  },
+  getSession: () => supabase.auth.getSession(),
 
-  onAuthStateChange: (callback) => {
-    // Bridging Supabase's event listener to NextAuth's session-based flow
-    // NextAuth handles this via SessionProvider, but we provide a dummy for compatibility
-    return { data: { subscription: { unsubscribe: () => { } } } };
-  }
+  onAuthStateChange: (callback) =>
+    supabase.auth.onAuthStateChange(callback),
 };
 
 // Database helper functions

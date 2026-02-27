@@ -29,6 +29,7 @@ class ClearbitClient:
                 "enrichment_industry": "Software",
                 "enrichment_employee_count": 10 + bucket * 25,
                 "enrichment_linkedin_url": f"https://www.linkedin.com/company/{domain.split('.')[0]}",
+                "description": f"{domain.capitalize()} is a leading provider of innovative solutions in the software industry, currently expanding their team."
             }
         # Prefer RapidAPI wrapper if provided
         if self.rapid_host and self.rapidapi_key and self.rapid_base:
@@ -58,4 +59,6 @@ class ClearbitClient:
             out["enrichment_industry"] = j.get("category") or j.get("industry")
             out["enrichment_employee_count"] = j.get("employees") or j.get("metrics", {}).get("employees")
             out["enrichment_linkedin_url"] = j.get("linkedin") or j.get("links", {}).get("linkedin")
+            out["description"] = j.get("description") or j.get("bio")
+            out["tech_stack"] = j.get("tech") or j.get("tags")
             return {k: v for k, v in out.items() if v}

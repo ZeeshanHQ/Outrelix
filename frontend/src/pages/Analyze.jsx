@@ -1,8 +1,9 @@
+'use client';
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Analyzer from '../components/Analyzer';
 import AppSidebar from '../components/AppSidebar';
-import { analyzerApi } from '../lib/supabaseClient';
+import { analyzerApi } from '../utils/supabaseHelpers';
 import { toast } from 'react-toastify';
 import { Search, Trash2, Eye, Mail, X, ExternalLink, RefreshCw } from 'lucide-react';
 import EmailGenerator from '../components/EmailGenerator';
@@ -80,14 +81,13 @@ const AnalyzePage = () => {
             Harness the power of Llama 3 to decode business strategies and SEO blueprints from any URL.
           </p>
 
-          {/* Daily Limit Info */}
-          {dailyLimit && (
-            <div className="mt-6 inline-flex items-center px-4 py-2 bg-slate-50 border border-slate-100 rounded-xl">
-              <span className="text-slate-500 text-xs font-bold uppercase tracking-widest">
-                Daily Credits: <span className="text-slate-800">{dailyLimit.max_per_day - dailyLimit.remaining_analyses} used of {dailyLimit.max_per_day}</span>
-              </span>
-            </div>
-          )}
+          {/* Premium Intelligence Pill */}
+          <div className="mt-6 inline-flex items-center px-4 py-2 bg-blue-50 border border-blue-100 rounded-xl">
+            <span className="text-blue-600 text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+              <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse" />
+              Full-Throttle Intelligence Active
+            </span>
+          </div>
         </motion.div>
 
         {/* Analyzer Component */}

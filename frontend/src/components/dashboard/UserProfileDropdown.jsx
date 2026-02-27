@@ -1,15 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User, Settings, CreditCard, LogOut, ChevronDown } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { signOut, useSession } from 'next-auth/react';
+import { useNavigate } from 'react-router-dom';
+import { auth } from '../../supabase';
 
 const UserProfileDropdown = ({ user }) => {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef(null);
-    const router = useRouter();
-    const { data: session } = useSession();
-    const displayUser = user || session?.user;
+    const navigate = useNavigate();
 
     const toggleDropdown = () => setIsOpen(!isOpen);
 
@@ -28,13 +26,16 @@ const UserProfileDropdown = ({ user }) => {
 
     const handleLogout = async () => {
         try {
-            await signOut({ callbackUrl: '/' });
+            await auth.signOut();
+            localStorage.removeItem('user');
+            localStorage.removeItem('isAuthenticated');
+            window.location.href = '/'; // Hard reload to clear states
         } catch (error) {
             console.error('Logout failed:', error);
         }
     };
 
-    if (!displayUser) return null;
+    if (!user) return null;
 
     return (
         <div className="relative" ref={dropdownRef}>
@@ -45,7 +46,7 @@ const UserProfileDropdown = ({ user }) => {
             >
                 <div className="text-right hidden lg:block pl-2">
                     <span className="block text-sm font-bold text-slate-700 leading-none group-hover:text-blue-600 transition-colors">
-                        {displayUser.name || displayUser.displayName}
+                        {user.displayName || user.name}
                     </span>
                     <span className="block text-[10px] font-semibold text-slate-400 uppercase tracking-widest mt-0.5">
                         Pro Account
@@ -53,7 +54,7 @@ const UserProfileDropdown = ({ user }) => {
                 </div>
                 <div className="h-9 w-9 rounded-full bg-slate-100 p-0.5 ring-2 ring-transparent group-hover:ring-blue-100 transition-all flex-shrink-0">
                     <img
-                        src={displayUser.image || displayUser.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayUser.name || displayUser.email || 'U')}&background=3C50E0&color=fff`}
+                        src={user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName || user.email}&background=3C50E0&color=fff`}
                         alt="Profile"
                         className="h-full w-full rounded-full object-cover"
                     />
@@ -73,15 +74,15 @@ const UserProfileDropdown = ({ user }) => {
                     >
                         <div className="px-4 py-3 border-b border-slate-100 mb-2">
                             <p className="text-sm font-bold text-slate-800">Signed in as</p>
-                            <p className="text-xs text-slate-500 truncate font-medium">{displayUser.email}</p>
+                            <p className="text-xs text-slate-500 truncate font-medium">{user.email}</p>
                         </div>
 
                         <div className="space-y-1 px-2">
-                            <button onClick={() => { router.push('/settings'); setIsOpen(false); }} className="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-600 rounded-lg hover:bg-slate-50 hover:text-blue-600 transition-colors">
+                            <button onClick={() => { navigate('/settings'); setIsOpen(false); }} className="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-600 rounded-lg hover:bg-slate-50 hover:text-blue-600 transition-colors">
                                 <Settings className="w-4 h-4" />
                                 Account Settings
                             </button>
-                            <button onClick={() => { router.push('/billing'); setIsOpen(false); }} className="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-600 rounded-lg hover:bg-slate-50 hover:text-blue-600 transition-colors">
+                            <button onClick={() => { navigate('/billing'); setIsOpen(false); }} className="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-600 rounded-lg hover:bg-slate-50 hover:text-blue-600 transition-colors">
                                 <CreditCard className="w-4 h-4" />
                                 Billing & Plan
                             </button>

@@ -1,11 +1,9 @@
-'use client';
 import React, { useState, useRef, useEffect } from 'react';
-import Link from 'next/link';
-import { useRouter, usePathname } from 'next/navigation';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { GlobeAltIcon, SunIcon, MoonIcon, UserCircleIcon } from '@heroicons/react/24/outline';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useSession, signOut } from 'next-auth/react';
+import { auth } from '../supabase';
 
 const LANGUAGES = [
   { code: 'en', label: 'English', flag: '/flags/us.png', fallback: '🇺🇸' },
@@ -15,9 +13,10 @@ const LANGUAGES = [
 
 const Navbar = () => {
   const { t, i18n } = useTranslation();
-  const router = useRouter();
-  const pathname = usePathname();
-  const { data: session } = useSession();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const pathname = location.pathname;
+  const [user, setUser] = useState(null);
   const [dark, setDark] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -30,6 +29,20 @@ const Navbar = () => {
   useEffect(() => {
     setDark(document.documentElement.classList.contains('dark'));
     lastScrollY.current = window.scrollY;
+
+    // Check current auth status
+    const initAuth = async () => {
+      const { data: { session } } = await auth.getSession();
+      setUser(session?.user ?? null);
+    };
+    initAuth();
+
+    // Listen for auth changes
+    const { data: { subscription } } = auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const currentLang = LANGUAGES.find(l => l.code === i18n.language) || LANGUAGES[0];
@@ -59,7 +72,8 @@ const Navbar = () => {
   };
 
   const handleSignOut = async () => {
-    await signOut({ callbackUrl: '/' });
+    await auth.signOut();
+    navigate('/');
   };
 
   // Close dropdowns on outside click
@@ -109,9 +123,9 @@ const Navbar = () => {
           <button
             onClick={() => {
               if (isDashboardRoute) {
-                router.push('/dashboard');
+                navigate('/dashboard');
               } else {
-                router.push('/');
+                navigate('/');
               }
             }}
             className="flex items-center h-full mr-6 pl-2 focus:outline-none"
@@ -253,23 +267,23 @@ const Navbar = () => {
             </div>
 
             {/* User Profile */}
-            {session?.user && (
+            {user && (
               <div className="relative" ref={profileDropdownRef}>
                 <button
                   onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
                   className="flex items-center space-x-2 focus:outline-none px-2 py-1 rounded-lg hover:bg-gray-100/30 dark:hover:bg-gray-700/30 transition-colors duration-200"
                 >
-                  {session.user.image ? (
+                  {user.user_metadata?.avatar_url || user.image ? (
                     <img
-                      src={session.user.image}
-                      alt={session.user.name}
+                      src={user.user_metadata?.avatar_url || user.image}
+                      alt={user.user_metadata?.full_name || user.name}
                       className="w-8 h-8 rounded-full object-cover ring-2 ring-primary-500"
                     />
                   ) : (
                     <UserCircleIcon className="w-8 h-8 text-gray-600 dark:text-gray-300" />
                   )}
                   <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
-                    {session.user.name || (session.user.email ? session.user.email.split('@')[0] : 'User')}
+                    {user.user_metadata?.full_name || user.name || (user.email ? user.email.split('@')[0] : 'User')}
                   </span>
                 </button>
                 <AnimatePresence>

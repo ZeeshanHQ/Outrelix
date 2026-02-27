@@ -35,6 +35,10 @@ def _cfg():
         enable_clearbit = False
         push_to_gsheets = False
         dry_run = True
+        free_mode = False
+        enable_overpass = False
+        enable_embed_scoring = False
+        enable_embed_dedupe = False
     return load_config_from_env_and_args(Args)
 
 

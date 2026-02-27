@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import Writer from '../components/Writer';
 import AppSidebar from '../components/AppSidebar';

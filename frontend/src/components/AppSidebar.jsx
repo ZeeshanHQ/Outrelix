@@ -1,7 +1,6 @@
 import React from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useSession } from 'next-auth/react';
 import {
   Home,
   Search,
@@ -52,11 +51,10 @@ const navSections = [
 
 const AppSidebar = () => {
   const { isCollapsed, toggleCollapse, isMobileOpen, closeMobile } = useSidebar();
-  const pathname = usePathname();
-  const router = useRouter();
-  const { data: session } = useSession();
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  const isActive = (to) => pathname === to || pathname.startsWith(to + '/');
+  const isActive = (to) => location.pathname.startsWith(to);
 
   const sidebarWidth = isCollapsed ? 'w-[72px]' : 'w-[280px]';
 
@@ -126,7 +124,7 @@ const AppSidebar = () => {
                   return (
                     <button
                       key={key}
-                      onClick={() => { router.push(to); closeMobile(); }}
+                      onClick={() => { navigate(to); closeMobile(); }}
                       className={`relative flex items-center transition-all duration-200 group w-full overflow-hidden
                         ${isCollapsed ? 'justify-center h-11 rounded-xl' : 'gap-3 px-3.5 py-2.5 rounded-lg'}
                         ${active
@@ -166,12 +164,8 @@ const AppSidebar = () => {
         {/* Footer / User Profile */}
         <div className={`mt-auto border-t border-slate-50 transition-all duration-300 ${isCollapsed ? 'p-2' : 'p-4'}`}>
           <div className={`flex items-center rounded-xl bg-slate-50 border border-slate-100/50 transition-all duration-300 ${isCollapsed ? 'justify-center py-3 px-0' : 'gap-3 p-2.5'}`}>
-            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-[10px] ring-2 ring-white shadow-sm overflow-hidden">
-              {session?.user?.image ? (
-                <img src={session.user.image} alt="" className="w-full h-full object-cover" />
-              ) : (
-                session?.user?.name ? session.user.name.substring(0, 2).toUpperCase() : '??'
-              )}
+            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-[10px] ring-2 ring-white shadow-sm">
+              UP
             </div>
 
             {!isCollapsed && (
@@ -180,12 +174,8 @@ const AppSidebar = () => {
                 animate={{ opacity: 1, x: 0 }}
                 className="flex flex-col overflow-hidden"
               >
-                <span className="text-xs font-bold text-slate-800 truncate">
-                  {session?.user?.name || 'User'}
-                </span>
-                <span className="text-[9px] text-slate-400 font-bold uppercase tracking-tighter">
-                  {session?.user?.email || 'Pro Account'}
-                </span>
+                <span className="text-xs font-bold text-slate-800 truncate">Zeeshan</span>
+                <span className="text-[9px] text-slate-400 font-bold uppercase tracking-tighter">Pro Account</span>
               </motion.div>
             )}
           </div>

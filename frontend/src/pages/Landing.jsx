@@ -1,10 +1,7 @@
-'use client';
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { signIn } from 'next-auth/react';
+import { useNavigate, Link } from 'react-router-dom';
 import {
   RocketLaunchIcon,
   ChartBarIcon,
@@ -219,7 +216,7 @@ const SignupModal = ({ isOpen, onClose, onSignupSuccess, onEmailVerified, pendin
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const router = useRouter();
+  const navigate = useNavigate();
   const [verificationSent, setVerificationSent] = useState(false);
   const [emailNotVerified, setEmailNotVerified] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
@@ -234,7 +231,7 @@ const SignupModal = ({ isOpen, onClose, onSignupSuccess, onEmailVerified, pendin
   const handleGoogleSignIn = async () => {
     setLoading(true);
     try {
-      await signIn('google', { callbackUrl: '/dashboard' });
+      await auth.signInWithGoogle({ redirectTo: window.location.origin + '/dashboard' });
     } catch (error) {
       console.error('Google sign-in error:', error);
       let errorMessage = 'Google sign-in failed. Please try again.';

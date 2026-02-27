@@ -29,11 +29,20 @@ class LeadEngineService {
    * Get headers with authentication
    */
   async getHeaders() {
-    const token = await this.getAuthToken();
-    return {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-    };
+    try {
+      const token = await this.getAuthToken();
+      const { data: { user } } = await supabase.auth.getUser();
+      return {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+        'X-User-Id': user?.id || '',
+      };
+    } catch (error) {
+      console.warn('Silent auth failure in getHeaders:', error);
+      return {
+        'Content-Type': 'application/json',
+      };
+    }
   }
 
   /**
@@ -228,7 +237,7 @@ class LeadEngineService {
       const poll = async () => {
         try {
           const status = await this.getRunStatus(runId);
-          
+
           if (onProgress) {
             onProgress(status);
           }

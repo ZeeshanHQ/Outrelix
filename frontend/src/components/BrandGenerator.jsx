@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-toastify';
-import supabase, { aiApi } from '../lib/supabaseClient';
+import { supabase } from '../supabase';
+import { aiApi } from '../utils/supabaseHelpers';
 import { Palette, Sparkles, Copy, Globe, FileText, RefreshCw, Eye, Trash2 } from 'lucide-react';
 
 const BrandGenerator = () => {
@@ -70,10 +71,7 @@ const BrandGenerator = () => {
   };
 
   const handleGenerate = async () => {
-    if (dailyCount >= dailyLimit) {
-      toast.error(`Daily limit reached! (${dailyLimit}/day)`);
-      return;
-    }
+    // Limit check removed for Premium experience
     if (!brandName && !businessType) {
       toast.error('Enter a brand name or business type.');
       return;
@@ -167,10 +165,10 @@ Return strict JSON with: brandName, tagline, colorPalette (array of 3 hex), tone
               </p>
             </div>
             <div className="text-right">
-              <div className="text-xl font-black text-slate-800">
-                {dailyCount}/{dailyLimit}
+              <div className="text-xl font-black text-purple-600 uppercase">
+                Active
               </div>
-              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Daily Credits</div>
+              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Premium Engine</div>
             </div>
           </div>
 
@@ -203,7 +201,7 @@ Return strict JSON with: brandName, tagline, colorPalette (array of 3 hex), tone
             whileHover={{ scale: 1.01, y: -2 }}
             whileTap={{ scale: 0.99 }}
             onClick={handleGenerate}
-            disabled={isGenerating || dailyCount >= dailyLimit}
+            disabled={isGenerating}
             className="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold hover:bg-slate-800 transition-all disabled:opacity-30 flex items-center justify-center gap-3"
           >
             {isGenerating ? (

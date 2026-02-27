@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useRouter } from 'next/navigation';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   ChevronDownIcon,
   ChevronUpIcon,
@@ -98,7 +98,7 @@ const FAQSection = ({ title, icon: Icon, faqs, delay = 0 }) => {
 };
 
 const ContactForm = () => {
-  const router = useRouter();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -111,7 +111,7 @@ const ContactForm = () => {
     // Handle form submission here
     console.log('Form submitted:', formData);
     // Navigate to contact page or show success message
-    router.push('/contact');
+    navigate('/contact');
   };
 
   const handleChange = (e) => {
@@ -230,7 +230,7 @@ const ContactForm = () => {
 };
 
 const FAQ = () => {
-  const pathname = typeof window !== 'undefined' ? window.location.hash : '';
+  const location = useLocation();
   const generalFAQs = [
     {
       question: "What is Outrelix and how does it work?",
@@ -321,18 +321,18 @@ const FAQ = () => {
 
   // Handle anchor links when page loads
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.location.hash) {
-      const element = document.querySelector(window.location.hash);
+    if (location.hash) {
+      const element = document.querySelector(location.hash);
       if (element) {
         setTimeout(() => {
           element.scrollIntoView({
             behavior: 'smooth',
             block: 'start'
           });
-        }, 500);
+        }, 500); // Small delay to ensure page is loaded
       }
     }
-  }, []);
+  }, [location.hash]);
 
   return (
     <>

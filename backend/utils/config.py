@@ -64,7 +64,11 @@ def load_config_from_env_and_args(args) -> Config:
 
     # Defaults - configurable
     default_queries = os.getenv("QUERIES", "business,company,services")
-    queries = [q.strip() for q in (args.queries or default_queries).split(",") if q.strip()]
+    raw_queries = args.queries or default_queries
+    if isinstance(raw_queries, list):
+        queries = [q.strip() for q in raw_queries if q and q.strip()]
+    else:
+        queries = [q.strip() for q in str(raw_queries).split(",") if q.strip()]
     geo = args.geo or os.getenv("GEO", "USA")
     category = args.category or os.getenv("CATEGORY", "General Business")
     limit = int(args.limit or os.getenv("LIMIT", 1000) or 1000)

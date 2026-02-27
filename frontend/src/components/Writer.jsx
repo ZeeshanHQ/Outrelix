@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-toastify';
-import supabase, { analyzerApi, aiApi } from '../lib/supabaseClient';
+import { supabase } from '../supabase';
+import { analyzerApi, aiApi } from '../utils/supabaseHelpers';
 import { Smartphone, Mail, Megaphone, Search, Package, FileText, Share2, Newspaper, PenTool, RefreshCw } from 'lucide-react';
 
 const Writer = ({ onGenerationComplete }) => {
@@ -134,7 +135,7 @@ const Writer = ({ onGenerationComplete }) => {
       } catch (e) {
         generatedText = await simulateAIWriter(mode, contentType, inputText);
       }
-      
+
       setOutputText(generatedText);
       setProgress('Saving to history...');
 
@@ -142,7 +143,7 @@ const Writer = ({ onGenerationComplete }) => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         const wordCount = generatedText.split(' ').length;
-        
+
         const { error } = await supabase
           .from('writer_sessions')
           .insert([{
@@ -158,14 +159,14 @@ const Writer = ({ onGenerationComplete }) => {
 
         // Update daily count
         setDailyCount(prev => prev + 1);
-        
+
         // Reload recent sessions
         loadRecentSessions();
       }
 
       setProgress('');
       toast.success('Content generated successfully!');
-      
+
       if (onGenerationComplete) {
         onGenerationComplete({
           mode,
@@ -189,7 +190,7 @@ const Writer = ({ onGenerationComplete }) => {
     await new Promise(resolve => setTimeout(resolve, 2000));
 
     const prompt = prompts[contentType][mode];
-    
+
     if (mode === 'write') {
       return generateNewContent(contentType, prompt);
     } else {
@@ -199,7 +200,7 @@ const Writer = ({ onGenerationComplete }) => {
 
   const generateNewContent = (type, prompt) => {
     const templates = {
-      app_description: `🚀 **Outrelix - AI-Powered Email Marketing**
+      app_description: `**Outrelix - AI-Powered Email Marketing**
 
 Transform your email campaigns with AI-driven personalization and automation. Outrelix helps businesses create compelling, personalized emails that drive engagement and conversions.
 
@@ -212,8 +213,8 @@ Transform your email campaigns with AI-driven personalization and automation. Ou
 
 **Perfect for:** Marketing teams, small businesses, and entrepreneurs looking to scale their email marketing efforts.
 
-Download now and start sending emails that actually get opened! 📧✨`,
-      
+Download now and start sending emails that actually get opened!`,
+
       cold_email: `Subject: Quick question about your email marketing strategy
 
 Hi [Name],
@@ -230,8 +231,8 @@ Best regards,
 [Your Name]
 
 P.S. I'm not selling anything - just genuinely interested in helping fellow entrepreneurs succeed.`,
-      
-      ad_copy: `🔥 **LIMITED TIME: 50% OFF Email Marketing Mastery Course**
+
+      ad_copy: `**LIMITED TIME: 50% OFF Email Marketing Mastery Course**
 
 Stop losing customers to boring emails! 
 
@@ -243,7 +244,7 @@ Stop losing customers to boring emails!
 **Only 24 hours left** - Don't miss out on this exclusive offer!
 
 [CLAIM YOUR DISCOUNT NOW] →`,
-      
+
       seo_post: `# The Complete Guide to Email Marketing Automation in 2024
 
 Email marketing automation has revolutionized how businesses communicate with their customers. In this comprehensive guide, we'll explore the latest trends, strategies, and tools that are shaping the future of email marketing.
@@ -264,7 +265,7 @@ Email automation isn't just about sending bulk emails - it's about creating pers
 Modern email marketing platforms offer sophisticated automation features that make it easy to create complex workflows without technical expertise.
 
 Ready to transform your email marketing? Start with these proven strategies and watch your engagement rates soar.`,
-      
+
       product_description: `🌟 **Premium Wireless Headphones - Studio Quality Sound**
 
 Experience music like never before with our flagship wireless headphones featuring advanced noise cancellation and crystal-clear audio.
@@ -285,7 +286,7 @@ Experience music like never before with our flagship wireless headphones featuri
 **Special Offer:** Order today and get free shipping + 2-year warranty!
 
 Don't settle for mediocre sound. Upgrade to studio-quality audio today.`,
-      
+
       blog_post: `# 5 Email Marketing Mistakes That Are Costing You Customers
 
 Email marketing remains one of the most effective digital marketing channels, but many businesses are making costly mistakes that hurt their results. Here are the top 5 mistakes to avoid:
@@ -311,18 +312,18 @@ Sending the same message to everyone reduces relevance and engagement. Segment b
 A/B test everything - subject lines, send times, content, and CTAs to continuously improve performance.
 
 Ready to fix these mistakes? Start with one improvement this week and watch your email marketing results improve dramatically.`,
-      
-      social_media: `🚀 Just launched our new AI-powered email marketing tool!
 
-✨ Generate personalized emails in seconds
-📊 Track performance with real-time analytics  
-🎯 Target the right audience every time
-⚡ Automate your entire email workflow
+      social_media: `Just launched our new AI-powered email marketing tool!
+
+Generate personalized emails in seconds
+Track performance with real-time analytics
+Target the right audience every time
+Automate your entire email workflow
 
 Who's ready to transform their email marketing? 
 
 #EmailMarketing #AI #MarketingTech #BusinessGrowth #Automation`,
-      
+
       press_release: `**FOR IMMEDIATE RELEASE**
 
 **Outrelix Launches Revolutionary AI-Powered Email Marketing Platform**
@@ -413,22 +414,20 @@ This rewritten version maintains your original message while making it more effe
           <div className="flex gap-4">
             <button
               onClick={() => setMode('write')}
-              className={`px-6 py-3 rounded-lg font-medium transition-all flex items-center gap-2 ${
-                mode === 'write'
-                  ? 'bg-blue-600 text-white shadow-lg'
-                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-              }`}
+              className={`px-6 py-3 rounded-lg font-medium transition-all flex items-center gap-2 ${mode === 'write'
+                ? 'bg-blue-600 text-white shadow-lg'
+                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                }`}
             >
               <PenTool className="w-5 h-5" />
               Write New
             </button>
             <button
               onClick={() => setMode('rewrite')}
-              className={`px-6 py-3 rounded-lg font-medium transition-all flex items-center gap-2 ${
-                mode === 'rewrite'
-                  ? 'bg-blue-600 text-white shadow-lg'
-                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-              }`}
+              className={`px-6 py-3 rounded-lg font-medium transition-all flex items-center gap-2 ${mode === 'rewrite'
+                ? 'bg-blue-600 text-white shadow-lg'
+                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                }`}
             >
               <RefreshCw className="w-5 h-5" />
               Rewrite Existing
@@ -448,11 +447,10 @@ This rewritten version maintains your original message while making it more effe
                 <button
                   key={type.value}
                   onClick={() => setContentType(type.value)}
-                  className={`p-4 rounded-lg text-sm font-medium transition-all flex flex-col items-center gap-2 ${
-                    contentType === type.value
-                      ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-2 border-blue-500'
-                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 border-2 border-transparent'
-                  }`}
+                  className={`p-4 rounded-lg text-sm font-medium transition-all flex flex-col items-center gap-2 ${contentType === type.value
+                    ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-2 border-blue-500'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 border-2 border-transparent'
+                    }`}
                 >
                   <IconComponent className="w-6 h-6" />
                   <span>{type.label}</span>

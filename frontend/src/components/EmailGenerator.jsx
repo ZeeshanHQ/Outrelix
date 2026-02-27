@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Copy, Wand2, Send, CheckCircle2, RefreshCw, Mail, Check } from 'lucide-react';
-import { aiApi } from '../lib/supabaseClient';
+import { aiApi } from '../utils/supabaseHelpers';
 import BACKEND_URL from '../config/backend';
 import { toast } from 'react-toastify';
 

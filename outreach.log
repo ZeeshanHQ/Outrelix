@@ -10,3 +10,41 @@ NameError: name 'supabase' is not defined
 2026-02-21 11:24:25,461 - utils.fuzzy - INFO - DRY_RUN: fuzzy dedupe will simulate name collisions
 2026-02-21 11:24:25,461 - core.merge - INFO - Merge summary: {'input_total': 0, 'normalized': 0, 'merged_total': 0, 'groups': 0, 'merged_count': 0, 'kept': 0, 'source_counts': {'gmaps': 0, 'yelp': 0, 'yellowpages': 0, 'overpass': 0}}
 2026-02-21 11:24:25,465 - core.pipeline - INFO - SOURCING metrics: {'input_total': 0, 'normalized': 0, 'merged_total': 0, 'groups': 0, 'merged_count': 0, 'kept': 0, 'source_counts': {'gmaps': 0, 'yelp': 0, 'yellowpages': 0, 'overpass': 0}}
+2026-02-22 11:13:13,860 - asyncio - ERROR - Task exception was never retrieved
+future: <Task finished name='Task-3' coro=<gmail_status_background_checker() done, defined at S:\3D Objects\Outrelix\backend\api\main_api.py:1288> exception=NameError("name 'supabase' is not defined")>
+Traceback (most recent call last):
+  File "S:\3D Objects\Outrelix\backend\api\main_api.py", line 1290, in gmail_status_background_checker
+    users = supabase.table('users').select('id, gmail_token').execute().data
+NameError: name 'supabase' is not defined
+2026-02-22 23:32:16,726 - core.pipeline - INFO - FREE MODE: Using GoogleMapsDirectExtractor (Playwright)
+2026-02-22 23:32:45,287 - extractors.google_maps_direct - INFO - Direct Scraping: https://www.google.com/maps/search/used%20car%20dealerships%20auto%20repair%20service%20stations%20in%20Pakistan
+2026-02-22 23:32:54,348 - core.merge - INFO - Merging sources: gmaps=10 yelp=0 yellowpages=0 overpass=0
+2026-02-22 23:32:54,353 - utils.hashing - INFO - DRY_RUN: generating deterministic mock company_id
+2026-02-22 23:32:54,361 - utils.hashing - INFO - DRY_RUN: generating deterministic mock company_id
+2026-02-22 23:32:54,362 - utils.hashing - INFO - DRY_RUN: generating deterministic mock company_id
+2026-02-22 23:32:54,362 - utils.hashing - INFO - DRY_RUN: generating deterministic mock company_id
+2026-02-22 23:32:54,362 - utils.hashing - INFO - DRY_RUN: generating deterministic mock company_id
+2026-02-22 23:32:54,362 - utils.hashing - INFO - DRY_RUN: generating deterministic mock company_id
+2026-02-22 23:32:54,362 - utils.hashing - INFO - DRY_RUN: generating deterministic mock company_id
+2026-02-22 23:32:54,362 - utils.hashing - INFO - DRY_RUN: generating deterministic mock company_id
+2026-02-22 23:32:54,363 - utils.hashing - INFO - DRY_RUN: generating deterministic mock company_id
+2026-02-22 23:32:54,363 - utils.hashing - INFO - DRY_RUN: generating deterministic mock company_id
+2026-02-22 23:32:54,367 - utils.fuzzy - INFO - DRY_RUN: fuzzy dedupe will simulate name collisions
+2026-02-22 23:32:54,367 - core.merge - INFO - Merge summary: {'input_total': 10, 'normalized': 10, 'merged_total': 10, 'groups': 0, 'merged_count': 0, 'kept': 10, 'source_counts': {'gmaps': 10, 'yelp': 0, 'yellowpages': 0, 'overpass': 0}}
+2026-02-22 23:32:54,371 - core.pipeline - INFO - SOURCING metrics: {'input_total': 10, 'normalized': 10, 'merged_total': 10, 'groups': 0, 'merged_count': 0, 'kept': 10, 'source_counts': {'gmaps': 10, 'yelp': 0, 'yellowpages': 0, 'overpass': 0}}
+2026-02-22 23:42:00,180 - core.pipeline - INFO - FREE MODE: Using GoogleMapsDirectExtractor (Playwright)
+2026-02-22 23:42:04,885 - extractors.google_maps_direct - INFO - Direct Scraping: https://www.google.com/maps/search/real%20estate%20agents%20property%20brokers%20home%20sellers%20in%20Global
+2026-02-22 23:42:16,114 - core.merge - INFO - Merging sources: gmaps=10 yelp=0 yellowpages=0 overpass=0
+2026-02-22 23:42:16,117 - utils.hashing - INFO - DRY_RUN: generating deterministic mock company_id
+2026-02-22 23:42:16,122 - utils.hashing - INFO - DRY_RUN: generating deterministic mock company_id
+2026-02-22 23:42:16,122 - utils.hashing - INFO - DRY_RUN: generating deterministic mock company_id
+2026-02-22 23:42:16,122 - utils.hashing - INFO - DRY_RUN: generating deterministic mock company_id
+2026-02-22 23:42:16,122 - utils.hashing - INFO - DRY_RUN: generating deterministic mock company_id
+2026-02-22 23:42:16,123 - utils.hashing - INFO - DRY_RUN: generating deterministic mock company_id
+2026-02-22 23:42:16,123 - utils.hashing - INFO - DRY_RUN: generating deterministic mock company_id
+2026-02-22 23:42:16,123 - utils.hashing - INFO - DRY_RUN: generating deterministic mock company_id
+2026-02-22 23:42:16,123 - utils.hashing - INFO - DRY_RUN: generating deterministic mock company_id
+2026-02-22 23:42:16,123 - utils.hashing - INFO - DRY_RUN: generating deterministic mock company_id
+2026-02-22 23:42:16,124 - utils.fuzzy - INFO - DRY_RUN: fuzzy dedupe will simulate name collisions
+2026-02-22 23:42:16,124 - core.merge - INFO - Merge summary: {'input_total': 10, 'normalized': 10, 'merged_total': 10, 'groups': 0, 'merged_count': 0, 'kept': 10, 'source_counts': {'gmaps': 10, 'yelp': 0, 'yellowpages': 0, 'overpass': 0}}
+2026-02-22 23:42:16,124 - core.pipeline - INFO - SOURCING metrics: {'input_total': 10, 'normalized': 10, 'merged_total': 10, 'groups': 0, 'merged_count': 0, 'kept': 10, 'source_counts': {'gmaps': 10, 'yelp': 0, 'yellowpages': 0, 'overpass': 0}}

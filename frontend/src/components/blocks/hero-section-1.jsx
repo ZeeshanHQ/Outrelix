@@ -1,5 +1,5 @@
 import React from 'react'
-import Link from 'next/link'
+import { Link } from 'react-router-dom'
 import { ArrowRight, ChevronRight, Menu, X, Sparkles, Target, Zap, ShieldCheck } from 'lucide-react'
 import { Button } from '../ui/button'
 import { AnimatedGroup } from '../ui/animated-group'

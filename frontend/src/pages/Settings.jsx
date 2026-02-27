@@ -1,3 +1,4 @@
+'use client';
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -13,8 +14,9 @@ import {
   Trash2,
   Bell,
   PenTool,
-  Loader2,
-  QrCode
+  QrCode,
+  Target,
+  Sparkles
 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import DashboardHeader from '../components/dashboard/DashboardHeader';
@@ -53,6 +55,18 @@ const Settings = () => {
   });
   const [mfaModal, setMfaModal] = useState(false);
 
+  // Onboarding / Targeting Intelligence
+  const [onboardingData, setOnboardingData] = useState({
+    expect: '',
+    primary_role: '',
+    industry: '',
+    company_size: '',
+    job_title: '',
+    company_name: '',
+    additional_notes: ''
+  });
+  const [isSavingTargeting, setIsSavingTargeting] = useState(false);
+
   // Load actual user from Supabase
   useEffect(() => {
     const fetchUser = async () => {
@@ -73,10 +87,54 @@ const Settings = () => {
         if (isVerified) {
           setMfaData(prev => ({ ...prev, enabled: true }));
         }
+        fetchProfile(sbUser.id);
       }
     };
     fetchUser();
   }, []);
+
+  const fetchProfile = async (userId) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const response = await fetch(`${BACKEND_URL}/api/user/profile`, {
+        headers: {
+          'Authorization': `Bearer ${session?.access_token}`
+        }
+      });
+      const data = await response.json();
+      if (data.status === 'success') {
+        if (data.profile.name) setUser(prev => ({ ...prev, name: data.profile.name }));
+        if (data.profile.onboarding_data) setOnboardingData(data.profile.onboarding_data);
+      }
+    } catch (err) {
+      console.error("Error fetching profile:", err);
+    }
+  };
+
+  const saveTargeting = async () => {
+    setIsSavingTargeting(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const response = await fetch(`${BACKEND_URL}/api/user/profile`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token}`
+        },
+        body: JSON.stringify({ onboarding_data: onboardingData })
+      });
+      const data = await response.json();
+      if (data.status === 'success') {
+        toast.success("Targeting Intelligence updated!");
+      } else {
+        toast.error(data.message || "Failed to update targeting.");
+      }
+    } catch (err) {
+      toast.error("Error saving targeting data.");
+    } finally {
+      setIsSavingTargeting(false);
+    }
+  };
 
   const handleUpdateName = async () => {
     const { error } = await supabase.auth.updateUser({
@@ -343,115 +401,155 @@ const Settings = () => {
               </AnimatePresence>
             </div>
 
-            {/* Password Management */}
-            <div className="p-8 rounded-2xl border border-slate-100 bg-white shadow-sm">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 bg-purple-50 rounded-lg">
-                  <Lock className="w-5 h-5 text-purple-600" />
-                </div>
-                <h3 className="text-lg font-bold text-slate-800">Password</h3>
-              </div>
-
-              <AnimatePresence mode="wait">
-                {passFlow === 'ideal' && (
-                  <motion.div key="p-ideal" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                    <p className="text-sm text-slate-500 mb-6">Update your password to keep your account safe.</p>
-                    <button
-                      onClick={() => setPassFlow('changing')}
-                      className="text-sm font-bold text-purple-600 hover:text-purple-700 flex items-center gap-1 group"
-                    >
-                      Update Password <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                    </button>
-                  </motion.div>
-                )}
-
-                {passFlow === 'changing' && (
-                  <motion.div key="p-changing" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-                    <input
-                      type="password"
-                      placeholder="Current Password"
-                      value={passData.old}
-                      onChange={(e) => setPassData({ ...passData, old: e.target.value })}
-                      className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm focus:ring-2 focus:ring-purple-100 focus:border-purple-400 outline-none transition-all"
-                    />
-                    <input
-                      type="password"
-                      placeholder="New Password"
-                      value={passData.new}
-                      onChange={(e) => setPassData({ ...passData, new: e.target.value })}
-                      className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm focus:ring-2 focus:ring-purple-100 focus:border-purple-400 outline-none transition-all"
-                    />
-                    <input
-                      type="password"
-                      placeholder="Confirm New Password"
-                      value={passData.confirm}
-                      onChange={(e) => setPassData({ ...passData, confirm: e.target.value })}
-                      className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm focus:ring-2 focus:ring-purple-100 focus:border-purple-400 outline-none transition-all"
-                    />
-                    <div className="flex gap-2">
-                      <button onClick={handleChangePassword} className="flex-1 bg-purple-600 text-white py-3 rounded-xl text-sm font-bold hover:bg-purple-700 transition-all">Save Changes</button>
-                      <button onClick={() => setPassFlow('ideal')} className="px-4 py-3 text-slate-400 font-bold text-sm">Cancel</button>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
           </div>
 
-          {/* 3. Account Actions & Preferences */}
-          <div className="space-y-12">
-
-            {/* Account Preferences (2FA) */}
-            <div className="p-8 rounded-2xl border border-slate-100 bg-white shadow-sm">
-              <div className="flex items-center gap-3 mb-8">
-                <div className="p-2 bg-indigo-50 rounded-lg">
-                  <ShieldCheck className="w-5 h-5 text-indigo-600" />
+          {/* Targeting Intelligence (Onboarding Data) */}
+          <div className="p-8 rounded-2xl border border-slate-100 bg-white shadow-sm lg:col-span-2">
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-50 rounded-lg">
+                  <Target className="w-5 h-5 text-blue-600" />
                 </div>
-                <h3 className="text-lg font-bold text-slate-800">Account Control</h3>
+                <div>
+                  <h3 className="text-lg font-bold text-slate-800">Targeting Intelligence</h3>
+                  <p className="text-xs text-slate-500">Configure how the AI prioritizes and analyzes leads for you.</p>
+                </div>
+              </div>
+              <button
+                onClick={saveTargeting}
+                disabled={isSavingTargeting}
+                className="px-6 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition-all flex items-center gap-2 disabled:opacity-50"
+              >
+                {isSavingTargeting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                Save Targeting
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-6">
+                <div>
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Primary Goal</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Find high-intent B2B leads"
+                    value={onboardingData.expect}
+                    onChange={(e) => setOnboardingData({ ...onboardingData, expect: e.target.value })}
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm focus:ring-2 focus:ring-blue-100 outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Target Industry</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. SaaS, Fintech"
+                    value={onboardingData.industry}
+                    onChange={(e) => setOnboardingData({ ...onboardingData, industry: e.target.value })}
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm focus:ring-2 focus:ring-blue-100 outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Your Company Name</label>
+                  <input
+                    type="text"
+                    value={onboardingData.company_name}
+                    onChange={(e) => setOnboardingData({ ...onboardingData, company_name: e.target.value })}
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm focus:ring-2 focus:ring-blue-100 outline-none"
+                  />
+                </div>
               </div>
 
               <div className="space-y-6">
-                <div className="flex items-center justify-between group">
-                  <div>
-                    <h4 className="text-sm font-bold text-slate-800">Two-Factor Authentication</h4>
-                    <p className="text-[11px] font-medium text-slate-400">Add an extra layer of security.</p>
-                  </div>
-                  <button
-                    onClick={() => !mfaData.enabled && handleMfaEnroll()}
-                    className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${mfaData.enabled
-                      ? 'bg-emerald-50 text-emerald-600 border border-emerald-100 cursor-default'
-                      : 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm'
-                      }`}
-                  >
-                    {mfaData.enabled ? 'Enabled' : 'Turn On'}
-                  </button>
+                <div>
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Ideal Persona</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. CMO, Marketing Director"
+                    value={onboardingData.job_title}
+                    onChange={(e) => setOnboardingData({ ...onboardingData, job_title: e.target.value })}
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm focus:ring-2 focus:ring-blue-100 outline-none"
+                  />
                 </div>
-
-                <div className="flex items-center justify-between group">
-                  <div>
-                    <h4 className="text-sm font-bold text-slate-800">Newsletter Subscription</h4>
-                    <p className="text-[11px] font-medium text-slate-400">Receive weekly AI marketing tips.</p>
-                  </div>
-                  <div className="w-10 h-5 bg-blue-600 rounded-full relative cursor-pointer">
-                    <div className="absolute right-1 top-1 w-3 h-3 bg-white rounded-full shadow-sm"></div>
-                  </div>
+                <div>
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Target Company Size</label>
+                  <select
+                    value={onboardingData.company_size}
+                    onChange={(e) => setOnboardingData({ ...onboardingData, company_size: e.target.value })}
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm focus:ring-2 focus:ring-blue-100 outline-none"
+                  >
+                    <option value="">Select Size</option>
+                    <option value="1-10">1-10 Employees</option>
+                    <option value="11-50">11-50 Employees</option>
+                    <option value="51-200">51-200 Employees</option>
+                    <option value="201-500">201-500 Employees</option>
+                    <option value="500+">500+ Employees</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Additional Context</label>
+                  <textarea
+                    placeholder="Any specific instructions for lead enrichment..."
+                    value={onboardingData.additional_notes}
+                    onChange={(e) => setOnboardingData({ ...onboardingData, additional_notes: e.target.value })}
+                    rows={3}
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm focus:ring-2 focus:ring-blue-100 outline-none resize-none"
+                  />
                 </div>
               </div>
             </div>
-
-            {/* Newsletter placeholder */}
-            <div className="p-8 rounded-2xl border border-slate-100 bg-slate-50/30 flex flex-col items-center text-center">
-              <Bell className="w-8 h-8 text-slate-300 mb-4" />
-              <h4 className="text-sm font-bold text-slate-800">App Notifications</h4>
-              <p className="text-xs text-slate-400 mt-2">Manage how you receive alerts about your automation runs and campaigns.</p>
-            </div>
-
           </div>
         </div>
 
+        {/* 3. Account Actions & Preferences */}
+        <div className="space-y-12">
+
+          {/* Account Preferences (2FA) */}
+          <div className="p-8 rounded-2xl border border-slate-100 bg-white shadow-sm">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="p-2 bg-indigo-50 rounded-lg">
+                <ShieldCheck className="w-5 h-5 text-indigo-600" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-800">Account Control</h3>
+            </div>
+
+            <div className="space-y-6">
+              <div className="flex items-center justify-between group">
+                <div>
+                  <h4 className="text-sm font-bold text-slate-800">Two-Factor Authentication</h4>
+                  <p className="text-[11px] font-medium text-slate-400">Add an extra layer of security.</p>
+                </div>
+                <button
+                  onClick={() => !mfaData.enabled && handleMfaEnroll()}
+                  className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${mfaData.enabled
+                    ? 'bg-emerald-50 text-emerald-600 border border-emerald-100 cursor-default'
+                    : 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm'
+                    }`}
+                >
+                  {mfaData.enabled ? 'Enabled' : 'Turn On'}
+                </button>
+              </div>
+
+              <div className="flex items-center justify-between group">
+                <div>
+                  <h4 className="text-sm font-bold text-slate-800">Newsletter Subscription</h4>
+                  <p className="text-[11px] font-medium text-slate-400">Receive weekly AI marketing tips.</p>
+                </div>
+                <div className="w-10 h-5 bg-blue-600 rounded-full relative cursor-pointer">
+                  <div className="absolute right-1 top-1 w-3 h-3 bg-white rounded-full shadow-sm"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Newsletter placeholder */}
+          <div className="p-8 rounded-2xl border border-slate-100 bg-slate-50/30 flex flex-col items-center text-center">
+            <Bell className="w-8 h-8 text-slate-300 mb-4" />
+            <h4 className="text-sm font-bold text-slate-800">App Notifications</h4>
+            <p className="text-xs text-slate-400 mt-2">Manage how you receive alerts about your automation runs and campaigns.</p>
+          </div>
+
+        </div>
       </main>
 
-      {/* MFA Modal */}
       <AnimatePresence>
         {mfaModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -489,7 +587,7 @@ const Settings = () => {
 
                 <div className="space-y-4">
                   <div>
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2 px-1">Verification Code</label>
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1 px-1">Verification Code</label>
                     <input
                       type="text"
                       placeholder="000 000"

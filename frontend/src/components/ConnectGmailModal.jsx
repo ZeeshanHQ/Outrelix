@@ -1,14 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { Dialog } from '@headlessui/react';
+import { Dialog, DialogBackdrop, DialogPanel } from '@headlessui/react';
 import { CheckCircleIcon, XMarkIcon, EnvelopeIcon } from '@heroicons/react/24/outline';
 import { useGmailStatus } from '../utils/GmailStatusContext';
 import BACKEND_URL from '../config/backend';
+import { supabase } from '../supabase';
 
 const ConnectGmailModal = ({ open, onClose, onConnected, gmailEmail: initialGmailEmail, onSeeCampaign, onGmailConnected }) => {
   const { refreshGmailStatus } = useGmailStatus();
   const [isConnecting, setIsConnecting] = useState(false);
   const [gmailEmail, setGmailEmail] = useState(initialGmailEmail || '');
   const [success, setSuccess] = useState(false);
+
+  // Helper to get auth headers
+  const getAuthHeaders = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session?.access_token) {
+      return { 'Authorization': `Bearer ${session.access_token}` };
+    }
+    return {};
+  };
 
   // Reset state when modal opens
   useEffect(() => {
@@ -21,15 +31,18 @@ const ConnectGmailModal = ({ open, onClose, onConnected, gmailEmail: initialGmai
   // Check Gmail status when modal opens
   useEffect(() => {
     if (!open) return;
-    
+
     const checkGmailStatus = async () => {
       try {
-        const res = await fetch(`${BACKEND_URL}/api/user/gmail-status`, { credentials: 'include' });
+        const authHeaders = await getAuthHeaders();
+        const res = await fetch(`${BACKEND_URL}/api/user/gmail-status`, {
+          credentials: 'include',
+          headers: { ...authHeaders }
+        });
         const data = await res.json();
         if (data.connected && data.email) {
           setGmailEmail(data.email);
           setSuccess(true);
-          // Close modal immediately after successful connection
           if (onConnected) onConnected(data.email);
           if (onGmailConnected) onGmailConnected();
           onClose();
@@ -47,22 +60,29 @@ const ConnectGmailModal = ({ open, onClose, onConnected, gmailEmail: initialGmai
     checkGmailStatus();
   }, [open, onConnected, onGmailConnected, onClose]);
 
-  const handleConnectGmail = () => {
+  const handleConnectGmail = async () => {
     setIsConnecting(true);
-    const popup = window.open(`${BACKEND_URL}/auth/gmail`, 'Connect Gmail', 'width=500,height=700');
+    // Get the current user ID to pass as a query param to the popup
+    const { data: { user } } = await supabase.auth.getUser();
+    const userId = user?.id || '';
+    const popupUrl = `${BACKEND_URL}/auth/gmail?user_id=${userId}`;
+    const popup = window.open(popupUrl, 'Connect Gmail', 'width=500,height=700');
     if (!popup) {
       alert('Popup blocked! Please allow popups for this site.');
       setIsConnecting(false);
       return;
     }
-    
+
     const timer = setInterval(async () => {
       if (popup.closed) {
         clearInterval(timer);
-        // Immediately close modal and fetch Gmail from backend
         let email = '';
         try {
-          const res = await fetch(`${BACKEND_URL}/api/user/gmail-status`, { credentials: 'include' });
+          const authHeaders = await getAuthHeaders();
+          const res = await fetch(`${BACKEND_URL}/api/user/gmail-status`, {
+            credentials: 'include',
+            headers: { ...authHeaders }
+          });
           const data = await res.json();
           if (data.connected && data.email) {
             email = data.email;
@@ -75,16 +95,17 @@ const ConnectGmailModal = ({ open, onClose, onConnected, gmailEmail: initialGmai
           setSuccess(false);
         }
         setIsConnecting(false);
-        onClose(); // Always close modal immediately after popup closes
+        onClose();
       }
-    }, 500); // Check more frequently for faster response
+    }, 500);
   };
 
+
   return (
-    <Dialog open={open} onClose={onClose} className="fixed z-[200] inset-0 overflow-y-auto font-poppins">
-      <div className="flex items-center justify-center min-h-screen px-4">
-        <Dialog.Overlay className="fixed inset-0 bg-gradient-to-br from-blue-900/70 via-purple-900/60 to-pink-900/60 backdrop-blur-[6px]" />
-        <div className="relative bg-white/90 dark:bg-gray-900/90 rounded-3xl shadow-2xl max-w-md w-full p-0 z-10 flex flex-col gap-0 overflow-hidden border border-blue-200 dark:border-blue-900 backdrop-blur-xl ring-4 ring-blue-300/10 focus:outline-none focus:ring-4 focus:ring-blue-400/30 animate-fade-in">
+    <Dialog open={open} onClose={onClose} className="relative z-[200] font-poppins">
+      <DialogBackdrop className="fixed inset-0 bg-gradient-to-br from-blue-900/70 via-purple-900/60 to-pink-900/60 backdrop-blur-[6px] transition-opacity" />
+      <div className="fixed inset-0 z-10 w-screen overflow-y-auto flex items-center justify-center p-4 text-center">
+        <DialogPanel className="relative bg-white/90 dark:bg-gray-900/90 rounded-3xl shadow-2xl max-w-md w-full p-0 flex flex-col gap-0 overflow-hidden border border-blue-200 dark:border-blue-900 backdrop-blur-xl ring-4 ring-blue-300/10 focus:outline-none focus:ring-4 focus:ring-blue-400/30 animate-fade-in text-left">
           <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-blue-600 dark:hover:text-blue-300 bg-white/70 dark:bg-gray-800/70 rounded-full p-2 shadow-md z-20 border border-blue-100 dark:border-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-400">
             <XMarkIcon className="w-7 h-7" />
           </button>
@@ -119,9 +140,9 @@ const ConnectGmailModal = ({ open, onClose, onConnected, gmailEmail: initialGmai
                 </div>
                 <p className="text-green-700 dark:text-green-200 font-semibold text-center mb-6">You can now send campaigns from your Gmail!</p>
                 <button
-                  onClick={() => { 
-                    if (onSeeCampaign) onSeeCampaign(); 
-                    onClose(); 
+                  onClick={() => {
+                    if (onSeeCampaign) onSeeCampaign();
+                    onClose();
                   }}
                   className="px-8 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-green-500 text-white font-bold text-lg shadow-lg hover:brightness-110 transition-all duration-300"
                 >
@@ -130,7 +151,7 @@ const ConnectGmailModal = ({ open, onClose, onConnected, gmailEmail: initialGmai
               </>
             )}
           </div>
-        </div>
+        </DialogPanel>
       </div>
     </Dialog>
   );

@@ -5,7 +5,7 @@ const resources = {
   en: {
     translation: {
       dashboard: 'Dashboard',
-      subtitle: 'Your command center for email outreach success 🚀',
+      subtitle: 'Your command center for email outreach success',
       totalEmails: 'Total Emails',
       sent: 'Sent',
       replies: 'Replies',
@@ -234,7 +234,7 @@ const resources = {
   es: {
     translation: {
       dashboard: 'Tablero',
-      subtitle: 'Tu centro de mando para el éxito en el alcance por correo 🚀',
+      subtitle: 'Tu centro de mando para el éxito en el alcance por correo',
       totalEmails: 'Emails Totales',
       sent: 'Enviados',
       replies: 'Respuestas',
@@ -449,7 +449,7 @@ const resources = {
   zh: {
     translation: {
       dashboard: '仪表板',
-      subtitle: '您的电子邮件推广成功指挥中心 🚀',
+      subtitle: '您的电子邮件推广成功指挥中心',
       totalEmails: '总邮件数',
       sent: '已发送',
       replies: '回复',

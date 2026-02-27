@@ -18,11 +18,11 @@ class BackendManager {
   // Wake up the backend by making a simple request
   async wakeUpBackend() {
     console.log('🔄 Backend is sleeping, attempting to wake up...');
-    
+
     for (let attempt = 1; attempt <= this.maxWakeUpAttempts; attempt++) {
       try {
         console.log(`⏰ Wake-up attempt ${attempt}/${this.maxWakeUpAttempts}`);
-        
+
         // Make a simple request to wake up the backend
         const response = await fetch(`${BACKEND_URL}/health`, {
           method: 'GET',
@@ -40,7 +40,7 @@ class BackendManager {
           return true;
         }
       } catch (error) {
-        console.log(`❌ Wake-up attempt ${attempt} failed:`, error.message);
+        console.log(`Wake-up attempt ${attempt} failed:`, error.message);
       }
 
       // Wait before next attempt
@@ -69,7 +69,7 @@ class BackendManager {
       if (this.checkIfBackendSleeping(response)) {
         console.log('😴 Backend is sleeping, waking up...');
         const wokeUp = await this.wakeUpBackend();
-        
+
         if (wokeUp) {
           // Retry the original request
           return await fetch(url, {
@@ -90,7 +90,7 @@ class BackendManager {
       if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
         console.log('🌐 Network error, attempting to wake up backend...');
         const wokeUp = await this.wakeUpBackend();
-        
+
         if (wokeUp) {
           // Retry the original request
           return await fetch(url, {
@@ -102,7 +102,7 @@ class BackendManager {
           });
         }
       }
-      
+
       throw error;
     }
   }

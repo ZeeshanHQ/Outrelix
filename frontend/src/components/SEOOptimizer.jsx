@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-toastify';
-import supabase, { aiApi, supabaseUrl, supabaseAnonKey } from '../lib/supabaseClient';
+import { supabase, supabaseUrl, supabaseAnonKey } from '../supabase';
+import { aiApi } from '../utils/supabaseHelpers';
 import { Search, FileText, Globe, Copy, Trash2, Eye, Settings, Target, Zap } from 'lucide-react';
 
 const SEOOptimizer = ({ onOptimizationComplete }) => {
@@ -71,10 +72,7 @@ const SEOOptimizer = ({ onOptimizationComplete }) => {
       return;
     }
 
-    if (dailyCount >= dailyLimit) {
-      toast.error(`Daily limit reached! You've used all ${dailyLimit} optimizations for today.`);
-      return;
-    }
+    // Limit check removed for Premium experience
 
     setIsOptimizing(true);
     setProgress('Analyzing content...');
@@ -323,10 +321,10 @@ const SEOOptimizer = ({ onOptimizationComplete }) => {
               </p>
             </div>
             <div className="text-right">
-              <div className="text-xl font-black text-slate-800">
-                {dailyCount}/{dailyLimit}
+              <div className="text-xl font-black text-blue-600">
+                ACTIVE
               </div>
-              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Daily Credits</div>
+              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Premium Intelligence</div>
             </div>
           </div>
 
@@ -371,7 +369,7 @@ const SEOOptimizer = ({ onOptimizationComplete }) => {
               whileHover={{ scale: 1.01, y: -2 }}
               whileTap={{ scale: 0.99 }}
               onClick={optimizeContent}
-              disabled={isOptimizing || dailyCount >= dailyLimit}
+              disabled={isOptimizing}
               className="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold hover:bg-slate-800 transition-all disabled:opacity-30 flex items-center justify-center gap-3"
             >
               {isOptimizing ? (

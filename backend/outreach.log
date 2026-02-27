@@ -40,3 +40,165 @@ Traceback (most recent call last):
   File "S:\3D Objects\Outrelix\backend\api\main_api.py", line 1266, in gmail_status_background_checker
     users = supabase.table('users').select('id, gmail_token').execute().data
 NameError: name 'supabase' is not defined
+2026-02-23 05:48:50,264 - core.pipeline - INFO - FREE MODE: Using GoogleMapsDirectExtractor (Playwright)
+2026-02-23 05:49:06,538 - extractors.google_maps_direct - INFO - Direct Scraping: https://www.google.com/maps/search/software%20houses%20in%20United%20States
+2026-02-23 05:49:18,277 - extractors.google_maps_direct - ERROR - Error scraping query software houses: Page.goto: net::ERR_NAME_NOT_RESOLVED at https://www.google.com/maps/search/software%20houses%20in%20United%20States
+Call log:
+  - navigating to "https://www.google.com/maps/search/software%20houses%20in%20United%20States", waiting until "domcontentloaded"
+
+2026-02-23 05:49:18,540 - core.merge - INFO - Merging sources: gmaps=0 yelp=0 yellowpages=0 overpass=0
+2026-02-23 05:49:18,540 - utils.fuzzy - INFO - DRY_RUN: fuzzy dedupe will simulate name collisions
+2026-02-23 05:49:18,540 - core.merge - INFO - Merge summary: {'input_total': 0, 'normalized': 0, 'merged_total': 0, 'groups': 0, 'merged_count': 0, 'kept': 0, 'source_counts': {'gmaps': 0, 'yelp': 0, 'yellowpages': 0, 'overpass': 0}}
+2026-02-23 05:49:18,540 - core.pipeline - INFO - SOURCING metrics: {'input_total': 0, 'normalized': 0, 'merged_total': 0, 'groups': 0, 'merged_count': 0, 'kept': 0, 'source_counts': {'gmaps': 0, 'yelp': 0, 'yellowpages': 0, 'overpass': 0}}
+2026-02-23 08:45:03,635 - core.pipeline - INFO - FREE MODE: Using GoogleMapsDirectExtractor (Playwright)
+2026-02-23 08:45:11,076 - extractors.google_maps_direct - INFO - Direct Scraping: https://www.google.com/maps/search/residential%20commercial%20property%20brokers%20real%20estate%20agents%20in%20United%20States
+2026-02-23 08:45:30,816 - extractors.google_maps_direct - INFO - No result feed found. Checking for single result or empty.
+2026-02-23 08:45:31,260 - core.merge - INFO - Merging sources: gmaps=0 yelp=0 yellowpages=0 overpass=0
+2026-02-23 08:45:31,260 - utils.fuzzy - INFO - DRY_RUN: fuzzy dedupe will simulate name collisions
+2026-02-23 08:45:31,260 - core.merge - INFO - Merge summary: {'input_total': 0, 'normalized': 0, 'merged_total': 0, 'groups': 0, 'merged_count': 0, 'kept': 0, 'source_counts': {'gmaps': 0, 'yelp': 0, 'yellowpages': 0, 'overpass': 0}}
+2026-02-23 08:45:31,262 - core.pipeline - INFO - SOURCING metrics: {'input_total': 0, 'normalized': 0, 'merged_total': 0, 'groups': 0, 'merged_count': 0, 'kept': 0, 'source_counts': {'gmaps': 0, 'yelp': 0, 'yellowpages': 0, 'overpass': 0}}
+2026-02-23 10:19:03,353 - core.pipeline - INFO - FREE MODE: Using GoogleMapsDirectExtractor (Playwright)
+2026-02-23 10:19:06,286 - extractors.google_maps_direct - INFO - Direct Scraping: https://www.google.com/maps/search/realestate%20agents%20in%20United%20States
+2026-02-23 10:19:16,323 - extractors.google_maps_direct - INFO - Extracted: Chenab Estate Advisors | web=None | phone=None | addr=None
+2026-02-23 10:19:20,226 - extractors.google_maps_direct - INFO - Extracted: Zee Real Estates | web=None | phone=None | addr=None
+2026-02-23 10:19:24,024 - extractors.google_maps_direct - INFO - Extracted: Zee Real Estates | web=None | phone=03005378199 | addr=Lower Canal Rd, Faisalabad, Pakistan 
+2026-02-23 10:19:27,541 - extractors.google_maps_direct - INFO - Extracted: Cybertize Technologies | web=None | phone=03055522218 | addr=Office#216, First Floor, City Mall, Chen One Rd, D Ground Block B People's Colony No 1, Faisalabad, 38000, Pakistan 
+2026-02-23 10:19:30,951 - extractors.google_maps_direct - INFO - Extracted: RAZA ESTATE | web=None | phone=03218609618 | addr=H, H 30 Main boulevard, block, Wapda City, Faisalabad, 38000, Pakistan 
+2026-02-23 10:19:34,330 - extractors.google_maps_direct - INFO - Extracted: Punjab Small Industrial Estate | web=None | phone=03218609618 | addr=H, H 30 Main boulevard, block, Wapda City, Faisalabad, 38000, Pakistan 
+2026-02-23 10:19:37,591 - extractors.google_maps_direct - INFO - Extracted: USA REALTY, LLC | web=None | phone=None | addr=Nalka Kohala\u060c, Masjid Ismail Rd, Punjab Small Industries Corporation, Faisalabad, 38850, Pakistan 
+2026-02-23 10:19:40,980 - extractors.google_maps_direct - ERROR - Error scraping query realestate agents: Page.evaluate: SyntaxError: missing ) after argument list
+    at eval (<anonymous>)
+    at UtilityScript.evaluate (<anonymous>:290:30)
+    at UtilityScript.<anonymous> (<anonymous>:1:44)
+2026-02-23 10:19:41,224 - core.merge - INFO - Merging sources: gmaps=7 yelp=0 yellowpages=0 overpass=0
+2026-02-23 10:19:41,229 - utils.hashing - INFO - DRY_RUN: generating deterministic mock company_id
+2026-02-23 10:19:41,232 - utils.hashing - INFO - DRY_RUN: generating deterministic mock company_id
+2026-02-23 10:19:41,233 - utils.phone - INFO - DRY_RUN: normalizing phone deterministically
+2026-02-23 10:19:41,537 - utils.hashing - INFO - DRY_RUN: generating deterministic mock company_id
+2026-02-23 10:19:41,537 - utils.phone - INFO - DRY_RUN: normalizing phone deterministically
+2026-02-23 10:19:41,538 - utils.hashing - INFO - DRY_RUN: generating deterministic mock company_id
+2026-02-23 10:19:41,539 - utils.phone - INFO - DRY_RUN: normalizing phone deterministically
+2026-02-23 10:19:41,539 - utils.hashing - INFO - DRY_RUN: generating deterministic mock company_id
+2026-02-23 10:19:41,540 - utils.phone - INFO - DRY_RUN: normalizing phone deterministically
+2026-02-23 10:19:41,542 - utils.hashing - INFO - DRY_RUN: generating deterministic mock company_id
+2026-02-23 10:19:41,543 - utils.hashing - INFO - DRY_RUN: generating deterministic mock company_id
+2026-02-23 10:19:41,544 - utils.fuzzy - INFO - DRY_RUN: fuzzy dedupe will simulate name collisions
+2026-02-23 10:19:41,552 - core.merge - INFO - Merge summary: {'input_total': 7, 'normalized': 7, 'merged_total': 6, 'groups': 1, 'merged_count': 1, 'kept': 6, 'source_counts': {'gmaps': 7, 'yelp': 0, 'yellowpages': 0, 'overpass': 0}}
+2026-02-23 10:19:41,552 - core.pipeline - INFO - SOURCING metrics: {'input_total': 7, 'normalized': 7, 'merged_total': 6, 'groups': 1, 'merged_count': 1, 'kept': 6, 'source_counts': {'gmaps': 7, 'yelp': 0, 'yellowpages': 0, 'overpass': 0}}
+2026-02-23 11:42:14,463 - core.pipeline - INFO - FREE MODE: Using GoogleMapsDirectExtractor (Playwright)
+2026-02-23 11:42:21,801 - extractors.google_maps_direct - INFO - Direct Scraping: https://www.google.com/maps/search/realestate%20agencies%20in%20United%20States
+2026-02-23 11:42:32,457 - extractors.google_maps_direct - INFO - Extracted: Chenab Estate Advisors | web=None | phone=None | addr=None
+2026-02-23 11:42:39,161 - extractors.google_maps_direct - INFO - Extracted: Zee Real Estates | web=None | phone=03005378199 | addr=Lower Canal Rd, Faisalabad, Pakistan 
+2026-02-23 11:42:42,662 - extractors.google_maps_direct - INFO - Extracted: RAZA ESTATE | web=None | phone=03218609618 | addr=H, H 30 Main boulevard, block, Wapda City, Faisalabad, 38000, Pakistan 
+2026-02-23 11:42:46,381 - extractors.google_maps_direct - INFO - Extracted: The Bizzarro Agency, New York Real Estate Agents | web=None | phone=03218609618 | addr=8 W 126th St, New York, NY 10027, United States 
+2026-02-23 11:42:57,673 - extractors.google_maps_direct - ERROR - Error scraping query realestate agencies: Page.evaluate: SyntaxError: missing ) after argument list
+    at eval (<anonymous>)
+    at UtilityScript.evaluate (<anonymous>:290:30)
+    at UtilityScript.<anonymous> (<anonymous>:1:44)
+2026-02-23 11:42:57,932 - core.merge - INFO - Merging sources: gmaps=4 yelp=0 yellowpages=0 overpass=0
+2026-02-23 11:42:57,934 - utils.hashing - INFO - DRY_RUN: generating deterministic mock company_id
+2026-02-23 11:42:57,938 - utils.phone - INFO - DRY_RUN: normalizing phone deterministically
+2026-02-23 11:42:57,944 - utils.hashing - INFO - DRY_RUN: generating deterministic mock company_id
+2026-02-23 11:42:57,944 - utils.phone - INFO - DRY_RUN: normalizing phone deterministically
+2026-02-23 11:42:57,944 - utils.hashing - INFO - DRY_RUN: generating deterministic mock company_id
+2026-02-23 11:42:57,944 - utils.phone - INFO - DRY_RUN: normalizing phone deterministically
+2026-02-23 11:42:57,944 - utils.hashing - INFO - DRY_RUN: generating deterministic mock company_id
+2026-02-23 11:42:57,947 - utils.fuzzy - INFO - DRY_RUN: fuzzy dedupe will simulate name collisions
+2026-02-23 11:42:57,947 - core.merge - INFO - Merge summary: {'input_total': 4, 'normalized': 4, 'merged_total': 4, 'groups': 0, 'merged_count': 0, 'kept': 4, 'source_counts': {'gmaps': 4, 'yelp': 0, 'yellowpages': 0, 'overpass': 0}}
+2026-02-23 11:42:57,948 - core.pipeline - INFO - SOURCING metrics: {'input_total': 4, 'normalized': 4, 'merged_total': 4, 'groups': 0, 'merged_count': 0, 'kept': 4, 'source_counts': {'gmaps': 4, 'yelp': 0, 'yellowpages': 0, 'overpass': 0}}
+2026-02-23 20:37:27,963 - core.pipeline - INFO - FREE MODE: Using GoogleMapsDirectExtractor (Playwright)
+2026-02-23 20:37:50,270 - extractors.google_maps_direct - INFO - Direct Scraping: https://www.google.com/maps/search/truck%20freight%20carriers%20logistics%20transport%20companies%20in%20United%20States
+2026-02-23 20:38:02,475 - extractors.google_maps_direct - INFO - Extracted: North America Logistics | web=http://www.northamericalogistics.us/ | phone=None | addr=None
+2026-02-23 20:38:05,817 - extractors.google_maps_direct - INFO - Extracted: AF Trucking USA | web=http://www.northamericalogistics.us/ | phone=None | addr=None
+2026-02-23 20:38:06,869 - extractors.google_maps_direct - ERROR - Error scraping query truck freight carriers logistics transport companies: Page.evaluate: SyntaxError: missing ) after argument list
+    at eval (<anonymous>)
+    at UtilityScript.evaluate (<anonymous>:290:30)
+    at UtilityScript.<anonymous> (<anonymous>:1:44)
+2026-02-23 20:38:07,138 - core.merge - INFO - Merging sources: gmaps=2 yelp=0 yellowpages=0 overpass=0
+2026-02-23 20:38:07,162 - core.merge - INFO - Merge summary: {'input_total': 2, 'normalized': 2, 'merged_total': 1, 'groups': 1, 'merged_count': 1, 'kept': 1, 'source_counts': {'gmaps': 2, 'yelp': 0, 'yellowpages': 0, 'overpass': 0}}
+2026-02-23 20:38:07,166 - core.pipeline - INFO - SOURCING metrics: {'input_total': 2, 'normalized': 2, 'merged_total': 1, 'groups': 1, 'merged_count': 1, 'kept': 1, 'source_counts': {'gmaps': 2, 'yelp': 0, 'yellowpages': 0, 'overpass': 0}}
+2026-02-23 20:49:46,276 - core.pipeline - INFO - FREE MODE: Using GoogleMapsDirectExtractor (Playwright)
+2026-02-23 20:49:49,288 - extractors.google_maps_direct - INFO - Direct Scraping: https://www.google.com/maps/search/truck%20freight%20carriers%20logistics%20transport%20in%20United%20States
+2026-02-23 20:50:05,701 - extractors.google_maps_direct - INFO - No result feed found. Checking for single result or empty.
+2026-02-23 20:50:05,908 - core.merge - INFO - Merging sources: gmaps=0 yelp=0 yellowpages=0 overpass=0
+2026-02-23 20:50:05,909 - core.merge - INFO - Merge summary: {'input_total': 0, 'normalized': 0, 'merged_total': 0, 'groups': 0, 'merged_count': 0, 'kept': 0, 'source_counts': {'gmaps': 0, 'yelp': 0, 'yellowpages': 0, 'overpass': 0}}
+2026-02-23 20:50:05,910 - core.pipeline - INFO - SOURCING metrics: {'input_total': 0, 'normalized': 0, 'merged_total': 0, 'groups': 0, 'merged_count': 0, 'kept': 0, 'source_counts': {'gmaps': 0, 'yelp': 0, 'yellowpages': 0, 'overpass': 0}}
+2026-02-23 20:59:32,556 - core.pipeline - INFO - FREE MODE: Using GoogleMapsDirectExtractor (Playwright)
+2026-02-23 20:59:34,835 - extractors.google_maps_direct - INFO - Direct Scraping: https://www.google.com/maps/search/truck%20freight%20carriers%20logistics%20transport%20in%20United%20States
+2026-02-23 20:59:49,270 - extractors.google_maps_direct - INFO - No result feed found. Checking for single result or empty.
+2026-02-23 20:59:49,511 - core.merge - INFO - Merging sources: gmaps=0 yelp=0 yellowpages=0 overpass=0
+2026-02-23 20:59:49,512 - core.merge - INFO - Merge summary: {'input_total': 0, 'normalized': 0, 'merged_total': 0, 'groups': 0, 'merged_count': 0, 'kept': 0, 'source_counts': {'gmaps': 0, 'yelp': 0, 'yellowpages': 0, 'overpass': 0}}
+2026-02-23 20:59:49,513 - core.pipeline - INFO - SOURCING metrics: {'input_total': 0, 'normalized': 0, 'merged_total': 0, 'groups': 0, 'merged_count': 0, 'kept': 0, 'source_counts': {'gmaps': 0, 'yelp': 0, 'yellowpages': 0, 'overpass': 0}}
+2026-02-24 13:40:13,092 - core.pipeline - INFO - FREE MODE: Using GoogleMapsDirectExtractor (Playwright)
+2026-02-24 13:40:39,609 - extractors.google_maps_direct - INFO - Direct Scraping: https://www.google.com/maps/search/residential%20commercial%20property%20brokers%20real%20estate%20agents%20in%20United%20States
+2026-02-24 13:40:50,698 - extractors.google_maps_direct - INFO - Extracted: Chenab Estate Advisors | web=http://www.azamrealestate.com.pk/ | phone=None
+2026-02-24 13:40:53,792 - extractors.google_maps_direct - INFO - Extracted: Azam Real Estate | web=http://www.azamrealestate.com.pk/ | phone=None
+2026-02-24 13:40:57,163 - extractors.google_maps_direct - INFO - Extracted: Zee Real Estates | web=http://www.zeerealestates.com/ | phone=03005378199
+2026-02-24 13:41:01,512 - extractors.google_maps_direct - INFO - Extracted: Fortune Real Estates - Best Property Dealers in Mohali | web=https://www.fortunerealestates.co.in/ | phone=+919815178832
+2026-02-24 13:41:05,593 - extractors.google_maps_direct - INFO - Extracted: EMPIRE ESTATES | web=http://www.azamrealestate.com.pk/ | phone=None
+2026-02-24 13:41:09,568 - extractors.google_maps_direct - INFO - Extracted: Baig Real Estate | web=http://www.baigrealestate.com/ | phone=03001465131
+2026-02-24 13:41:12,507 - extractors.google_maps_direct - INFO - Extracted: Consult N Deal | web=http://www.baigrealestate.com/ | phone=03001465131
+2026-02-24 13:41:15,613 - extractors.google_maps_direct - INFO - Extracted: Zahid Estate | web=https://consultndeal.com/ | phone=03217779777
+2026-02-24 13:41:21,993 - extractors.google_maps_direct - INFO - Extracted: 360 REAL ESTATE & BUILDER'S | web=http://www.azamrealestate.com.pk/ | phone=03005599467
+2026-02-24 13:41:24,792 - extractors.google_maps_direct - INFO - Extracted: Lodhi Real Estate | web=http://www.azamrealestate.com.pk/ | phone=None
+2026-02-24 13:41:25,874 - core.merge - INFO - Merging sources: gmaps=10 yelp=0 yellowpages=0 overpass=0
+2026-02-24 13:41:26,057 - core.merge - INFO - Merge summary: {'input_total': 10, 'normalized': 10, 'merged_total': 5, 'groups': 2, 'merged_count': 5, 'kept': 5, 'source_counts': {'gmaps': 10, 'yelp': 0, 'yellowpages': 0, 'overpass': 0}}
+2026-02-24 13:41:26,058 - core.pipeline - INFO - SOURCING metrics: {'input_total': 10, 'normalized': 10, 'merged_total': 5, 'groups': 2, 'merged_count': 5, 'kept': 5, 'source_counts': {'gmaps': 10, 'yelp': 0, 'yellowpages': 0, 'overpass': 0}}
+2026-02-24 13:41:30,510 - extractors.hunter - INFO - DRY_RUN/disabled: Hunter domain_search using mocks for domain=www.azamrealestate.com.pk
+2026-02-24 13:41:42,774 - extractors.hunter - INFO - DRY_RUN/disabled: Hunter domain_search using mocks for domain=www.baigrealestate.com
+2026-02-24 13:41:44,656 - extractors.contact_extractor_direct - INFO - Navigating to Contact page: https://consultndeal.com/about-us
+2026-02-24 13:41:45,700 - extractors.hunter - INFO - DRY_RUN/disabled: Hunter domain_search using mocks for domain=consultndeal.com
+2026-02-24 21:25:22,041 - core.pipeline - INFO - FREE MODE: Using GoogleMapsDirectExtractor (Playwright)
+2026-02-24 21:25:45,309 - extractors.google_maps_direct - INFO - Direct Scraping: https://www.google.com/maps/search/tech%20industries%20in%20United%20States
+2026-02-24 21:26:03,790 - extractors.google_maps_direct - INFO - Extracted: TECH-HUB Innovation Center Faisalabad | web=https://techhubsystems.com/ | phone=None
+2026-02-24 21:26:06,152 - extractors.google_maps_direct - INFO - Extracted: IIFA TECH | web=https://techhubsystems.com/ | phone=None
+2026-02-24 21:26:08,670 - extractors.google_maps_direct - INFO - Extracted: Chenab Engineering Works & Foundries Pvt Ltd | web=https://techhubsystems.com/ | phone=None
+2026-02-24 21:26:10,924 - extractors.google_maps_direct - INFO - Extracted: Techverx | web=https://techhubsystems.com/ | phone=None
+2026-02-24 21:26:13,303 - extractors.google_maps_direct - INFO - Extracted: TechMateTech LLC Pakistan | web=https://techhubsystems.com/ | phone=None
+2026-02-24 21:26:15,559 - extractors.google_maps_direct - INFO - Extracted: Hi Tech Industries | web=https://techhubsystems.com/ | phone=None
+2026-02-24 21:26:18,010 - extractors.google_maps_direct - INFO - Extracted: Tecnsol - Digital Marketing Training & Services in Pakistan | web=https://techhubsystems.com/ | phone=None
+2026-02-24 21:26:20,357 - extractors.google_maps_direct - INFO - Extracted: Treet Daewoo Battery Factory | web=https://techhubsystems.com/ | phone=None
+2026-02-24 21:26:25,949 - extractors.google_maps_direct - INFO - Extracted: Ibrahim Fibres Ltd, TP-1 | web=https://techhubsystems.com/ | phone=None
+2026-02-24 21:26:28,824 - extractors.google_maps_direct - INFO - Extracted: 2BTech | Business IT Solutions Company | web=https://techhubsystems.com/ | phone=None
+2026-02-24 21:26:30,712 - core.merge - INFO - Merging sources: gmaps=10 yelp=0 yellowpages=0 overpass=0
+2026-02-24 21:26:30,716 - core.merge - INFO - Merge summary: {'input_total': 10, 'normalized': 10, 'merged_total': 1, 'groups': 1, 'merged_count': 9, 'kept': 1, 'source_counts': {'gmaps': 10, 'yelp': 0, 'yellowpages': 0, 'overpass': 0}}
+2026-02-24 21:26:30,717 - core.pipeline - INFO - SOURCING metrics: {'input_total': 10, 'normalized': 10, 'merged_total': 1, 'groups': 1, 'merged_count': 9, 'kept': 1, 'source_counts': {'gmaps': 10, 'yelp': 0, 'yellowpages': 0, 'overpass': 0}}
+2026-02-24 21:27:03,378 - extractors.contact_extractor_direct - INFO - Navigating to Contact page: https://techhubsystems.com/#contact
+2026-02-24 21:27:13,647 - extractors.hunter - INFO - DRY_RUN/disabled: Hunter domain_search using mocks for domain=techhubsystems.com
+2026-02-24 21:27:33,588 - utils.selection - INFO - Primary email selected (only role available): hello@techhubsystems.com
+2026-02-24 21:27:33,629 - extractors.linkedin_data - INFO - DRY_RUN/disabled: LinkedIn company-by-domain for techhubsystems.com
+2026-02-24 21:27:33,629 - extractors.clearbit - INFO - DRY_RUN/disabled: Clearbit enrichment using mocks for domain=techhubsystems.com
+2026-02-24 21:27:33,644 - extractors.linkedin_data - INFO - DRY_RUN/disabled: LinkedIn search-people keywords=owner OR founder OR ceo OR president OR manager OR contractor company=TECH-HUB Innovation Center Faisalabad
+2026-02-24 21:27:33,646 - api.main_api - INFO - Run run_1771950322 completed successfully with 1 leads.
+2026-02-24 21:38:35,367 - core.pipeline - INFO - FREE MODE: Using GoogleMapsDirectExtractor (Playwright)
+2026-02-24 21:38:38,209 - extractors.google_maps_direct - INFO - Direct Scraping: https://www.google.com/maps/search/venture%20backed%20startups%20tech%20firms%20software%20companies%20in%20United%20States
+2026-02-24 21:38:49,762 - extractors.google_maps_direct - INFO - Extracted: Devsinc | web=http://www.devsinc.com/ | phone=None
+2026-02-24 21:38:52,658 - extractors.google_maps_direct - INFO - Extracted: InvoZone | web=http://www.devsinc.com/ | phone=None
+2026-02-24 21:38:55,606 - extractors.google_maps_direct - INFO - Extracted: FATbit Technologies | web=http://www.devsinc.com/ | phone=None
+2026-02-24 21:38:58,503 - extractors.google_maps_direct - INFO - Extracted: Suffescom Solutions - Top Mobile App Development Company in India | web=https://www.suffescom.com/?utm_source=GMB_india&utm_medium=organic&utm_campaign=lead | phone=+919878736127
+2026-02-24 21:39:01,885 - extractors.google_maps_direct - INFO - Extracted: Numtra llc | web=http://www.devsinc.com/ | phone=03334224055
+2026-02-24 21:39:04,686 - extractors.google_maps_direct - INFO - Extracted: Exotica IT Solutions Private Limited | web=http://www.devsinc.com/ | phone=None
+2026-02-24 21:39:07,981 - extractors.google_maps_direct - INFO - Extracted: Master Infotech | web=https://masterinfotech.in/ | phone=
+2026-02-24 21:39:11,373 - extractors.google_maps_direct - INFO - Extracted: I-Softinc | web=https://www.i-softinc.com/ | phone=+919971731257
+2026-02-24 21:39:15,492 - core.merge - INFO - Merging sources: gmaps=8 yelp=0 yellowpages=0 overpass=0
+2026-02-24 21:39:15,709 - core.merge - INFO - Merge summary: {'input_total': 8, 'normalized': 8, 'merged_total': 4, 'groups': 1, 'merged_count': 4, 'kept': 4, 'source_counts': {'gmaps': 8, 'yelp': 0, 'yellowpages': 0, 'overpass': 0}}
+2026-02-24 21:39:15,709 - core.pipeline - INFO - SOURCING metrics: {'input_total': 8, 'normalized': 8, 'merged_total': 4, 'groups': 1, 'merged_count': 4, 'kept': 4, 'source_counts': {'gmaps': 8, 'yelp': 0, 'yellowpages': 0, 'overpass': 0}}
+2026-02-24 21:39:21,197 - extractors.hunter - INFO - DRY_RUN/disabled: Hunter domain_search using mocks for domain=www.suffescom.com
+2026-02-24 21:39:21,378 - utils.selection - INFO - Primary email selected (only role available): hello@www.suffescom.com
+2026-02-24 21:39:35,981 - utils.selection - INFO - Primary email selected (prefer personal over role): global.business@devsinc.com
+2026-02-24 21:40:10,264 - utils.selection - INFO - Primary email selected (only role available): info@masterinfotech.in
+2026-02-24 21:40:14,489 - utils.selection - INFO - Primary email selected (only role available): sales@i-softinc.com
+2026-02-24 21:40:14,543 - extractors.linkedin_data - INFO - DRY_RUN/disabled: LinkedIn company-by-domain for www.devsinc.com
+2026-02-24 21:40:14,545 - extractors.clearbit - INFO - DRY_RUN/disabled: Clearbit enrichment using mocks for domain=www.devsinc.com
+2026-02-24 21:40:14,546 - extractors.linkedin_data - INFO - DRY_RUN/disabled: LinkedIn company-by-domain for www.suffescom.com
+2026-02-24 21:40:14,546 - extractors.clearbit - INFO - DRY_RUN/disabled: Clearbit enrichment using mocks for domain=www.suffescom.com
+2026-02-24 21:40:14,547 - extractors.linkedin_data - INFO - DRY_RUN/disabled: LinkedIn company-by-domain for masterinfotech.in
+2026-02-24 21:40:14,547 - extractors.clearbit - INFO - DRY_RUN/disabled: Clearbit enrichment using mocks for domain=masterinfotech.in
+2026-02-24 21:40:14,548 - extractors.linkedin_data - INFO - DRY_RUN/disabled: LinkedIn company-by-domain for www.i-softinc.com
+2026-02-24 21:40:14,549 - extractors.clearbit - INFO - DRY_RUN/disabled: Clearbit enrichment using mocks for domain=www.i-softinc.com
+2026-02-24 21:40:14,587 - extractors.linkedin_data - INFO - DRY_RUN/disabled: LinkedIn search-people keywords=owner OR founder OR ceo OR president OR manager OR contractor company=Devsinc
+2026-02-24 21:40:14,621 - extractors.linkedin_data - INFO - DRY_RUN/disabled: LinkedIn search-people keywords=owner OR founder OR ceo OR president OR manager OR contractor company=Suffescom Solutions - Top Mobile App Development Company in India
+2026-02-24 21:40:14,658 - extractors.linkedin_data - INFO - DRY_RUN/disabled: LinkedIn search-people keywords=owner OR founder OR ceo OR president OR manager OR contractor company=Master Infotech
+2026-02-24 21:40:14,693 - extractors.linkedin_data - INFO - DRY_RUN/disabled: LinkedIn search-people keywords=owner OR founder OR ceo OR president OR manager OR contractor company=I-Softinc
+2026-02-24 21:40:14,704 - api.main_api - INFO - Run run_1771951115 completed successfully with 4 leads.
+2026-02-27 12:52:13,564 - googleapiclient.discovery_cache - INFO - file_cache is only supported with oauth2client<4.0.0

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-toastify';
-import supabase, { aiApi, analyzerApi } from '../lib/supabaseClient';
+import { supabase } from '../supabase';
+import { aiApi, analyzerApi } from '../utils/supabaseHelpers';
 import { Search, ExternalLink, RefreshCw, Sparkles, AlertCircle, Mail } from 'lucide-react';
 import EmailGenerator from './EmailGenerator';
 
