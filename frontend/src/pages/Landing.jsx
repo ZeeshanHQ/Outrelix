@@ -1380,7 +1380,7 @@ const Landing = () => {
                 onClick={() => setIsSignupOpen(true)}
                 className="group px-10 py-5 text-base shadow-[0_15px_30px_-5px_rgba(37,99,235,0.4)] hover:-translate-y-1 active:translate-y-0"
               >
-                Start Scraping Free <span className="inline-block group-hover:translate-x-1 transition-transform ml-1">→</span>
+                Start Generating Leads <span className="inline-block group-hover:translate-x-1 transition-transform ml-1">→</span>
               </RainbowButton>
               <button className="px-10 py-5 bg-white/5 border border-white/10 backdrop-blur-xl text-white font-bold rounded-2xl text-base hover:bg-white/10 transition-all border-white/20">
                 Book a Private Demo

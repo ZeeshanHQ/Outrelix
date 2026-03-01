@@ -67,20 +67,25 @@ export default function RadialOrbitalTimeline({
     };
 
     useEffect(() => {
-        let rotationTimer;
+        let animationFrameId;
 
-        if (autoRotate && viewMode === "orbital") {
-            rotationTimer = setInterval(() => {
+        const animate = () => {
+            if (autoRotate && viewMode === "orbital") {
                 setRotationAngle((prev) => {
                     const newAngle = (prev + 0.3) % 360;
                     return Number(newAngle.toFixed(3));
                 });
-            }, 50);
+                animationFrameId = requestAnimationFrame(animate);
+            }
+        };
+
+        if (autoRotate && viewMode === "orbital") {
+            animationFrameId = requestAnimationFrame(animate);
         }
 
         return () => {
-            if (rotationTimer) {
-                clearInterval(rotationTimer);
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
             }
         };
     }, [autoRotate, viewMode]);
@@ -180,7 +185,7 @@ export default function RadialOrbitalTimeline({
                             <div
                                 key={item.id}
                                 ref={(el) => (nodeRefs.current[item.id] = el)}
-                                className="absolute transition-all duration-700 cursor-pointer"
+                                className={`absolute cursor-pointer ${!autoRotate ? "transition-all duration-700" : ""}`}
                                 style={nodeStyle}
                                 onClick={(e) => {
                                     e.stopPropagation();

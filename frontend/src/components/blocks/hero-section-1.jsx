@@ -230,7 +230,7 @@ export function HeroSection({ setIsSignupOpen }) {
                         >
                             <Sparkles className="w-3.5 h-3.5 text-blue-600 animate-pulse" />
                             <span className="text-blue-700 text-xs font-bold uppercase tracking-widest">
-                                AI Lead Engine · v2.0 · 99.8% Accuracy
+                                AI Lead Engine · v1.0 · 99.8% Accuracy
                             </span>
                         </motion.div>
 
@@ -242,7 +242,9 @@ export function HeroSection({ setIsSignupOpen }) {
                             className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 leading-[1.08] mb-6"
                         >
                             Find Leads for{' '}
-                            <TypingRotator words={industries} />
+                            <div className="inline-block min-w-[200px] sm:min-w-[270px] lg:min-w-[320px] text-left">
+                                <TypingRotator words={industries} />
+                            </div>
                             <br />
                             <span className="text-slate-900">at Lightning Speed.</span>
                         </motion.h1>
@@ -254,7 +256,7 @@ export function HeroSection({ setIsSignupOpen }) {
                             transition={{ delay: 0.3, duration: 0.7 }}
                             className="text-lg text-slate-500 leading-relaxed mb-10 max-w-lg"
                         >
-                            Outrelix scrapes verified leads from Google Maps, LinkedIn, and 10+ sources — then sends
+                            Outrelix reveals verified leads from Google Maps, LinkedIn, and 10+ sources — then sends
                             personalized cold emails via your Gmail. <strong className="text-slate-700">Fully automated.</strong>
                         </motion.p>
 
@@ -269,7 +271,7 @@ export function HeroSection({ setIsSignupOpen }) {
                                 onClick={() => setIsSignupOpen(true)}
                                 className="group shadow-lg shadow-blue-200/50 hover:shadow-blue-300 hover:-translate-y-0.5 active:translate-y-0"
                             >
-                                Start Scraping Free
+                                Start Generating Leads
                                 <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                             </GradientButton>
                             <button className="flex items-center justify-center gap-2 px-7 py-3.5 bg-white border border-slate-200 text-slate-700 font-bold rounded-xl text-base hover:bg-slate-50 transition-all">
