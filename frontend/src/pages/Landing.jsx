@@ -20,7 +20,7 @@ import {
 } from '@heroicons/react/24/outline';
 import BACKEND_URL from '../config/backend';
 import { auth, db } from '../supabase';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import OnboardingModal from '../components/OnboardingModal';
 import WelcomeModal from '../components/WelcomeModal';
@@ -401,6 +401,7 @@ const SignupModal = ({ isOpen, onClose, onSignupSuccess, onEmailVerified, pendin
           if (otpResponse.ok) {
             setPendingEmail(email);
             setShowOTPModal(true);
+            onClose(); // Auto close signup modal when OTP is sent
             toast.success('Verification code sent to your email!', {
               position: 'top-center',
               autoClose: 5000,
@@ -1547,7 +1548,6 @@ const Landing = () => {
         email={pendingEmail}
         onVerificationSuccess={handleOTPVerificationSuccess}
       />
-      <ToastContainer />
       {/* Footer - properly separated and full width */}
       <footer className="w-full">
         <Footer />

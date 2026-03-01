@@ -30,15 +30,23 @@ const DashboardHeader = ({ showGreeting = true, title = '' }) => {
     ];
 
     useEffect(() => {
-        // 1. Get User Data
-        const savedUser = localStorage.getItem('user');
-        if (savedUser) {
-            try {
-                setUser(JSON.parse(savedUser));
-            } catch (e) {
-                console.error('Failed to parse user data', e);
+        const loadUser = () => {
+            const savedUser = localStorage.getItem('user');
+            if (savedUser) {
+                try {
+                    setUser(JSON.parse(savedUser));
+                } catch (e) {
+                    console.error('Failed to parse user data', e);
+                    setUser(null);
+                }
+            } else {
+                setUser(null);
             }
-        }
+        };
+
+        // 1. Initial load + re-load on any account switch event
+        loadUser();
+        window.addEventListener('user-updated', loadUser);
 
         // 2. Set Greeting
         const hour = new Date().getHours();
@@ -68,6 +76,7 @@ const DashboardHeader = ({ showGreeting = true, title = '' }) => {
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
             window.removeEventListener('new-notification', handleNewNotif);
+            window.removeEventListener('user-updated', loadUser);
         };
 
     }, []);

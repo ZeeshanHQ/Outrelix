@@ -22,6 +22,7 @@ import httpx
 from pydantic import BaseModel
 from typing import List
 from fastapi import BackgroundTasks
+import traceback
 from dotenv import load_dotenv
 import asyncio
 from datetime import datetime, time as dt_time, timedelta
@@ -108,13 +109,16 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:3000",
         "http://127.0.0.1:3000",
-        "http://[::1]:3000"
+        "http://localhost:3001",
+        "http://127.0.0.1:3001",
+        "http://[::1]:3000",
+        "http://[::1]:3001"
     ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-app.add_middleware(SessionMiddleware, secret_key='your_secret_key', same_site="lax")
+app.add_middleware(SessionMiddleware, secret_key='your_secret_key', same_site="lax", max_age=30 * 24 * 3600)  # 30 days session persistence
 
 email_handler = EmailHandler()
 reply_detector = ReplyDetector()
@@ -224,22 +228,15 @@ async def get_current_user(request: Request):
     auth_header = request.headers.get('Authorization')
     if auth_header and auth_header.startswith('Bearer '):
         token = auth_header.split(' ')[1]
-        print(f"[DEBUG] Received Bearer token: {token[:15]}...")
+        print(f"[DEBUG] Received Bearer token (len={len(token)}): {token[:15]}...")
         try:
             # If it's the service role key, we don't treat it as a user session
             if token == SUPABASE_KEY:
                 print("[DEBUG] Received SUPABASE_KEY (Service Role) - Access Denied for user-specific endpoints")
                 return None
                 
-            # Check for X-User-Id header as a fallback
-            x_user_id = request.headers.get('X-User-Id')
-            if x_user_id:
-                print(f"[DEBUG] Found X-User-Id header: {x_user_id}")
-                return x_user_id
-                
-            # Supabase tokens are JWTs. We'll decode without verification to get 'sub'
+            # decode without verification to get 'sub'
             try:
-                # Use jwt (PyJWT) to decode
                 decoded = jwt.decode(token, options={"verify_signature": False})
                 uid = decoded.get('sub')
                 if uid:
@@ -249,8 +246,8 @@ async def get_current_user(request: Request):
             except Exception as jwt_err:
                 print(f"[DEBUG] JWT decode failed: {jwt_err}")
                 
-            # Fallback: Check if it's a raw user_id (some dev flows pass it directly)
-            if len(token) > 30 and "-" in token: # Simple UUID check
+            # Fallback: UUID check
+            if len(token) > 30 and "-" in token: 
                 print(f"[DEBUG] Treating token as raw user_id: {token}")
                 return token
 
@@ -258,7 +255,13 @@ async def get_current_user(request: Request):
             print(f"[DEBUG] Auth extraction failed: {e}")
             return None
             
-    print("[DEBUG] No authentication found (no session, no valid header)")
+    # Fallback: Check for X-User-Id header
+    x_user_id = request.headers.get('X-User-Id')
+    if x_user_id:
+        print(f"[DEBUG] Found X-User-Id header: {x_user_id}")
+        return x_user_id
+
+    print(f"[DEBUG] No authentication found. Headers: {dict(request.headers.items())}")
     return None
 
 class LeadEngineRunParams(BaseModel):
@@ -279,19 +282,19 @@ class ResendSendRequest(BaseModel):
 
 # -------------------- GMAIL OAUTH2 ROUTES --------------------
 @app.get('/auth/gmail')
-async def auth_gmail(request: Request):
+async def auth_gmail(request: Request, user_id: str = None, port: str = "3000"):
     try:
-        # 1. Try session first
-        user_id = request.session.get('user_id')
-        # 2. Try query parameter (used when opening as popup from frontend)
-        if not user_id:
-            user_id = request.query_params.get('user_id')
-        # 3. Try JWT from Authorization header
+        # Try to get user_id from query params or session
         if not user_id:
             user_id = await get_current_user(request)
-        print(f"[DEBUG] /auth/gmail hit, resolved user_id: {user_id}")
+        
+        print(f"[DEBUG] /auth/gmail hit, user_id: {user_id}, port: {port}")
         if not user_id:
-            return HTMLResponse("<h2>Error: You must be logged in to connect Gmail. Please log in first.</h2>", status_code=401)
+            return HTMLResponse(f"<h2>Error: You must be logged in to connect Gmail. Please log in first.</h2><p>DEBUG: request headers: {dict(request.headers)}</p>", status_code=401)
+        
+        # Store port in session to remember where to redirect back
+        request.session['frontend_port'] = port
+        
         flow = Flow.from_client_secrets_file(
             CLIENT_SECRETS_FILE,
             scopes=SCOPES,
@@ -314,7 +317,7 @@ async def auth_gmail(request: Request):
         print(f"[ERROR] /auth/gmail crashed: {e}")
         import traceback
         traceback.print_exc()
-        return HTMLResponse(f"/auth/gmail crashed: {e}", status_code=500)
+        return HTMLResponse(f"<h2>/auth/gmail crashed: {e}</h2>", status_code=500)
 
 @app.get('/auth/gmail/callback')
 async def auth_gmail_callback(request: Request):
@@ -415,22 +418,32 @@ async def auth_gmail_callback(request: Request):
             "client_secret": credentials.client_secret,
             "scopes": list(credentials.scopes) if credentials.scopes else []
         }
-        # Save Gmail token and Gmail address
         supabase_request("PATCH", "profiles", {
             "gmail_token": token_json,
-            "gmail_email": email
+            "gmail_email": email,
+            "gmail_status": True
         }, params={"id": user_id})
         print(f"[DEBUG] /auth/gmail/callback: Gmail connected successfully for {email} (user: {user_id})")
-        return HTMLResponse("""
+        # Redirect back to the frontend
+        frontend_port = request.session.get('frontend_port', '3000')
+        frontend_url = f"http://localhost:{frontend_port}"
+            
+        print(f"[DEBUG] Redirecting back to {frontend_url}")
+        return HTMLResponse(f"""
             <script>
-              if (window.opener) {
-                window.opener.postMessage({ gmailConnected: true }, "*");
+              if (window.opener) {{
+                console.log("Notifying opener of success...");
+                window.opener.postMessage({{ gmailConnected: true }}, "*");
                 window.close();
-              } else {
-                window.location = 'http://localhost:3000/dashboard?gmail_connected=true';
-              }
+              }} else {{
+                window.location = '{frontend_url}/dashboard?gmail_connected=true';
+              }}
             </script>
-            <p>Gmail connected! You can close this window.</p>
+            <div style="font-family: sans-serif; text-align: center; padding: 50px;">
+                <h2 style="color: #22c55e;">Gmail Connected Successfully!</h2>
+                <p>You can close this window now.</p>
+                <button onclick="window.close()" style="padding: 10px 20px; background: #3b82f6; color: white; border: none; border-radius: 5px; cursor: pointer;">Close Window</button>
+            </div>
         """)
     except Exception as e:
         print(f"[ERROR] /auth/gmail/callback crashed: {e}")
@@ -529,7 +542,7 @@ async def create_campaign(request: Request, body: CampaignRequest):
             "Prefer": "return=representation"
         }
         
-        response = requests.post(url, headers=headers, json=campaign_data)
+        response = httpx.post(url, headers=headers, json=campaign_data)
         
         if response.status_code in (200, 201):
             campaign = response.json()[0]
@@ -566,7 +579,8 @@ async def get_campaigns(request: Request):
             "Content-Type": "application/json"
         }
         
-        response = requests.get(url, headers=headers)
+        with httpx.Client(timeout=30.0) as client:
+            response = client.get(url, headers=headers)
         
         if response.status_code == 200:
             campaigns = response.json() if response.json() else []
@@ -577,6 +591,8 @@ async def get_campaigns(request: Request):
             
     except Exception as e:
         print(f"[ERROR] Failed to get campaigns: {e}")
+        import traceback
+        traceback.print_exc()
         return JSONResponse({'error': f'Failed to get campaigns: {str(e)}'}, status_code=500)
 
 @app.get('/api/campaigns/schema')
@@ -689,10 +705,31 @@ async def gmail_status(request: Request):
     try:
         user_data = supabase_request("GET", "profiles", params={"id": user_id})
         if not user_data or len(user_data) == 0:
-            return JSONResponse({'connected': False, 'email': None})
-        status = user_data[0].get('gmail_status')
-        email = user_data[0].get('gmail_email')
-        return JSONResponse({'connected': bool(status), 'email': email})
+            print(f"[WARNING] /api/user/gmail-status: No profile record found in 'profiles' table for user_id: {user_id}")
+            return JSONResponse({
+                'connected': False, 
+                'email': None,
+                'gmail_email': None,
+                'status': False,
+                'error': 'Profile not found'
+            })
+            
+        # Check both gmail_token and gmail_status for resilience
+        profile = user_data[0]
+        token = profile.get('gmail_token')
+        status = profile.get('gmail_status')
+        email = profile.get('gmail_email')
+        
+        print(f"[DEBUG] /api/user/gmail-status: Found profile for {user_id}, email={email}, token_present={bool(token)}")
+        
+        is_connected = bool(token) or bool(status)
+        
+        return JSONResponse({
+            'connected': is_connected, 
+            'email': email,
+            'gmail_email': email,
+            'status': is_connected
+        })
     except Exception as e:
         print(f"[ERROR] /api/user/gmail-status: {e}")
         return JSONResponse({'connected': False, 'email': None})
@@ -782,7 +819,7 @@ async def send_otp(request: OTPRequest):
             "Content-Type": "application/json"
         }
         
-        response = requests.post(
+        response = httpx.post(
             "https://api.resend.com/emails",
             headers=headers,
             json=email_data
@@ -813,51 +850,65 @@ async def verify_otp(request: OTPVerifyRequest):
         })
         
         if not validation_result:
-            return JSONResponse({'error': 'Failed to validate OTP'}, status_code=500)
+            return JSONResponse({'valid': False, 'message': 'Failed to validate OTP'})
         
         result = validation_result
         
         if result['valid']:
             # If email verification, update user profile
             if request.purpose == 'email_verification':
-                # Update user's email_verified status in profiles table
-                supabase_request("PATCH", "profiles", {
-                    'email_verified': True,
-                    'updated_at': 'NOW()'
-                }, params={"email": request.email})
+                try:
+                    supabase_request("PATCH", "profiles", {
+                        'email_verified': True
+                    }, params={"email": request.email})
+                except Exception as patch_err:
+                    print(f"[WARNING] Could not update email_verified flag: {patch_err}")
             
             return JSONResponse({
                 'valid': True,
                 'message': result['message']
             })
         else:
+            # Return 200 with valid=False so frontend can read the message
             return JSONResponse({
                 'valid': False,
-                'message': result['message']
-            }, status_code=400)
+                'message': result.get('message', 'Invalid or expired verification code')
+            })
             
     except Exception as e:
         print(f"Error verifying OTP: {e}")
-        return JSONResponse({'error': 'Internal server error'}, status_code=500)
+        import traceback
+        traceback.print_exc()
+        return JSONResponse({'valid': False, 'message': 'Verification failed. Please try again.'})
+
+# In-memory cooldown tracker for OTP resend (email -> last_resend_timestamp)
+_otp_resend_cooldowns = {}
+OTP_RESEND_COOLDOWN_SECONDS = 60  # 1 minute cooldown
 
 @app.post('/api/otp/resend')
 async def resend_otp(request: OTPRequest):
-    """Resend OTP to user's email"""
+    """Resend OTP to user's email with 60-second cooldown"""
     try:
-        # Clean up old OTPs for this email
-        supabase.table('otp_verifications').delete().eq('email', request.email).eq('purpose', request.purpose).execute()
-        
-        # Generate new OTP
-        otp_result = supabase.rpc('create_otp', {
+        # Check cooldown
+        last_sent = _otp_resend_cooldowns.get(request.email, 0)
+        elapsed = time.time() - last_sent
+        if elapsed < OTP_RESEND_COOLDOWN_SECONDS:
+            remaining = int(OTP_RESEND_COOLDOWN_SECONDS - elapsed)
+            return JSONResponse({
+                'error': f'Please wait {remaining} seconds before requesting a new code'
+            }, status_code=429)
+
+        # Generate new OTP using the helper function
+        otp_result = supabase_rpc('create_otp', {
             'p_email': request.email,
             'p_purpose': request.purpose,
             'p_expiry_minutes': 10
-        }).execute()
+        })
         
-        if not otp_result.data:
+        if not otp_result:
             return JSONResponse({'error': 'Failed to generate OTP'}, status_code=500)
         
-        otp_code = otp_result.data['otp_code']
+        otp_code = otp_result['otp_code']
         
         # Send email using Resend API
         email_data = {
@@ -884,13 +935,15 @@ async def resend_otp(request: OTPRequest):
             "Content-Type": "application/json"
         }
         
-        response = requests.post(
+        response = httpx.post(
             "https://api.resend.com/emails",
             headers=headers,
             json=email_data
         )
         
         if response.status_code == 200:
+            # Update cooldown tracker
+            _otp_resend_cooldowns[request.email] = time.time()
             return JSONResponse({
                 'message': 'New OTP sent successfully',
                 'expires_in_minutes': 10
@@ -914,9 +967,9 @@ def update_gmail_token_rest(user_id, token_json, email):
     data = {
         "gmail_token": json.dumps(token_json)
     }
-    response = requests.patch(url, headers=headers, json=data)
+    response = httpx.patch(url, headers=headers, json=data)
     print("[DEBUG] Supabase REST API response:", response.status_code, response.text)
-    return response.ok
+    return response.status_code < 400
 
 # -------------------- GEOIP ENDPOINT --------------------
 @app.get('/api/geoip')
@@ -927,7 +980,7 @@ async def geoip(request: Request):
         return JSONResponse({'country': 'PK', 'country_name': 'Pakistan'})
     try:
         geo_url = f'https://ipapi.co/{ip}/json/'
-        geo_res = requests.get(geo_url, timeout=3)
+        geo_res = httpx.get(geo_url, timeout=3)
         geo_data = geo_res.json()
         country = geo_data.get('country')
         country_name = geo_data.get('country_name')
@@ -1012,7 +1065,7 @@ Format the response as JSON:
                 {"role": "user", "content": prompt}
             ]
         }
-        response = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=payload, timeout=60)
+        response = httpx.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=payload, timeout=60)
         result = response.json()
         content = result['choices'][0]['message']['content']
         try:
@@ -1153,6 +1206,52 @@ def send_email_via_gmail(service, to_email: str, subject: str, body: str):
     except Exception as e:
         print(f"[ERROR] Failed to send email to {to_email}: {e}")
 
+@app.post('/api/ai/refine-objective')
+async def refine_objective(payload: dict, request: Request):
+    user_id = request.session.get('user_id')
+    if not user_id:
+        raise HTTPException(status_code=401, detail="User not authenticated")
+    
+    goal = payload.get('goal', '')
+    if not goal:
+        return {"refined_goal": ""}
+    
+    try:
+        # Prompt for OpenRouter to refine the text
+        system_prompt = "You are an elite campaign strategist. Your task is to refine the user's campaign objective into a professional, compelling, and high-converting description for an outreach campaign. Keep the core intent but make it sound more sophisticated and clear. Return ONLY the refined text."
+        user_prompt = f"Refine this campaign objective: {goal}"
+        
+        response = await generate_text_with_ai(system_prompt, user_prompt)
+        return {"refined_goal": response.strip()}
+    except Exception as e:
+        print(f"[ERROR] AI refinement failed: {e}")
+        return {"refined_goal": goal} # Fallback to original
+
+async def generate_text_with_ai(system_prompt: str, user_prompt: str):
+    """Generic helper to call OpenRouter/AI."""
+    url = "https://openrouter.ai/api/v1/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+        "Content-Type": "application/json",
+        "HTTP-Referer": "https://outrelix.com",
+        "X-Title": "Outrelix Intelligence"
+    }
+    
+    payload = {
+        "model": "google/gemini-2.0-flash-lite-preview-02-05:free",
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt}
+        ]
+    }
+    
+    async with httpx.AsyncClient(timeout=30.0) as client:
+        response = await client.post(url, headers=headers, json=payload)
+        if response.status_code == 200:
+            return response.json()['choices'][0]['message']['content']
+        else:
+            raise Exception(f"AI API returned {response.status_code}: {response.text}")
+
 # -------------------- CAMPAIGN ROUTES --------------------
 @app.post('/api/campaign/start')
 async def start_campaign(payload: StartCampaignPayload, request: Request, background_tasks: BackgroundTasks):
@@ -1162,7 +1261,7 @@ async def start_campaign(payload: StartCampaignPayload, request: Request, backgr
 
     # Check user's plan and campaign limit
     try:
-        user_data = supabase_request("GET", "users", params={"id": user_id})
+        user_data = supabase_request("GET", "profiles", params={"id": user_id})
         if not user_data:
              raise HTTPException(status_code=404, detail="User not found")
         
@@ -1207,7 +1306,7 @@ async def process_and_send_campaign(user_id: str, payload: StartCampaignPayload,
 
     # Get user's plan for template quality
     try:
-        user_data = supabase_request("GET", "users", params={"id": user_id})
+        user_data = supabase_request("GET", "profiles", params={"id": user_id})
         user_plan = user_data[0].get("plan", "Free") if user_data else "Free"
     except Exception as e:
         print(f"[WARNING] Could not get user plan, defaulting to Free: {e}")
@@ -1236,7 +1335,7 @@ async def process_and_send_campaign(user_id: str, payload: StartCampaignPayload,
             "email_template": email_content['body'],  # Store the generated template
             "email_subject": email_content['subject']  # Store the subject too
         }
-        response = requests.post(url, headers=headers, json=campaign_data)
+        response = httpx.post(url, headers=headers, json=campaign_data)
         if response.status_code in (200, 201):
             campaign_id = response.json()[0]['id']
             print(f"Campaign {campaign_id} saved to database with template.")
@@ -1313,7 +1412,7 @@ async def gmail_token_valid(request: Request):
     user_id = await get_current_user(request)
     if not user_id:
         return JSONResponse({'valid': False, 'email': None})
-    user_data = supabase_request("GET", "users", params={"id": user_id})
+    user_data = supabase_request("GET", "profiles", params={"id": user_id})
     user_record = user_data[0] if user_data else {}
     token_json = user_record.get('gmail_token')
     email = user_record.get('gmail_email')
@@ -1333,7 +1432,7 @@ async def gmail_token_valid(request: Request):
         return JSONResponse({'valid': True, 'email': profile['emailAddress']})
     except Exception as e:
         # Clear expired/invalid token from Supabase
-        supabase_request("PATCH", "users", {'gmail_token': None, 'gmail_email': None}, params={"id": user_id})
+        supabase_request("PATCH", "profiles", {'gmail_token': None, 'gmail_email': None, 'gmail_status': False}, params={"id": user_id})
         return JSONResponse({'valid': False, 'email': None})
 
 @app.delete('/api/campaigns/{campaign_id}')
@@ -1352,7 +1451,7 @@ async def delete_campaign(campaign_id: int, request: Request):
             "Content-Type": "application/json"
         }
         
-        verify_response = requests.get(verify_url, headers=headers)
+        verify_response = httpx.get(verify_url, headers=headers)
         if verify_response.status_code != 200:
             print(f"[ERROR] Campaign verification failed: {verify_response.status_code} - {verify_response.text}")
             raise HTTPException(status_code=500, detail="Failed to verify campaign ownership")
@@ -1363,7 +1462,7 @@ async def delete_campaign(campaign_id: int, request: Request):
         
         # Now delete the campaign
         delete_url = f"https://bfoggljxtwoloxthtocy.supabase.co/rest/v1/campaigns?id=eq.{campaign_id}&user_id=eq.{user_id}"
-        delete_response = requests.delete(delete_url, headers=headers)
+        delete_response = httpx.delete(delete_url, headers=headers)
         
         if delete_response.status_code in (200, 204):
             return {"success": True, "message": "Campaign deleted successfully"}
@@ -1392,7 +1491,7 @@ async def get_campaign_details(campaign_id: int, request: Request):
             "Authorization": f"Bearer {SUPABASE_SERVICE_ROLE_KEY}",
             "Content-Type": "application/json"
         }
-        response = requests.get(url, headers=headers)
+        response = httpx.get(url, headers=headers)
         if response.status_code == 200:
             campaigns = response.json()
             if campaigns:
@@ -1478,7 +1577,7 @@ async def send_email_resend(request: Request, body: ResendSendRequest):
     
     try:
         # Get user info for "From" name
-        user_data = supabase_request("GET", "users", params={"id": user_id})
+        user_data = supabase_request("GET", "profiles", params={"id": user_id})
         user_name = user_data[0].get('name', 'Outrelix User') if user_data else 'Outrelix User'
 
         email_data = {
@@ -1494,7 +1593,7 @@ async def send_email_resend(request: Request, body: ResendSendRequest):
             "Content-Type": "application/json"
         }
         
-        response = requests.post(
+        response = httpx.post(
             "https://api.resend.com/emails",
             headers=headers,
             json=email_data
@@ -1674,7 +1773,7 @@ async def get_user_profile(user_id: str = Depends(get_current_user)):
         raise HTTPException(status_code=401, detail="Unauthorized")
     
     try:
-        users = supabase_request("GET", "users", params={"id": user_id})
+        users = supabase_request("GET", "profiles", params={"id": user_id})
         if not users or not isinstance(users, list):
             return {"status": "error", "message": "User not found"}
         
@@ -1713,7 +1812,7 @@ async def update_user_profile(update: UserProfileUpdate, user_id: str = Depends(
         return {"status": "success", "message": "No changes requested"}
 
     try:
-        supabase_request("PATCH", "users", data, params={"id": user_id})
+        supabase_request("PATCH", "profiles", data, params={"id": user_id})
         return {"status": "success", "message": "Profile updated"}
     except Exception as e:
         logger.error(f"Error updating profile: {e}")

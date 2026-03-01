@@ -65,7 +65,8 @@ const ConnectGmailModal = ({ open, onClose, onConnected, gmailEmail: initialGmai
     // Get the current user ID to pass as a query param to the popup
     const { data: { user } } = await supabase.auth.getUser();
     const userId = user?.id || '';
-    const popupUrl = `${BACKEND_URL}/auth/gmail?user_id=${userId}`;
+    const currentPort = window.location.port || '3000';
+    const popupUrl = `${BACKEND_URL}/auth/gmail?user_id=${userId}&port=${currentPort}`;
     const popup = window.open(popupUrl, 'Connect Gmail', 'width=500,height=700');
     if (!popup) {
       alert('Popup blocked! Please allow popups for this site.');
@@ -88,6 +89,8 @@ const ConnectGmailModal = ({ open, onClose, onConnected, gmailEmail: initialGmai
             email = data.email;
             setGmailEmail(email);
             setSuccess(true);
+            // Update global GmailStatusContext so all pages refresh instantly
+            refreshGmailStatus();
             if (onConnected) onConnected(email);
             if (onGmailConnected) onGmailConnected();
           }
@@ -95,7 +98,8 @@ const ConnectGmailModal = ({ open, onClose, onConnected, gmailEmail: initialGmai
           setSuccess(false);
         }
         setIsConnecting(false);
-        onClose();
+        // Don't auto-close - let user see the success message and click "See Campaign"
+        if (!success) onClose();
       }
     }, 500);
   };

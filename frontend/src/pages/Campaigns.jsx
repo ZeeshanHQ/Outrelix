@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import BACKEND_URL from '../config/backend';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BarChart3, Rocket, Target, Globe, Mail as LucideMail, ShieldCheck } from 'lucide-react';
-import StartCampaignModal from '../components/StartCampaignModal';
+import MissionBuilder from '../components/MissionBuilder';
 import ConnectGmailModal from '../components/ConnectGmailModal';
 import { toast } from 'react-toastify';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -347,7 +347,12 @@ const Campaigns = () => {
                   <ArrowPathIcon className={`h-4 w-4 ${loadingCampaigns ? 'animate-spin' : ''}`} />
                   Refresh
                 </button>
-                {!gmailInitialLoading && !isGmailConnected && (
+                {gmailInitialLoading ? (
+                  <div className="flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800/50 rounded-xl animate-pulse">
+                    <div className="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-slate-700" />
+                    <div className="w-24 h-3 bg-slate-300 dark:bg-slate-700 rounded-md" />
+                  </div>
+                ) : !isGmailConnected ? (
                   <button
                     onClick={() => setShowConnectGmailModal(true)}
                     className="flex items-center gap-2 px-4 py-2 bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900 rounded-xl text-xs font-bold hover:bg-emerald-100 transition-all shadow-sm"
@@ -355,7 +360,18 @@ const Campaigns = () => {
                     <PlusIcon className="h-4 w-4" />
                     Connect Gmail
                   </button>
-                )}
+                ) : isGmailConnected ? (
+                  <div
+                    className="flex items-center gap-2 px-4 py-2 bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800/50 rounded-xl shadow-sm text-xs font-bold text-emerald-700 dark:text-emerald-400 transition-all cursor-default group"
+                    title="Gmail Connected"
+                  >
+                    <div className="relative flex h-2.5 w-2.5">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                    </div>
+                    <span className="truncate max-w-[150px] font-semibold">{gmailEmail}</span>
+                  </div>
+                ) : null}
               </div>
             </div>
 
@@ -509,7 +525,7 @@ const Campaigns = () => {
         </main>
       </div>
 
-      <StartCampaignModal
+      <MissionBuilder
         open={showStartModal}
         onClose={() => setShowStartModal(false)}
         onStart={handleStartCampaign}
