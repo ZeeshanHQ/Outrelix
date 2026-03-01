@@ -1,69 +1,79 @@
-'use client';
 import React from 'react';
-import Footer from '../components/Footer';
+import { Scale, ShieldAlert, BadgeCheck, Gavel, HelpCircle } from 'lucide-react';
 
 const TermsOfService = () => {
     return (
-        <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-            <main className="flex-1 max-w-4xl mx-auto px-6 py-20">
-                <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-8 md:p-12 border border-gray-100 dark:border-gray-700">
-                    <h1 className="text-4xl md:text-5xl font-extrabold mb-10 text-center bg-gradient-to-r from-green-400 to-blue-600 bg-clip-text text-transparent">
-                        Terms of Service
-                    </h1>
+        <div className="bg-white min-h-screen relative overflow-hidden font-sans">
+            {/* Background Decor */}
+            <div className="absolute top-0 right-0 w-full h-[600px] bg-gradient-to-b from-green-50/50 to-transparent -z-10" />
 
-                    <div className="space-y-10 text-gray-700 dark:text-gray-300 leading-relaxed">
-                        <section>
-                            <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white border-l-4 border-green-500 pl-4 uppercase tracking-wider text-sm">1. Acceptance of Terms</h2>
-                            <p>
-                                By using Outrelix, you agree to be bound by these Terms of Service. Our platform provides automated email outreach and lead generation tools. If you use our services on behalf of an organization, you represent that you have the authority to bind that organization to these terms.
-                            </p>
-                        </section>
-
-                        <section>
-                            <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white border-l-4 border-green-500 pl-4 uppercase tracking-wider text-sm">2. Use of Services</h2>
-                            <p>You agree to use Outrelix only for lawful purposes. Prohibited activities include:</p>
-                            <ul className="list-disc pl-6 space-y-2 mt-4">
-                                <li>Sending unsolicited bulk emails (Spam) in violation of CAN-SPAM or GDPR.</li>
-                                <li>Attempting to reverse engineer or disrupt the service's infrastructure.</li>
-                                <li>Using the lead generation tools to scrape sensitive or prohibited information.</li>
-                            </ul>
-                        </section>
-
-                        <section>
-                            <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white border-l-4 border-green-500 pl-4 uppercase tracking-wider text-sm">3. Account Responsibility</h2>
-                            <p>
-                                You are responsible for maintaining the security of your account and any connected Google or Facebook accounts. Outrelix is not liable for any loss or damage arising from your failure to protect your login credentials.
-                            </p>
-                        </section>
-
-                        <section>
-                            <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white border-l-4 border-green-500 pl-4 uppercase tracking-wider text-sm">4. Subscription & Payments</h2>
-                            <p>
-                                Payments for premium plans are processed securely. Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period. Refunds are handled on a case-by-case basis according to our refund policy.
-                            </p>
-                        </section>
-
-                        <section>
-                            <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white border-l-4 border-green-500 pl-4 uppercase tracking-wider text-sm">5. Limitation of Liability</h2>
-                            <p>
-                                Outrelix provides the platform "as is." To the fullest extent permitted by law, Outrelix shall not be liable for any indirect, incidental, or consequential damages resulting from the use or inability to use the service.
-                            </p>
-                        </section>
-
-                        <section className="pt-10 border-t border-gray-100 dark:border-gray-700">
-                            <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Questions?</h2>
-                            <p>If you have any questions regarding these Terms, please contact us:</p>
-                            <a
-                                href="mailto:support@astraventa.online"
-                                className="inline-block mt-4 text-xl font-bold text-green-600 dark:text-green-400 hover:underline"
-                            >
-                                support@astraventa.online
-                            </a>
-                        </section>
+            <main className="max-w-4xl mx-auto px-6 py-24">
+                {/* Header */}
+                <div className="text-center mb-20">
+                    <div className="w-16 h-16 bg-green-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl shadow-green-500/20">
+                        <Scale className="text-white w-8 h-8" />
                     </div>
+                    <h1 className="text-5xl font-black text-slate-900 tracking-tighter mb-4">Terms of Service</h1>
+                    <p className="text-slate-400 font-bold uppercase tracking-widest text-sm">Agreement Version 2.4 | Feb 2026</p>
+                </div>
+
+                {/* Content */}
+                <div className="space-y-16 text-slate-600 leading-relaxed">
+
+                    <section>
+                        <div className="flex items-center gap-4 mb-6">
+                            <div className="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center">
+                                <BadgeCheck className="w-4 h-4 text-green-600" />
+                            </div>
+                            <h2 className="text-2xl font-black text-slate-900 tracking-tight">1. Acceptance</h2>
+                        </div>
+                        <p className="text-lg leading-relaxed">
+                            By accessing or using Outrelix, you agree to be bound by these legal terms. Our platform provides advanced neural outreach and lead generation services. If you disagree with any part of these terms, you must cease all use of our services immediately.
+                        </p>
+                    </section>
+
+                    <section className="p-8 rounded-[2.5rem] bg-slate-50 border border-slate-100 relative overflow-hidden">
+                        <div className="flex items-start gap-4 mb-6">
+                            <ShieldAlert className="w-8 h-8 text-amber-500 shrink-0 mt-1" />
+                            <div>
+                                <h2 className="text-2xl font-black text-slate-900 tracking-tight mb-2">Service Usage Rules</h2>
+                                <p className="font-medium text-slate-600">You must use Outrelix only for lawful, ethical outreach. Prohibited actions include:</p>
+                                <ul className="mt-4 space-y-2 text-sm font-bold text-slate-400 uppercase tracking-widest">
+                                    <li>• Automated spamming prohibited</li>
+                                    <li>• No illegal data scraping</li>
+                                    <li>• Infrastructure disruption forbidden</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section>
+                        <div className="flex items-center gap-4 mb-6">
+                            <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
+                                <Gavel className="w-4 h-4 text-blue-600" />
+                            </div>
+                            <h2 className="text-2xl font-black text-slate-900 tracking-tight">2. Liability & Warranty</h2>
+                        </div>
+                        <p className="text-lg mb-6">
+                            Outrelix is provided "as is" and "as available." We do not guarantee 100% uptime or success rates for outreach sequences as these depend on external mail server behavior.
+                        </p>
+                        <div className="p-6 rounded-3xl bg-slate-900 text-white text-xs font-mono uppercase tracking-tighter leading-relaxed">
+                            TO THE MAXIMUM EXTENT PERMITTED BY LAW, OUTRELIX SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, OR CONSEQUENTIAL DAMAGES RESULTING FROM THE USE OR INABILITY TO USE THE SERVICE.
+                        </div>
+                    </section>
+
+                    <section className="pt-16 border-t border-slate-100 text-center">
+                        <h2 className="text-3xl font-black text-slate-900 tracking-tighter mb-4">Legal Support</h2>
+                        <p className="text-slate-500 mb-8 flex items-center justify-center gap-2">
+                            <HelpCircle className="w-4 h-4" /> Have a question about our legal framework?
+                        </p>
+                        <a href="mailto:legal@outrelix.com" className="text-2xl font-black text-green-600 hover:text-green-700 transition-colors">
+                            legal@outrelix.com
+                        </a>
+                    </section>
+
                 </div>
             </main>
-            <Footer />
         </div>
     );
 };

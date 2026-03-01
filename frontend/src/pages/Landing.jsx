@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import NumberFlow from "@number-flow/react";
 import { useTranslation } from 'react-i18next';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import {
   RocketLaunchIcon,
   ChartBarIcon,
@@ -18,6 +19,7 @@ import {
   EyeIcon,
   EyeSlashIcon
 } from '@heroicons/react/24/outline';
+import { ArrowRight, CheckCircle } from 'lucide-react';
 import BACKEND_URL from '../config/backend';
 import { auth, db } from '../supabase';
 import { ToastContainer, toast } from 'react-toastify';
@@ -25,8 +27,19 @@ import 'react-toastify/dist/ReactToastify.css';
 import OnboardingModal from '../components/OnboardingModal';
 import WelcomeModal from '../components/WelcomeModal';
 import OTPVerificationModal from '../components/OTPVerificationModal';
-import Footer from '../components/Footer';
+// Removed Footer import to prevent duplication
 import { HeroSection } from '../components/blocks/hero-section-1';
+import ProcessSection from '../components/blocks/ProcessSection';
+import OrbitalTimelineBlock from '../components/blocks/OrbitalTimelineBlock';
+import IndustryScrapers from '../components/blocks/IndustryScrapers';
+import FAQSection from '../components/blocks/FAQSection';
+import InteractivePipeline from '../components/blocks/InteractivePipeline';
+import { Button } from "../components/ui/button";
+import { Badge } from "../components/ui/badge";
+import { Card, CardHeader, CardContent } from "../components/ui/card";
+import { Avatar, AvatarImage } from "../components/ui/avatar";
+import { RainbowButton } from "../components/ui/rainbow-button";
+import { cn } from "../lib/utils";
 
 // FeatureCard component
 const FeatureCard = ({ icon: Icon, title, description, delay }) => (
@@ -35,47 +48,42 @@ const FeatureCard = ({ icon: Icon, title, description, delay }) => (
     whileInView={{ opacity: 1, y: 0 }}
     transition={{ delay }}
     viewport={{ once: true }}
-    className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-gray-100 dark:border-gray-700"
+    className="bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100 hover:border-blue-100 group"
   >
-    <div className="w-16 h-16 rounded-xl bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 flex items-center justify-center mb-6 shadow-lg">
-      <Icon className="w-8 h-8 text-white" />
+    <div className="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+      <Icon className="w-7 h-7 text-blue-600" />
     </div>
-    <h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-white font-poppins leading-tight">{title}</h3>
-    <p className="text-gray-600 dark:text-gray-400 font-poppins leading-relaxed">{description}</p>
+    <h3 className="text-xl font-bold mb-4 text-slate-900 leading-tight">{title}</h3>
+    <p className="text-slate-600 leading-relaxed text-sm">{description}</p>
   </motion.div>
 );
 
 // TestimonialCard component
-const TestimonialCard = ({ image, name, role, company, quote, delay }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    transition={{ delay }}
-    viewport={{ once: true }}
-    className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-gray-100 dark:border-gray-700"
-  >
-    <div className="flex items-center mb-6">
-      <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-gradient-to-r from-green-400 via-blue-500 to-purple-600 shadow-lg">
-        <img src={image} alt={name} className="w-full h-full object-cover" />
+const TestimonialCard = ({ author, text, className }) => {
+  return (
+    <div
+      className={cn(
+        "flex flex-col rounded-lg border-t",
+        "bg-gradient-to-b from-muted/50 to-muted/10",
+        "p-4 text-start sm:p-6",
+        "hover:from-muted/60 hover:to-muted/20",
+        "transition-colors duration-300",
+        className
+      )}
+    >
+      <div className="flex items-center gap-3">
+        <Avatar className="h-12 w-12">
+          <AvatarImage src={author.avatar} alt={author.name} />
+        </Avatar>
+        <div className="flex flex-col items-start">
+          <h3 className="text-md font-semibold leading-none">{author.name}</h3>
+          <p className="text-sm text-muted-foreground">{author.handle}</p>
+        </div>
       </div>
-      <div className="ml-6">
-        <h3 className="text-xl font-bold text-gray-900 dark:text-white font-poppins">{name}</h3>
-        <p className="text-sm text-gray-600 dark:text-gray-400 font-poppins">{role}</p>
-        <p className="text-sm text-primary-600 dark:text-primary-400 font-poppins font-semibold">{company}</p>
-      </div>
+      <p className="sm:text-md mt-4 text-sm text-muted-foreground leading-relaxed italic">"{text}"</p>
     </div>
-    <div className="mb-6">
-      <p className="text-gray-600 dark:text-gray-300 font-poppins leading-relaxed text-lg italic">"{quote}"</p>
-    </div>
-    <div className="flex text-yellow-400">
-      {[...Array(5)].map((_, i) => (
-        <svg key={i} className="w-6 h-6 fill-current" viewBox="0 0 20 20">
-          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-        </svg>
-      ))}
-    </div>
-  </motion.div>
-);
+  )
+};
 
 // LiveCounter component
 const LiveCounter = ({ start, end, duration, isLive = false, updateInterval = 10000 }) => {
@@ -106,57 +114,82 @@ const LiveCounter = ({ start, end, duration, isLive = false, updateInterval = 10
 };
 
 // PricingCard component
-const PricingCard = ({ title, price, subtitle, features, popular, delay, onSignupClick }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    transition={{ delay }}
-    viewport={{ once: true }}
-    className={`relative bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 border-2 ${popular
-      ? 'border-primary-500 bg-gradient-to-br from-white to-blue-50 dark:from-gray-800 dark:to-blue-950'
-      : 'border-gray-100 dark:border-gray-700'
-      }`}
-  >
-    {popular && (
-      <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-        <span className="bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 text-white px-6 py-2 rounded-full text-sm font-bold font-poppins shadow-lg">
-          Most Popular
-        </span>
-      </div>
-    )}
-    <div className="text-center mb-8">
-      <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 font-poppins">
-        {title}
-      </h3>
-      <p className="text-gray-600 dark:text-gray-400 font-poppins mb-4">
-        {subtitle}
-      </p>
-      <div className="mb-6">
-        <span className="text-5xl font-bold text-gray-900 dark:text-white font-poppins">${price}</span>
-        <span className="text-xl text-gray-600 dark:text-gray-400 font-poppins">/month</span>
-      </div>
-    </div>
-    <ul className="space-y-4 mb-8">
-      {features.map((feature, index) => (
-        <li key={index} className="flex items-start text-gray-600 dark:text-gray-300 font-poppins">
-          <CheckCircleIcon className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
-          <span className="text-sm leading-relaxed">{feature}</span>
-        </li>
-      ))}
-    </ul>
-    <button
-      onClick={onSignupClick}
-      className={`w-full py-4 px-6 rounded-xl font-semibold transition-all duration-300 font-poppins ${title === 'Starter'
-        ? 'bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 text-white hover:opacity-90 shadow-lg hover:shadow-xl transform hover:scale-105'
-        : popular
-          ? 'bg-gray-900 dark:bg-gray-700 text-white hover:bg-gray-800 dark:hover:bg-gray-600 border border-gray-300 dark:border-gray-600'
-          : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600'
-        }`}
+const PricingCard = ({ tier, paymentFrequency = "monthly", onSignupClick }) => {
+  const price = tier.price[paymentFrequency]
+  const isHighlighted = tier.highlighted
+  const isPopular = tier.popular
+
+  return (
+    <Card
+      className={cn(
+        "relative flex flex-col gap-8 overflow-hidden p-6 hover:shadow-2xl transition-all duration-300",
+        isHighlighted ? "bg-foreground text-background" : "bg-background text-foreground",
+        isPopular && "ring-2 ring-blue-600"
+      )}
     >
-      {title === 'Starter' ? 'Start Free Trial' : 'Upgrade Now'}
-    </button>
-  </motion.div>
-);
+      {isHighlighted && (
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:45px_45px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]" />
+      )}
+      {isPopular && (
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(59,130,246,0.1),rgba(255,255,255,0))]" />
+      )}
+
+      <h2 className="flex items-center gap-3 text-xl font-medium capitalize z-10">
+        {tier.name}
+        {isPopular && (
+          <Badge variant="secondary" className="mt-1 z-10 bg-blue-100 text-blue-600 border-none shadow-none">
+            🔥 Most Popular
+          </Badge>
+        )}
+      </h2>
+
+      <div className="relative h-12 z-10">
+        {typeof price === "number" ? (
+          <>
+            <NumberFlow
+              format={{
+                style: "currency",
+                currency: "USD",
+              }}
+              value={price}
+              className="text-4xl font-medium"
+            />
+            <p className="-mt-2 text-xs text-muted-foreground">Per month</p>
+          </>
+        ) : (
+          <h1 className="text-4xl font-medium">{price}</h1>
+        )}
+      </div>
+
+      <div className="flex-1 space-y-2 z-10">
+        <h3 className="text-sm font-medium">{tier.description || tier.subtitle}</h3>
+        <ul className="space-y-2">
+          {tier.features.map((feature, index) => (
+            <li
+              key={index}
+              className={cn(
+                "flex items-center gap-2 text-sm font-medium",
+                isHighlighted ? "text-background" : "text-slate-600"
+              )}
+            >
+              <CheckCircle className="h-4 w-4 text-blue-500" />
+              {feature}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <Button
+        variant={isHighlighted ? "secondary" : (isPopular ? "default" : "outline")}
+        className={cn("w-full z-10", isPopular && "bg-blue-600 hover:bg-blue-700")}
+        onClick={onSignupClick}
+      >
+        Start with {tier.name}
+        <ArrowRight className="ml-2 h-4 w-4" />
+      </Button>
+    </Card>
+  )
+};
 
 // industryPhrases array
 const industryPhrases = [
@@ -210,9 +243,15 @@ function setLoginCalled(email) {
   localStorage.setItem('loginCalled:' + email, 'true');
 }
 
-const SignupModal = ({ isOpen, onClose, onSignupSuccess, onEmailVerified, pendingOnboardingUserName, setShowOnboardingModal, setShowWelcomeModal, setIsNewUser, setOnboardingUserName, selectedCountry, setSelectedCountry, hasProcessedVerification, setHasProcessedVerification, showOTPModal, setShowOTPModal, pendingEmail, setPendingEmail }) => {
+const SignupModal = ({ isOpen, onClose, onSignupSuccess, onEmailVerified, pendingOnboardingUserName, setShowOnboardingModal, setShowWelcomeModal, setIsNewUser, setOnboardingUserName, selectedCountry, setSelectedCountry, hasProcessedVerification, setHasProcessedVerification, showOTPModal, setShowOTPModal, pendingEmail, setPendingEmail, initialMode = 'signup' }) => {
   const { t } = useTranslation();
-  const [isLogin, setIsLogin] = useState(false);
+  const [isLogin, setIsLogin] = useState(initialMode === 'login');
+
+  useEffect(() => {
+    if (isOpen) {
+      setIsLogin(initialMode === 'login');
+    }
+  }, [isOpen, initialMode]);
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -919,7 +958,22 @@ const industryNames = [
 const Landing = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
   const [isSignupOpen, setIsSignupOpen] = useState(false);
+  const [authMode, setAuthMode] = useState('signup');
+
+  // Handle Auth Hash Routing
+  useEffect(() => {
+    if (location.hash === '#login') {
+      setAuthMode('login');
+      setIsSignupOpen(true);
+      window.history.replaceState(null, '', '/');
+    } else if (location.hash === '#signup') {
+      setAuthMode('signup');
+      setIsSignupOpen(true);
+      window.history.replaceState(null, '', '/');
+    }
+  }, [location.hash]);
   const [isVideoOpen, setIsVideoOpen] = useState(false);
 
   // Digital typewriter state for hero section
@@ -1065,60 +1119,36 @@ const Landing = () => {
 
   const testimonials = [
     {
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
-      name: "Daniel Griffin",
-      role: "Marketing Director",
-      company: "TechCorp Inc.",
-      quote: "This platform has revolutionized our email outreach. We've seen a 300% increase in response rates and saved countless hours of manual work. The AI personalization is incredible!",
-      delay: 0.1
+      author: {
+        avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
+        name: "Daniel Griffin",
+        handle: "Marketing Director @ TechCorp",
+      },
+      text: "This platform has revolutionized our email outreach. We've seen a 300% increase in response rates and saved countless hours of manual work. The AI personalization is incredible!",
     },
     {
-      image: "/testimonials/sarah.png",
-      name: "Sarah Smith",
-      role: "Sales Manager",
-      company: "Global Solutions",
-      quote: "The AI-powered personalization and automated follow-ups have been game-changers for our sales team. Our conversion rates have doubled since we started using this platform.",
-      delay: 0.2
+      author: {
+        avatar: "/testimonials/sarah.png",
+        name: "Sarah Smith",
+        handle: "Sales Manager @ Global Solutions",
+      },
+      text: "The AI-powered personalization and automated follow-ups have been game-changers for our sales team. Our conversion rates have doubled since we started using this platform.",
     },
     {
-      image: "/testimonials/michel.png",
-      name: "Michael Chen",
-      role: "Founder & CEO",
-      company: "StartupX",
-      quote: "As a startup founder, this tool has been invaluable. It's helped us scale our outreach efforts without hiring additional staff. The ROI is absolutely phenomenal.",
-      delay: 0.3
+      author: {
+        avatar: "/testimonials/michel.png",
+        name: "Michael Chen",
+        handle: "Founder & CEO @ StartupX",
+      },
+      text: "As a startup founder, this tool has been invaluable. It's helped us scale our outreach efforts without hiring additional staff. The ROI is absolutely phenomenal.",
     },
-    {
-      image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&h=150&fit=crop&crop=face",
-      name: "Emma Rodriguez",
-      role: "VP of Sales",
-      company: "Enterprise Solutions",
-      quote: "The industry-specific templates and smart targeting features have transformed our B2B outreach. We're generating 5x more qualified leads than before.",
-      delay: 0.4
-    },
-    {
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
-      name: "David Thompson",
-      role: "Growth Marketing Lead",
-      company: "ScaleUp Ventures",
-      quote: "The real-time analytics and response notifications keep us ahead of the competition. This platform is a must-have for any growth-focused company.",
-      delay: 0.5
-    },
-    {
-      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face",
-      name: "Lisa Anderson",
-      role: "Digital Marketing Manager",
-      company: "Innovation Labs",
-      quote: "Setting up campaigns is incredibly easy, and the automated follow-up sequences work perfectly. Our team productivity has increased by 400%.",
-      delay: 0.6
-    }
   ];
 
   const pricingPlans = [
     {
-      title: 'Starter',
-      price: '99',
-      subtitle: 'Perfect for solo founders',
+      name: 'Starter',
+      price: { monthly: 99, yearly: 79 },
+      description: 'Perfect for solo founders',
       features: [
         '1,000 emails per month',
         '1 active sequence',
@@ -1128,12 +1158,12 @@ const Landing = () => {
         'No integrations'
       ],
       popular: false,
-      delay: 0.1
+      highlighted: false
     },
     {
-      title: 'Pro',
-      price: '199',
-      subtitle: 'Ideal for SaaS founders & small teams',
+      name: 'Pro',
+      price: { monthly: 199, yearly: 159 },
+      description: 'Ideal for SaaS founders & small teams',
       features: [
         '5,000 emails per month',
         'Unlimited sequences',
@@ -1145,12 +1175,12 @@ const Landing = () => {
         'Custom domain'
       ],
       popular: true,
-      delay: 0.2
+      highlighted: false
     },
     {
-      title: 'Power',
-      price: '399',
-      subtitle: 'Built for agencies & startups',
+      name: 'Power',
+      price: { monthly: 399, yearly: 319 },
+      description: 'Built for agencies & startups',
       features: [
         '15,000 emails per month',
         'Unlimited everything',
@@ -1164,7 +1194,7 @@ const Landing = () => {
         'Custom integrations'
       ],
       popular: false,
-      delay: 0.3
+      highlighted: true
     }
   ];
 
@@ -1261,261 +1291,124 @@ const Landing = () => {
   }, [industryDisplayed, industryTyping, industryIndex]);
 
   return (
-    <div className="min-h-screen bg-[#000000] text-white font-poppins selection:bg-blue-500/30 overflow-x-hidden">
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Outfit:wght@100..900&display=swap');
-        
-        :root {
-          --obsidian: #000000;
-          --obsidian-elevated: #050505;
-          --obsidian-border: rgba(255, 255, 255, 0.08);
-          --accent-blue: #3b82f6;
-          --accent-purple: #8b5cf6;
-        }
+    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 overflow-x-hidden">
 
-        .font-outfit { font-family: 'Outfit', sans-serif; }
-        .font-inter { font-family: 'Inter', sans-serif; }
+      {/* Hero */}
+      <HeroSection setIsSignupOpen={setIsSignupOpen} />
 
-        .obsidian-card {
-          background: rgba(10, 10, 10, 0.5);
-          backdrop-filter: blur(12px);
-          border: 1px solid var(--obsidian-border);
-          box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
-        }
 
-        .glow-overlay {
-          background: radial-gradient(circle at center, rgba(59, 130, 246, 0.05) 0%, transparent 70%);
-        }
 
-        .shimmer {
-          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
-          background-size: 200% 100%;
-          animation: shimmer 3s infinite;
-        }
+      {/* ── Interactive Capabilities Pipeline ── */}
+      <InteractivePipeline />
 
-        @keyframes shimmer {
-          0% { background-position: -200% 0; }
-          100% { background-position: 200% 0; }
-        }
-        
-        html { scroll-behavior: smooth; }
-        section[id] { scroll-margin-top: 80px; }
-      `}</style>
+      {/* ── The Outrelix Protocol (New Orbital Timeline) ── */}
+      <OrbitalTimelineBlock />
 
-      {/* Hero Section Layer */}
-      <div className="relative">
-        <div className="absolute inset-0 glow-overlay pointer-events-none" />
-        <HeroSection
-          setIsSignupOpen={setIsSignupOpen}
-        />
+      {/* ── How It Works (New ProcessSection) ── */}
+      <div id="how-it-works">
+        <ProcessSection />
       </div>
 
+      {/* ── Industries We Serve (New IndustryScrapers) ── */}
+      <IndustryScrapers />
 
-      {/* Layer 2: Metric Grid - Tactical Intelligence */}
-      <section className="relative py-24 bg-black overflow-hidden border-y border-white/5">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {[
-              { label: "Neural Extractions", value: 12400000, suffix: "+", icon: SparklesIcon },
-              { label: "Verified Leads", value: 890000, suffix: "", icon: CheckCircleIcon },
-              { label: "Outreach Automation", value: 99.9, suffix: "%", icon: RocketLaunchIcon },
-              { label: "Conversion Lift", value: 4.2, suffix: "x", icon: ChartBarIcon },
-            ].map((stat, i) => (
+      {/* ── Customer Stories section removed as requested ── */}
+
+      {/* ── Pricing ── */}
+      <section id="pricing" className="py-32 bg-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(99,102,241,0.03),transparent_40%)]" />
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 relative z-10">
+          <div className="text-center mb-24">
+            <span className="inline-block px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100/50 text-indigo-600 text-[10px] font-bold uppercase tracking-widest mb-6">
+              Pricing Plans
+            </span>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight mb-6">
+              Simple, <span className="text-indigo-600">Transparent</span> Pricing
+            </h2>
+            <p className="text-slate-500 text-lg max-w-2xl mx-auto">Start free. Scale as you grow. No hidden fees, just pure growth.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {pricingPlans.map((plan, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
+                transition={{ delay: i * 0.12, duration: 0.5 }}
                 viewport={{ once: true }}
-                className="obsidian-card p-10 rounded-[30px] group hover:border-blue-500/30 transition-all duration-500"
               >
-                <div className="flex items-center gap-4 mb-4">
-                  <stat.icon className="w-5 h-5 text-blue-500" />
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40">{stat.label}</span>
-                </div>
-                <div className="text-4xl md:text-5xl font-outfit font-black text-white">
-                  <LiveCounter start={0} end={stat.value} duration={2000} isLive />
-                  <span className="text-blue-500">{stat.suffix}</span>
-                </div>
+                <PricingCard
+                  tier={plan}
+                  onSignupClick={() => setIsSignupOpen(true)}
+                />
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Layer 3: Neural Intelligence - Bento Grid Feature Showcase */}
-      <section className="relative py-32 bg-[#000000]">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-24">
-            <h2 className="text-[10px] font-black text-blue-500 uppercase tracking-[0.4em] mb-4">Autonomous Capabilities</h2>
-            <h3 className="text-4xl md:text-7xl font-outfit font-black text-white uppercase italic tracking-tighter">
-              The Architecture of <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600">Dominance</span>
-            </h3>
-          </div>
+      {/* ── FAQ ── */}
+      <FAQSection />
 
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-[350px]">
-            {/* Big Feature 1: Global Intelligence */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              className="md:col-span-8 obsidian-card rounded-[40px] p-12 flex flex-col justify-end group transition-all duration-500 overflow-hidden relative"
-            >
-              <div className="absolute top-0 right-0 p-12 opacity-10 group-hover:opacity-20 transition-opacity">
-                <GlobeAltIcon className="w-80 h-80 text-blue-500" />
-              </div>
-              <div className="relative z-10">
-                <div className="flex items-center gap-3 mb-6">
-                  <span className="bg-blue-600/20 text-blue-400 text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-tighter">Neural Scan</span>
-                </div>
-                <h4 className="text-4xl font-outfit font-black text-white mb-6 uppercase">Global Lead Infiltration</h4>
-                <p className="text-white/40 max-w-md font-inter text-lg leading-relaxed">
-                  Our neural agents bypass traditional barriers to extract precise contact intelligence from across the decentralized web.
-                </p>
-              </div>
-            </motion.div>
-
-            {/* Small Feature 1: Verification */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              className="md:col-span-4 obsidian-card rounded-[40px] p-12 flex flex-col items-center justify-center text-center group transition-all duration-500"
-            >
-              <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-purple-600/20 to-blue-600/20 flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
-                <ShieldCheckIcon className="w-12 h-12 text-purple-500" />
-              </div>
-              <h4 className="text-2xl font-outfit font-black text-white uppercase">Zero-Bounce Protocol</h4>
-              <p className="text-white/40 text-base mt-4 font-inter leading-relaxed">Verified at source with 99.9% accuracy.</p>
-            </motion.div>
-
-            {/* Small Feature 2: Personalization */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              className="md:col-span-4 obsidian-card rounded-[40px] p-12 flex flex-col items-center justify-center text-center group transition-all duration-500"
-            >
-              <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-green-600/20 to-blue-600/20 flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
-                <SparklesIcon className="w-12 h-12 text-green-500" />
-              </div>
-              <h4 className="text-2xl font-outfit font-black text-white uppercase">Neural Icebreakers</h4>
-              <p className="text-white/40 text-base mt-4 font-inter leading-relaxed">Personalization that feels human, acts machine.</p>
-            </motion.div>
-
-            {/* Big Feature 2: Command Center */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              className="md:col-span-8 obsidian-card rounded-[40px] p-12 flex flex-col justify-end group transition-all duration-500 overflow-hidden relative bg-gradient-to-br from-[#050505] to-[#101010]"
-            >
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,rgba(139,92,246,0.1)_0%,transparent_70%)] opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="relative z-10">
-                <div className="flex items-center gap-3 mb-6">
-                  <span className="bg-purple-600/20 text-purple-400 text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-tighter">Command Center</span>
-                </div>
-                <h4 className="text-4xl font-outfit font-black text-white mb-6 uppercase">Unified Campaign Control</h4>
-                <p className="text-white/40 max-w-lg font-inter text-lg leading-relaxed">
-                  Orchestrate complex multi-channel outreach strategies from a single neural interface. Set your goals, and let the intelligence execute.
-                </p>
-              </div>
-            </motion.div>
-          </div>
+      {/* ── Final CTA ── */}
+      <section className="py-32 relative overflow-hidden bg-transparent">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute -top-24 -left-24 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[120px] opacity-40 animate-pulse" />
+          <div className="absolute -bottom-24 -right-24 w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[120px] opacity-40 animate-pulse [animation-delay:2s]" />
         </div>
-      </section>
-
-      {/* Layer 4: Enterprise Solutions - Comparative Advantage */}
-      <section className="relative py-32 bg-[#050505]">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex flex-col lg:flex-row items-center gap-20">
-            <div className="flex-1">
-              <h2 className="text-[10px] font-black text-blue-500 uppercase tracking-[0.4em] mb-6">Enterprise Protocol</h2>
-              <h3 className="text-4xl md:text-5xl font-outfit font-black text-white italic uppercase tracking-tighter mb-8">
-                Legacy Outreach is <br />
-                <span className="text-white/20">Extinct.</span>
-              </h3>
-              <div className="space-y-6">
-                {[
-                  "Eliminate manual lead research entirely",
-                  "Bypass restrictive landing page barriers",
-                  "Automated personalization at global scale",
-                  "Neural verification prevents domain blacklisting"
-                ].map((text, i) => (
-                  <div key={i} className="flex items-center gap-4 text-white/60">
-                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
-                    <span className="font-inter text-sm font-bold uppercase tracking-widest">{text}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="obsidian-card p-8 rounded-[30px] border-red-500/10">
-                <div className="text-[10px] font-black text-red-500 uppercase tracking-widest mb-4">Legacy Scrapers</div>
-                <div className="text-2xl font-outfit font-black text-white/40 mb-2">3.2% Response</div>
-                <p className="text-white/20 text-xs">Unverified data, generic messages, high bounce rates.</p>
-              </div>
-              <div className="obsidian-card p-8 rounded-[30px] border-blue-500/30 bg-blue-500/5">
-                <div className="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-4">Outrelix Neural</div>
-                <div className="text-2xl font-outfit font-black text-white mb-2">18.4% Response</div>
-                <p className="text-white/40 text-xs">Neural infiltration, 99.9% accuracy, automated empathy.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Layer 5: Global Social Proof - Partner Intelligence */}
-      <div className="py-20 border-y border-white/5 bg-black">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex flex-wrap items-center justify-between gap-12 opacity-30 grayscale hover:opacity-100 transition-opacity duration-1000">
-            {['Salesforce', 'HubSpot', 'Stripe', 'Google', 'Meta'].map((partner) => (
-              <span key={partner} className="text-2xl font-outfit font-black text-white tracking-tighter uppercase italic">{partner}</span>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Final CTA Layer: Deep Sea Call to Action */}
-      <section className="relative py-40 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-black via-blue-950/20 to-black pointer-events-none" />
-        <div className="max-w-5xl mx-auto px-6 relative z-10 text-center">
+        <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-8 text-center">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
             viewport={{ once: true }}
+            className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-[3rem] px-10 py-20 text-white shadow-2xl relative overflow-hidden group"
           >
-            <h2 className="text-5xl md:text-8xl font-outfit font-black text-white uppercase italic tracking-tighter mb-12">
-              Ready to <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500">Infiltrate?</span>
+            {/* Background Pattern */}
+            <div className="absolute inset-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] pointer-events-none"></div>
+            <div className="absolute inset-0 bg-blue-600/10 mix-blend-overlay group-hover:bg-blue-600/20 transition-all duration-700"></div>
+
+            <span className="inline-block px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md text-white/80 text-[10px] font-bold uppercase tracking-[0.3em] mb-8 border border-white/10">
+              Start Generating Revenue
+            </span>
+            <h2 className="text-4xl md:text-5xl lg:text-7xl font-black tracking-tight mb-8 leading-[1.1]">
+              Your Competitors Are Already<br />Using AI. <span className="text-blue-500">Don't Fall Behind.</span>
             </h2>
-            <div className="flex flex-col md:flex-row items-center justify-center gap-6">
-              <button
+            <p className="text-slate-400 text-lg mb-12 max-w-2xl mx-auto font-medium">
+              Join 2,500+ growth-focused teams generating pipeline on autopilot. No credit card required. Up and running in 5 minutes.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-5 justify-center">
+              <RainbowButton
                 onClick={() => setIsSignupOpen(true)}
-                className="w-full md:w-auto px-12 py-6 bg-white text-black font-black uppercase tracking-widest rounded-full hover:bg-blue-500 hover:text-white transition-all duration-500 transform hover:scale-110 active:scale-95 shadow-[0_0_50px_rgba(255,255,255,0.2)]"
+                className="group px-10 py-5 text-base shadow-[0_15px_30px_-5px_rgba(37,99,235,0.4)] hover:-translate-y-1 active:translate-y-0"
               >
-                Establish Connection
-              </button>
-              <button
-                onClick={() => setIsVideoOpen(true)}
-                className="w-full md:w-auto px-12 py-6 bg-transparent border-2 border-white/10 text-white font-black uppercase tracking-widest rounded-full hover:bg-white/5 transition-all duration-500"
-              >
-                Watch Briefing
+                Start Scraping Free <span className="inline-block group-hover:translate-x-1 transition-transform ml-1">→</span>
+              </RainbowButton>
+              <button className="px-10 py-5 bg-white/5 border border-white/10 backdrop-blur-xl text-white font-bold rounded-2xl text-base hover:bg-white/10 transition-all border-white/20">
+                Book a Private Demo
               </button>
             </div>
-            <div className="mt-12 flex items-center justify-center gap-8 text-white/20 text-[10px] font-black uppercase tracking-[0.3em]">
-              <span>No Credit Card</span>
-              <span>14-Day Intel Access</span>
-              <span>Elite Level Only</span>
+            <div className="mt-12 flex flex-wrap items-center justify-center gap-6 opacity-60">
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-green-500" />
+                <span className="text-[10px] font-bold uppercase tracking-wider">No Credit Card</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-green-500" />
+                <span className="text-[10px] font-bold uppercase tracking-wider">14-Day Free Trial</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-green-500" />
+                <span className="text-[10px] font-bold uppercase tracking-wider">Cancel Anytime</span>
+              </div>
             </div>
           </motion.div>
         </div>
       </section>
 
+      {/* Modals */}
       <SignupModal
         isOpen={isSignupOpen}
+        initialMode={authMode}
         onClose={() => setIsSignupOpen(false)}
         onSignupSuccess={handleSignupSuccess}
         pendingOnboardingUserName={pendingOnboardingUserName}
@@ -1532,15 +1425,8 @@ const Landing = () => {
         pendingEmail={pendingEmail}
         setPendingEmail={setPendingEmail}
       />
-      <WelcomeModal
-        isOpen={showWelcomeModal}
-        onComplete={handleWelcomeComplete}
-      />
-      <OnboardingModal
-        open={showOnboardingModal}
-        userName={onboardingUserName}
-        onClose={handleOnboardingComplete}
-      />
+      <WelcomeModal isOpen={showWelcomeModal} onComplete={handleWelcomeComplete} />
+      <OnboardingModal open={showOnboardingModal} userName={onboardingUserName} onClose={handleOnboardingComplete} />
       <OTPVerificationModal
         isOpen={showOTPModal}
         onClose={() => setShowOTPModal(false)}
@@ -1548,13 +1434,9 @@ const Landing = () => {
         onVerificationSuccess={handleOTPVerificationSuccess}
       />
       <ToastContainer />
-      {/* Footer - properly separated and full width */}
-      <footer className="w-full">
-        <Footer />
-      </footer>
     </div>
   );
 };
 
+
 export default Landing;
-// Force HMR update to clear ReferenceError

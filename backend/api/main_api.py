@@ -1,4 +1,5 @@
 import logging
+import requests
 from fastapi import FastAPI, Request, Response, Depends, HTTPException, status, Path, Body
 from fastapi.responses import RedirectResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware

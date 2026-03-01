@@ -2,7 +2,22 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { I18nextProvider } from 'react-i18next';
 import i18n from './i18n';
-import { ToastContainer } from 'react-toastify';
+import './index.css'; // Added this import
+
+// --- NEW PUBLIC LANDING PAGES ---
+import AILeadScraper from './pages/public/AILeadScraper';
+import OutreachWriter from './pages/public/OutreachWriter';
+import BrandIntelligence from './pages/public/BrandIntelligence';
+import SEOAnalytics from './pages/public/SEOAnalytics';
+import SalesTeams from './pages/public/SalesTeams';
+import MarketingTeams from './pages/public/MarketingTeams';
+import Founders from './pages/public/Founders';
+import SuccessStories from './pages/public/SuccessStories';
+import SalesPlaybooks from './pages/public/SalesPlaybooks';
+import Documentation from './pages/public/Documentation';
+import APIReference from './pages/public/APIReference';
+
+import { ToastContainer } from 'react-toastify'; // Corrected and moved this import
 import 'react-toastify/dist/ReactToastify.css';
 import './utils/axios'; // Import axios configuration globally
 import Navbar from './components/Navbar';
@@ -94,7 +109,7 @@ const RequireAuth = ({ children }) => {
 const PublicLayout = ({ children }) => (
   <>
     <Navbar />
-    <main className="container mx-auto px-4 py-8 pt-20">
+    <main className="flex-grow pt-20">
       {children}
     </main>
     <Footer />
@@ -137,18 +152,20 @@ const App = () => {
           <SidebarProvider>
             <Router>
               <div className="min-h-screen flex flex-col bg-white dark:bg-gray-900 transition-colors duration-300">
-                <style>
-                  {`
-                  nav[data-navbar-id="main-navbar"]:not(:first-of-type) { display: none !important; }
-                  nav[data-navbar-id="main-navbar"] { height: auto !important; padding: 0.5rem 0; }
-                  nav[data-navbar-id="main-navbar"] img { width: 5rem !important; height: 5rem !important; margin: 0.5rem 0; }
-                  nav[data-navbar-id="main-navbar"] .logo-text { font-size: 2.5rem !important; font-family: 'Pacifico', cursive; background: linear-gradient(135deg, #22c55e, #3b82f6, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-                `}
-                </style>
+
 
                 <Routes>
                   {/* Public Routes */}
-                  <Route path="/" element={<PublicLayout><Landing /></PublicLayout>} />
+                  {/* Public Routes */}
+                  <Route path="/" element={<PublicLayout>
+                    <div className="relative overflow-hidden">
+                      {/* Background Orbs */}
+                      <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[120px] -z-10 animate-pulse"></div>
+                      <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-purple-500/10 rounded-full blur-[120px] -z-10 animate-pulse" style={{ animationDelay: '2s' }}></div>
+
+                      <Landing />
+                    </div>
+                  </PublicLayout>} />
                   <Route path="/about" element={<PublicLayout><About /></PublicLayout>} />
                   <Route path="/blog" element={<PublicLayout><Blog /></PublicLayout>} />
                   <Route path="/contact" element={<PublicLayout><Contact /></PublicLayout>} />
@@ -158,6 +175,19 @@ const App = () => {
                   <Route path="/cookies" element={<PublicLayout><CookiePolicy /></PublicLayout>} />
                   <Route path="/data-deletion" element={<PublicLayout><DataDeletion /></PublicLayout>} />
                   <Route path="/pricing-payment" element={<PublicLayout><PricingPayment /></PublicLayout>} />
+
+                  {/* New Product/Solution Landing Pages */}
+                  <Route path="/platform/ai-lead-scraper" element={<AILeadScraper />} />
+                  <Route path="/platform/outreach-writer" element={<OutreachWriter />} />
+                  <Route path="/platform/brand-intelligence" element={<BrandIntelligence />} />
+                  <Route path="/platform/seo-analytics" element={<SEOAnalytics />} />
+                  <Route path="/solutions/sales-teams" element={<SalesTeams />} />
+                  <Route path="/solutions/marketing-teams" element={<MarketingTeams />} />
+                  <Route path="/solutions/founders" element={<Founders />} />
+                  <Route path="/resources/success-stories" element={<SuccessStories />} />
+                  <Route path="/resources/sales-playbooks" element={<SalesPlaybooks />} />
+                  <Route path="/resources/documentation" element={<Documentation />} />
+                  <Route path="/resources/api-reference" element={<APIReference />} />
 
                   {/* Dashboard Routes (Wrapped in DashboardLayout) */}
                   <Route element={<RequireAuth><DashboardLayout /></RequireAuth>}>
