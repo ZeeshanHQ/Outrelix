@@ -22,8 +22,6 @@ import {
 import { ArrowRight, CheckCircle } from 'lucide-react';
 import BACKEND_URL from '../config/backend';
 import { auth, db } from '../supabase';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import OnboardingModal from '../components/OnboardingModal';
 import WelcomeModal from '../components/WelcomeModal';
 import OTPVerificationModal from '../components/OTPVerificationModal';
@@ -440,6 +438,7 @@ const SignupModal = ({ isOpen, onClose, onSignupSuccess, onEmailVerified, pendin
           if (otpResponse.ok) {
             setPendingEmail(email);
             setShowOTPModal(true);
+            onClose(); // Auto close signup modal when OTP is sent
             toast.success('Verification code sent to your email!', {
               position: 'top-center',
               autoClose: 5000,
@@ -1433,7 +1432,6 @@ const Landing = () => {
         email={pendingEmail}
         onVerificationSuccess={handleOTPVerificationSuccess}
       />
-      <ToastContainer />
     </div>
   );
 };

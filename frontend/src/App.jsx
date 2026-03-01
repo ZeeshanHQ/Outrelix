@@ -56,19 +56,23 @@ const RequireAuth = ({ children }) => {
     // Initial check from Supabase directly to be most accurate
     const initAuth = async () => {
       try {
-        const { session } = await auth.getSession();
+        const { data: { session } } = await auth.getSession();
         if (session && session.user) {
-          // Sync localStorage if we have a valid session but flags are missing
-          const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
-          if (!isAuthenticated) {
+          // ALWAYS Sync localStorage with the current Supabase session
+          // This ensures that switching accounts updates the UI immediately
+          const userObj = {
+            email: session.user.email,
+            name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0],
+            displayName: session.user.user_metadata?.full_name || session.user.email?.split('@')[0],
+            photoURL: session.user.user_metadata?.avatar_url || session.user.user_metadata?.picture || null,
+            provider: session.user.app_metadata?.provider || 'supabase'
+          };
+
+          const cachedUser = localStorage.getItem('user');
+          if (cachedUser !== JSON.stringify(userObj)) {
+            console.log('[Auth] Syncing user metadata to localStorage');
             localStorage.setItem('isAuthenticated', 'true');
-            localStorage.setItem('user', JSON.stringify({
-              email: session.user.email,
-              name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0],
-              displayName: session.user.user_metadata?.full_name || session.user.email?.split('@')[0],
-              photoURL: session.user.user_metadata?.avatar_url || null,
-              provider: session.user.app_metadata?.provider || 'supabase'
-            }));
+            localStorage.setItem('user', JSON.stringify(userObj));
             window.dispatchEvent(new Event('user-updated'));
           }
           setIsAuthed(true);
@@ -136,6 +140,9 @@ const App = () => {
       } else if (event === 'SIGNED_OUT') {
         localStorage.removeItem('isAuthenticated');
         localStorage.removeItem('user');
+        // CRITICAL: Clear Gmail cache so the next account starts fresh
+        localStorage.removeItem('isGmailConnected');
+        localStorage.removeItem('gmailEmail');
         window.dispatchEvent(new Event('user-updated'));
       }
     });

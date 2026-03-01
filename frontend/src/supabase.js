@@ -4,8 +4,16 @@ import { createClient } from '@supabase/supabase-js';
 export const supabaseUrl = process.env.REACT_APP_SUPABASE_URL || 'https://bfoggljxtwoloxthtocy.supabase.co';
 export const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
 
-// Create Supabase client
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Create Supabase client with auth options to avoid lock manager issues in local/multi-tab dev
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true,
+    // Disable the lock manager if it's causing timeout issues on some browsers
+    flowType: 'pkce'
+  }
+});
 
 // Auth helper functions
 export const auth = {

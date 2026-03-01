@@ -13,6 +13,7 @@ import {
   Menu,
   FileText,
   CreditCard,
+  Gift,
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
@@ -161,24 +162,38 @@ const AppSidebar = () => {
           </div>
         </nav>
 
-        {/* Footer / User Profile */}
+        {/* Footer / Refer & Earn */}
         <div className={`mt-auto border-t border-slate-50 transition-all duration-300 ${isCollapsed ? 'p-2' : 'p-4'}`}>
-          <div className={`flex items-center rounded-xl bg-slate-50 border border-slate-100/50 transition-all duration-300 ${isCollapsed ? 'justify-center py-3 px-0' : 'gap-3 p-2.5'}`}>
-            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-[10px] ring-2 ring-white shadow-sm">
-              UP
-            </div>
+          <motion.div
+            whileHover={{ scale: 1.02, translateY: -2 }}
+            className={`relative flex items-center overflow-hidden rounded-xl bg-gradient-to-br from-indigo-50 to-blue-50 border border-blue-100/50 shadow-sm transition-all duration-300 cursor-pointer group ${isCollapsed ? 'justify-center py-3 px-0' : 'gap-3 p-3'}`}
+            onClick={() => navigate('/referrals')}
+          >
+            {/* Animated background glow */}
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-400/0 via-blue-400/10 to-purple-400/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+
+            <motion.div
+              animate={{ rotate: [0, -10, 10, -10, 10, 0] }}
+              transition={{ repeat: Infinity, duration: 2, repeatDelay: 3 }}
+              className={`flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-md ring-2 ring-white/50 ${isCollapsed ? '' : 'group-hover:shadow-lg transition-shadow'}`}
+            >
+              <Gift className="w-4 h-4" />
+            </motion.div>
 
             {!isCollapsed && (
-              <motion.div
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="flex flex-col overflow-hidden"
-              >
-                <span className="text-xs font-bold text-slate-800 truncate">Zeeshan</span>
-                <span className="text-[9px] text-slate-400 font-bold uppercase tracking-tighter">Pro Account</span>
-              </motion.div>
+              <div className="flex flex-col overflow-hidden relative z-10">
+                <span className="text-xs font-bold text-indigo-900 truncate">Refer & Earn</span>
+                <span className="text-[9px] text-blue-600 font-bold uppercase tracking-tighter">Get 1 Month Free</span>
+              </div>
             )}
-          </div>
+
+            {/* Tooltip for collapsed state */}
+            {isCollapsed && (
+              <div className="absolute left-full ml-4 px-3 py-1.5 bg-slate-900/90 backdrop-blur-sm text-white text-[11px] font-bold rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 translate-x-1 group-hover:translate-x-0 whitespace-nowrap pointer-events-none z-50 shadow-xl border border-white/10">
+                Refer & Earn
+              </div>
+            )}
+          </motion.div>
         </div>
       </motion.div>
     </>

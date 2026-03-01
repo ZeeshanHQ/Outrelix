@@ -19,7 +19,7 @@ const DashboardPreview = () => {
     useEffect(() => {
         const interval = setInterval(() => {
             setActiveRow(prev => (prev + 1) % leads.length);
-        }, 1800);
+        }, 1200);
         return () => clearInterval(interval);
     }, []);
 
@@ -181,13 +181,13 @@ const TypingRotator = ({ words }) => {
         const word = words[wordIndex];
         if (isTyping) {
             if (displayed.length < word.length) {
-                timeout = setTimeout(() => setDisplayed(word.slice(0, displayed.length + 1)), 70);
+                timeout = setTimeout(() => setDisplayed(word.slice(0, displayed.length + 1)), 50);
             } else {
-                timeout = setTimeout(() => setIsTyping(false), 1400);
+                timeout = setTimeout(() => setIsTyping(false), 900);
             }
         } else {
             if (displayed.length > 0) {
-                timeout = setTimeout(() => setDisplayed(displayed.slice(0, -1)), 40);
+                timeout = setTimeout(() => setDisplayed(displayed.slice(0, -1)), 25);
             } else {
                 setWordIndex((prev) => (prev + 1) % words.length);
                 setIsTyping(true);
