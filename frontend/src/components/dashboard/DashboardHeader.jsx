@@ -103,9 +103,9 @@ const DashboardHeader = ({ showGreeting = true, title = '' }) => {
     };
 
     return (
-        <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-slate-200/60 h-[80px] flex items-center">
+        <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-2xl border-b border-slate-100 h-[72px] flex items-center shadow-sm">
             <div className="flex items-center justify-between px-0 w-full mx-auto">
-                <div className="pl-12 lg:pl-20 transition-all duration-300">
+                <div className="pl-12 lg:pl-20 transition-all duration-300 scale-[0.90] origin-left">
                     {showGreeting ? (
                         <>
                             <h1 className="text-xl font-bold text-slate-800 tracking-tight">
@@ -123,7 +123,7 @@ const DashboardHeader = ({ showGreeting = true, title = '' }) => {
                     )}
                 </div>
 
-                <div className="flex items-center gap-6 pr-6 lg:pr-12">
+                <div className="flex items-center gap-6 pr-6 lg:pr-12 scale-[0.90] origin-right">
                     <div className="hidden md:block relative group">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
                         <input

@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-toastify';
 import { supabase } from '../supabase';
 import { analyzerApi, aiApi } from '../utils/supabaseHelpers';
-import { Smartphone, Mail, Megaphone, Search, Package, FileText, Share2, Newspaper, PenTool, RefreshCw } from 'lucide-react';
+import { Smartphone, Mail, Megaphone, Search, Package, FileText, Share2, Newspaper, PenTool, RefreshCw, Copy } from 'lucide-react';
 
 const Writer = ({ onGenerationComplete }) => {
   const [mode, setMode] = useState('write'); // 'write' or 'rewrite'
@@ -384,75 +384,78 @@ This rewritten version maintains your original message while making it more effe
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto p-6">
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8">
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-3">
-            <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl">
-              <PenTool className="w-8 h-8 text-white" />
+    <div className="w-full max-w-6xl mx-auto space-y-12 transition-all duration-500 scale-100">
+      {/* Search Section */}
+
+      <div className="bg-white rounded-[24px] border border-slate-100 shadow-sm p-8 lg:p-10 relative overflow-hidden group">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-50/50 blur-[100px] rounded-full -mr-32 -mt-32 transition-colors duration-700" />
+
+        <div className="flex items-center justify-between mb-10 relative z-10">
+          <div className="flex items-center gap-5">
+            <div className="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center shadow-md shadow-indigo-600/20 relative group">
+              <div className="absolute inset-0 bg-indigo-400 rounded-xl animate-ping opacity-20" />
+              <PenTool className="w-6 h-6 text-white relative z-10" />
             </div>
             <div>
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-                Smart Writer & Rewriter
+              <span className="text-[10px] font-bold text-slate-800 uppercase tracking-widest mb-1 block">
+                Elite Copy Intelligence
+              </span>
+              <h2 className="text-3xl font-bold text-slate-800 tracking-tight">
+                Copy Architect
               </h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400">AI-powered content generation</p>
             </div>
           </div>
           <div className="text-right">
-            <div className="text-2xl font-bold text-gray-900 dark:text-white">
-              {dailyCount}/{dailyLimit}
+            <div className="text-2xl font-bold text-slate-800 tracking-tight">
+              {dailyCount}<span className="text-slate-400 mx-1">/</span>{dailyLimit}
             </div>
-            <div className="text-sm text-gray-500 dark:text-gray-400">generations today</div>
+            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Generations Remaining</div>
           </div>
         </div>
 
         {/* Mode Selection */}
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-            Choose Mode
-          </label>
-          <div className="flex gap-4">
+        <div className="mb-10 relative z-10">
+          <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1 mb-3 block">Operation Mode</label>
+          <div className="flex gap-3">
             <button
               onClick={() => setMode('write')}
-              className={`px-6 py-3 rounded-lg font-medium transition-all flex items-center gap-2 ${mode === 'write'
-                ? 'bg-blue-600 text-white shadow-lg'
-                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+              className={`px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 border ${mode === 'write'
+                ? 'bg-indigo-600 text-white border-indigo-500 shadow-md shadow-indigo-600/20'
+                : 'bg-slate-50 text-slate-600 border-slate-200 hover:border-slate-300 hover:text-slate-800 hover:bg-white shadow-sm'
                 }`}
             >
-              <PenTool className="w-5 h-5" />
-              Write New
+              <PenTool className="w-4 h-4" />
+              Creative Synthesis
             </button>
             <button
               onClick={() => setMode('rewrite')}
-              className={`px-6 py-3 rounded-lg font-medium transition-all flex items-center gap-2 ${mode === 'rewrite'
-                ? 'bg-blue-600 text-white shadow-lg'
-                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+              className={`px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 border ${mode === 'rewrite'
+                ? 'bg-indigo-600 text-white border-indigo-500 shadow-md shadow-indigo-600/20'
+                : 'bg-slate-50 text-slate-600 border-slate-200 hover:border-slate-300 hover:text-slate-800 hover:bg-white shadow-sm'
                 }`}
             >
-              <RefreshCw className="w-5 h-5" />
-              Rewrite Existing
+              <RefreshCw className="w-4 h-4" />
+              Refinement Protocol
             </button>
           </div>
         </div>
 
         {/* Content Type Selection */}
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-            Content Type
-          </label>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="mb-10 relative z-10">
+          <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1 mb-3 block">Neural Template</label>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             {contentTypes.map((type) => {
               const IconComponent = type.icon;
               return (
                 <button
                   key={type.value}
                   onClick={() => setContentType(type.value)}
-                  className={`p-4 rounded-lg text-sm font-medium transition-all flex flex-col items-center gap-2 ${contentType === type.value
-                    ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-2 border-blue-500'
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 border-2 border-transparent'
+                  className={`p-5 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all flex flex-col items-center gap-2.5 border ${contentType === type.value
+                    ? 'bg-indigo-50/80 text-indigo-700 border-indigo-200 shadow-sm'
+                    : 'bg-slate-50 text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-white hover:text-slate-800 shadow-sm'
                     }`}
                 >
-                  <IconComponent className="w-6 h-6" />
+                  <IconComponent className="w-5 h-5 mb-0.5" />
                   <span>{type.label}</span>
                 </button>
               );
@@ -461,140 +464,179 @@ This rewritten version maintains your original message while making it more effe
         </div>
 
         {/* Input Section */}
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            {mode === 'write' ? 'Prompt or Instructions' : 'Text to Rewrite'}
+        <div className="mb-10 relative z-10">
+          <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1 mb-3 block">
+            {mode === 'write' ? 'Engine Instructions' : 'Source Content for Refinement'}
           </label>
           <textarea
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             placeholder={
               mode === 'write'
-                ? prompts[contentType]?.write || 'Enter your prompt or instructions...'
-                : 'Paste the text you want to rewrite...'
+                ? prompts[contentType]?.write || 'Describe your vision...'
+                : 'Paste content for surgical refinement...'
             }
-            className="w-full h-32 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white resize-none"
+            className="w-full h-40 px-6 py-5 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500/30 focus:bg-white transition-all outline-none text-slate-800 placeholder:text-slate-400 font-medium resize-none leading-relaxed shadow-sm text-sm"
             disabled={isGenerating}
           />
         </div>
 
         {/* Generate Button */}
-        <div className="mb-6">
+        <div className="relative z-10">
           <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            whileHover={{ scale: 1.01, y: -1 }}
+            whileTap={{ scale: 0.99 }}
             onClick={generateText}
             disabled={isGenerating || (mode === 'rewrite' && !inputText.trim()) || dailyCount >= dailyLimit}
-            className="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:from-blue-700 hover:to-purple-700 transition-all shadow-lg"
+            className="w-full py-5 bg-slate-900 text-white rounded-2xl font-bold text-sm uppercase tracking-wider shadow-sm hover:shadow-md hover:bg-black transition-all flex items-center justify-center gap-3 border border-slate-800 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-4 focus:ring-slate-500/20"
           >
-            {isGenerating ? 'Generating...' : mode === 'write' ? 'Generate Content' : 'Rewrite Text'}
+            {isGenerating ? (
+              <>
+                <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                <span>Simulating Creative Genius...</span>
+              </>
+            ) : (
+              <>
+                <RefreshCw className={`w-5 h-5 text-indigo-100 ${isGenerating ? 'animate-spin' : ''}`} />
+                <span>{mode === 'write' ? 'Execute Creative Synthesis' : 'Begin Refinement Protocol'}</span>
+              </>
+            )}
           </motion.button>
         </div>
+      </div>
 
-        {/* Progress Indicator */}
-        <AnimatePresence>
-          {isGenerating && progress && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg"
-            >
-              <div className="flex items-center gap-3">
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
-                <span className="text-blue-700 dark:text-blue-300">{progress}</span>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+      {/* Progress Indicator */}
+      <AnimatePresence>
+        {isGenerating && progress && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className="mt-8 flex items-center gap-4 text-xs font-bold text-indigo-600 uppercase tracking-widest"
+          >
+            <div className="flex gap-1.5">
+              {[...Array(3)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  animate={{ scale: [1, 1.5, 1], opacity: [0.3, 1, 0.3] }}
+                  transition={{ repeat: Infinity, duration: 1.5, delay: i * 0.3 }}
+                  className="w-1.5 h-1.5 bg-indigo-600 rounded-full"
+                />
+              ))}
+            </div>
+            {progress}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-        {/* Output Section */}
-        <AnimatePresence>
-          {outputText && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              className="space-y-6"
-            >
-              <div className="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                    Generated Content
+      {/* Output Section */}
+      <AnimatePresence>
+        {outputText && (
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className="bg-white rounded-[24px] border border-slate-100 shadow-sm overflow-hidden relative"
+          >
+            <div className="absolute top-0 right-10 w-px h-full bg-slate-100 hidden lg:block" />
+
+            <div className="p-8 lg:p-10 border-b border-slate-100 flex flex-col md:flex-row items-start md:items-center justify-between bg-slate-50/50 relative z-10 gap-6">
+              <div className="flex items-center gap-5">
+                <div className="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center text-white shadow-sm relative group">
+                  <div className="absolute inset-0 bg-emerald-400 rounded-xl animate-ping opacity-20" />
+                  <FileText className="w-6 h-6 relative z-10" />
+                </div>
+                <div>
+                  <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest mb-0.5 block">
+                    Synthesized Output
+                  </span>
+                  <h3 className="text-xl font-bold text-slate-800 tracking-tight">
+                    Generation Alpha
                   </h3>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => copyToClipboard(outputText)}
-                      className="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors"
-                    >
-                      Copy
-                    </button>
-                    <button
-                      onClick={clearAll}
-                      className="px-4 py-2 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors"
-                    >
-                      Clear
-                    </button>
-                  </div>
-                </div>
-                <div className="prose dark:prose-invert max-w-none">
-                  <pre className="whitespace-pre-wrap text-gray-700 dark:text-gray-300 font-sans leading-relaxed">
-                    {outputText}
-                  </pre>
                 </div>
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => copyToClipboard(outputText)}
+                  className="px-6 py-3.5 bg-indigo-600 text-white rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-sm flex items-center gap-2"
+                >
+                  <Copy className="w-4 h-4" />
+                  Direct Copy
+                </button>
+                <button
+                  onClick={clearAll}
+                  className="px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-500 font-bold text-xs uppercase tracking-widest hover:text-slate-800 hover:bg-slate-100 transition-all shadow-sm"
+                >
+                  Discard
+                </button>
+              </div>
+            </div>
 
-        {/* Recent Sessions */}
-        {sessions.length > 0 && (
-          <div className="mt-8">
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-              Recent Sessions
-            </h3>
-            <div className="space-y-3">
-              {sessions.slice(0, 5).map((session) => {
-                const contentTypeData = contentTypes.find(t => t.value === session.content_type);
-                const IconComponent = contentTypeData?.icon || FileText;
-                return (
-                  <div
-                    key={session.id}
-                    className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors cursor-pointer"
-                    onClick={() => {
-                      setMode(session.mode);
-                      setContentType(session.content_type);
-                      setInputText(session.input_text);
-                      setOutputText(session.output_text);
-                    }}
-                  >
-                    <div className="flex items-center justify-between">
+            <div className="p-8 lg:p-10 relative z-10">
+              <div className="prose prose-slate max-w-none">
+                <pre className="whitespace-pre-wrap text-slate-700 font-sans leading-relaxed text-sm">
+                  {outputText}
+                </pre>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Recent Sessions */}
+      {sessions.length > 0 && (
+        <div className="mt-16 relative z-10">
+          <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-6 ml-1">
+            Neural Vault History
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {sessions.slice(0, 6).map((session) => {
+              const contentTypeData = contentTypes.find(t => t.value === session.content_type);
+              const IconComponent = contentTypeData?.icon || FileText;
+              return (
+                <div
+                  key={session.id}
+                  className="p-6 bg-white border border-slate-100 rounded-2xl hover:border-indigo-300 transition-all cursor-pointer group hover:shadow-sm shadow-sm"
+                  onClick={() => {
+                    setMode(session.mode);
+                    setContentType(session.content_type);
+                    setInputText(session.input_text);
+                    setOutputText(session.output_text);
+                  }}
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center text-indigo-500 group-hover:bg-indigo-600 group-hover:text-white transition-colors border border-indigo-100">
+                        <IconComponent className="w-5 h-5" />
+                      </div>
                       <div>
-                        <div className="font-medium text-gray-900 dark:text-white flex items-center gap-2">
-                          <IconComponent className="w-4 h-4" />
+                        <div className="text-xs font-bold text-slate-800 tracking-tight">
                           {contentTypeData?.label || session.content_type}
                         </div>
-                        <div className="text-sm text-gray-500 dark:text-gray-400">
-                          {session.mode === 'write' ? 'Generated' : 'Rewritten'} • {session.word_count} words • {new Date(session.created_at).toLocaleDateString()}
+                        <div className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">
+                          {session.mode === 'write' ? 'Creative' : 'Refinement'} • {session.word_count} tokens
                         </div>
                       </div>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          copyToClipboard(session.output_text);
-                        }}
-                        className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded text-sm hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors"
-                      >
-                        Copy
-                      </button>
                     </div>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        copyToClipboard(session.output_text);
+                      }}
+                      className="p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-slate-100 transition-all"
+                    >
+                      <Copy className="w-4 h-4" />
+                    </button>
                   </div>
-                );
-              })}
-            </div>
+                  <div className="text-xs font-medium text-slate-500 truncate opacity-80 group-hover:opacity-100 transition-opacity">
+                    {session.output_text.substring(0, 80)}...
+                  </div>
+                </div>
+              );
+            })}
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };

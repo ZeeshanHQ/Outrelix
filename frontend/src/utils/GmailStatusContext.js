@@ -13,6 +13,8 @@ export const GmailStatusProvider = ({ children }) => {
     return cached === 'true' ? true : cached === 'false' ? false : null;
   });
   const [gmailEmail, setGmailEmail] = useState(localStorage.getItem('gmailEmail') || '');
+  const [isValid, setIsValid] = useState(localStorage.getItem('isGmailValid') === 'true');
+  const [needsReauth, setNeedsReauth] = useState(localStorage.getItem('needsGmailReauth') === 'true');
   const [loading, setLoading] = useState(false); // Only true during manual refresh
   const [initialLoading, setInitialLoading] = useState(!localStorage.getItem('isGmailConnected')); // Only show skeleton if no cache
 
@@ -50,9 +52,13 @@ export const GmailStatusProvider = ({ children }) => {
       const data = await res.json();
       setIsGmailConnected(data.connected);
       setGmailEmail(data.email || '');
+      setIsValid(data.isValid || false);
+      setNeedsReauth(data.needsReauth || false);
 
       // Cache the results
       localStorage.setItem('isGmailConnected', data.connected.toString());
+      localStorage.setItem('isGmailValid', (data.isValid || false).toString());
+      localStorage.setItem('needsGmailReauth', (data.needsReauth || false).toString());
       if (data.email) localStorage.setItem('gmailEmail', data.email);
       else localStorage.removeItem('gmailEmail');
     } catch (e) {
@@ -116,6 +122,8 @@ export const GmailStatusProvider = ({ children }) => {
     <GmailStatusContext.Provider value={{
       isGmailConnected,
       gmailEmail,
+      isValid,
+      needsReauth,
       loading,
       initialLoading,
       refreshGmailStatus

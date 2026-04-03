@@ -2,8 +2,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as ReTooltip, Legend, ResponsiveContainer } from 'recharts';
-import { CalendarIcon, LayersIcon as Dummy, DocumentArrowDownIcon } from '@heroicons/react/24/outline';
+import { CalendarIcon, LayersIcon as Dummy, DocumentArrowDownIcon, SparklesIcon } from '@heroicons/react/24/outline';
 import AppSidebar from '../components/AppSidebar';
+import DashboardHeader from '../components/dashboard/DashboardHeader';
 import { supabase } from '../supabase';
 
 const statusColors = {
@@ -105,92 +106,118 @@ const Analytics = () => {
   }, [dateRange]);
 
   return (
-    <div className="min-h-screen w-full font-poppins relative">
-      <AppSidebar />
-      {/* Fixed full-screen background gradient */}
-      <div className="fixed inset-0 w-full h-full z-0 bg-gradient-to-br from-[#e3e9fa] via-[#c7d2fe] to-[#f3e8ff] dark:from-[#0a183d] dark:via-[#1a237e] dark:to-[#4b006e]" aria-hidden="true"></div>
-      {/* Scrollable content */}
-      <div className="relative min-h-screen w-full flex flex-col px-0 z-10 bg-transparent">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between py-8 max-w-5xl mx-auto gap-4 w-full mt-6 md:mt-10">
-          <h1 className="text-5xl md:text-6xl font-extrabold flex items-center gap-2" style={{ letterSpacing: '-0.02em' }}>
-            <div className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center shadow-lg border border-white/30">
-              <BarChart3 className="w-7 h-7 text-blue-600 dark:text-blue-400" />
-            </div>
-            <span className="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent drop-shadow-lg pr-4 leading-tight" style={{ overflow: 'visible', display: 'inline-block' }}>
-              Analytics Dashboard
-            </span>
-          </h1>
-          <div className="flex items-center gap-2">
-            <button className={`px-4 py-2 rounded-lg font-semibold text-sm ${dateRange === '7d' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200'} transition-all`} onClick={() => setDateRange('7d')}>Last 7 days</button>
-            <button className={`px-4 py-2 rounded-lg font-semibold text-sm ${dateRange === 'custom' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200'} transition-all`} onClick={() => setDateRange('custom')}><CalendarIcon className="w-4 h-4 inline-block mr-1" />Custom</button>
-          </div>
-        </div>
-        {/* Loading */}
-        {loading && (
-          <div className="fixed inset-0 z-20 flex items-center justify-center pointer-events-none">
-            <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
-          </div>
-        )}
+    <div className="min-h-screen w-full font-poppins bg-white selection:bg-blue-100">
+      <DashboardHeader showGreeting={false} title="System Analytics" />
 
-        {/* Metric Cards (real data) */}
-        <div className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 w-full">
-          {[
-            { key: 'analyzer', label: 'Analyses', value: totals.analyzer },
-            { key: 'seo', label: 'SEO Optimizations', value: totals.seo },
-            { key: 'writer', label: 'Writer Sessions', value: totals.writer },
-            { key: 'brand', label: 'Brand Generations', value: totals.brand },
-            { key: 'sends', label: 'Emails Sent', value: totals.sends || 0 },
-            { key: 'opens', label: 'Opens', value: totals.opens || 0 },
-            { key: 'clicks', label: 'Clicks', value: totals.clicks || 0 },
-            { key: 'replies', label: 'Replies', value: totals.replies || 0 },
-          ].map((m, i) => (
-            <motion.div key={m.key} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6">
-              <div className="text-sm text-gray-500 mb-1">{m.label}</div>
-              <div className="text-3xl font-extrabold">{m.value}</div>
-            </motion.div>
-          ))}
-        </div>
-        {/* Interactive Graph Section */}
-        <div className="max-w-5xl mx-auto bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 mb-8 w-full">
-          <div className="flex flex-wrap items-center gap-2 mb-4">
-            {['events'].map((k) => (
-              <button key={k} className={`px-4 py-2 rounded-lg font-semibold text-sm ${graphMetric === k ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200'} transition-all`} onClick={() => setGraphMetric(k)}>Daily Activity</button>
-            ))}
-            <button className="ml-auto px-4 py-2 rounded-lg font-semibold text-sm bg-gradient-to-r from-blue-400 to-purple-400 text-white flex items-center gap-1" title="Export Premium Report"><DocumentArrowDownIcon className="w-4 h-4" /> Export</button>
-          </div>
-          <ResponsiveContainer width="100%" height={280}>
-            <LineChart data={series} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis dataKey="date" stroke="#888" />
-              <YAxis stroke="#888" />
-              <ReTooltip contentStyle={{ borderRadius: 12, fontFamily: 'Poppins, sans-serif' }} />
-              <Legend />
-              <Line type="monotone" dataKey="analyzer" stroke="#3b82f6" strokeWidth={3} dot={{ r: 2 }} />
-              <Line type="monotone" dataKey="seo" stroke="#22c55e" strokeWidth={3} dot={{ r: 2 }} />
-              <Line type="monotone" dataKey="writer" stroke="#a855f7" strokeWidth={3} dot={{ r: 2 }} />
-              <Line type="monotone" dataKey="brand" stroke="#f59e0b" strokeWidth={3} dot={{ r: 2 }} />
-              <Line type="monotone" dataKey="sends" stroke="#0ea5e9" strokeWidth={2} dot={false} />
-              <Line type="monotone" dataKey="opens" stroke="#10b981" strokeWidth={2} dot={false} />
-              <Line type="monotone" dataKey="clicks" stroke="#8b5cf6" strokeWidth={2} dot={false} />
-              <Line type="monotone" dataKey="replies" stroke="#ef4444" strokeWidth={2} dot={false} />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-        {/* Simple breakdown by feature (last 7 days) */}
-        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 w-full mb-10">
-          {series.map((d) => (
-            <div key={d.date} className="bg-white dark:bg-gray-900 rounded-2xl shadow p-4 flex items-center justify-between">
-              <div className="font-semibold">{d.date}</div>
-              <div className="text-sm text-gray-600 dark:text-gray-300 flex gap-4">
-                <span>Analyzer: {d.analyzer}</span>
-                <span>SEO: {d.seo}</span>
-                <span>Writer: {d.writer}</span>
-                <span>Brand: {d.brand}</span>
+      <div className="flex-1 overflow-y-auto no-scrollbar">
+        <main className="p-4 md:p-8 2xl:p-12 transition-all duration-500">
+          <div className="max-w-[1400px] mx-auto space-y-20 lg:space-y-28 scale-[0.90] origin-top">
+            {/* Header Section */}
+            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 pb-12 border-b border-slate-50">
+              <div className="space-y-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-white text-slate-400 rounded-full text-[10px] font-black uppercase tracking-widest border border-slate-100">
+                  <SparklesIcon className="h-3 w-3" />
+                  Fleet Intelligence
+                </div>
+                <h1 className="text-4xl md:text-5xl font-black text-slate-800 tracking-tight leading-tight">
+                  Performance <span className="text-blue-600">Overview</span>.
+                </h1>
+                <p className="text-slate-400 font-medium max-w-xl">
+                  Analyze your outreach efficiency, conversion velocity, and platform-wide growth metrics in real-time.
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
+                <button className={`px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all ${dateRange === '7d' ? 'bg-blue-600 text-white shadow-lg shadow-blue-200' : 'bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-slate-600'}`} onClick={() => setDateRange('7d')}>Last 7 days</button>
+                <button className={`px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all ${dateRange === 'custom' ? 'bg-blue-600 text-white shadow-lg shadow-blue-200' : 'bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-slate-600'}`} onClick={() => setDateRange('custom')}>Custom Range</button>
               </div>
             </div>
-          ))}
-        </div>
+            {/* Loading */}
+            {loading && (
+              <div className="fixed inset-0 z-20 flex items-center justify-center pointer-events-none">
+                <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+              </div>
+            )}
+
+            {/* Metric Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+              {[
+                { key: 'analyzer', label: 'Analyses', value: totals.analyzer },
+                { key: 'seo', label: 'SEO Optimizations', value: totals.seo },
+                { key: 'writer', label: 'Writer Sessions', value: totals.writer },
+                { key: 'brand', label: 'Brand Generations', value: totals.brand },
+                { key: 'sends', label: 'Emails Sent', value: totals.sends || 0 },
+                { key: 'opens', label: 'Opens', value: totals.opens || 0 },
+                { key: 'clicks', label: 'Clicks', value: totals.clicks || 0 },
+                { key: 'replies', label: 'Replies', value: totals.replies || 0 },
+              ].map((m, i) => (
+                <motion.div
+                  key={m.key}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.05 }}
+                  className="bg-white rounded-[2rem] shadow-sm border border-slate-100 p-8 hover:shadow-xl hover:shadow-blue-500/5 transition-all group"
+                >
+                  <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-4 group-hover:text-blue-500 transition-colors">{m.label}</div>
+                  <div className="text-4xl font-black text-slate-800 tracking-tight">{m.value}</div>
+                </motion.div>
+              ))}
+            </div>
+            {/* Interactive Graph Section */}
+            <div className="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 p-10 lg:p-12">
+              <div className="flex flex-wrap items-center justify-between gap-6 mb-12">
+                <div className="flex items-center gap-2">
+                  {['events'].map((k) => (
+                    <button key={k} className="px-6 py-3 rounded-xl bg-white text-slate-800 font-black text-[10px] uppercase tracking-widest border border-slate-100">Daily Activity Flow</button>
+                  ))}
+                </div>
+                <button className="px-8 py-4 rounded-xl bg-blue-600 text-white font-black text-[10px] uppercase tracking-widest shadow-lg shadow-blue-500/20 hover:bg-blue-700 hover:scale-105 transition-all flex items-center gap-2">
+                  <DocumentArrowDownIcon className="w-4 h-4" />
+                  Export Premium Intel
+                </button>
+              </div>
+              <div className="h-[400px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={series} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+                    <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 700, fill: '#94a3b8' }} dy={10} />
+                    <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 700, fill: '#94a3b8' }} />
+                    <ReTooltip
+                      contentStyle={{ borderRadius: '1.5rem', border: '1px solid #f1f5f9', boxShadow: '0 10px 30px -5px rgba(0,0,0,0.05)', padding: '1.25rem', fontFamily: 'Poppins, sans-serif' }}
+                      itemStyle={{ fontSize: '11px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em' }}
+                    />
+                    <Legend iconType="circle" wrapperStyle={{ paddingTop: '2rem', fontSize: '10px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em' }} />
+                    <Line type="monotone" dataKey="analyzer" stroke="#3b82f6" strokeWidth={4} dot={{ r: 4, strokeWidth: 2, fill: '#fff' }} activeDot={{ r: 6 }} />
+                    <Line type="monotone" dataKey="seo" stroke="#10b981" strokeWidth={4} dot={{ r: 4, strokeWidth: 2, fill: '#fff' }} activeDot={{ r: 6 }} />
+                    <Line type="monotone" dataKey="writer" stroke="#8b5cf6" strokeWidth={4} dot={{ r: 4, strokeWidth: 2, fill: '#fff' }} activeDot={{ r: 6 }} />
+                    <Line type="monotone" dataKey="brand" stroke="#f59e0b" strokeWidth={4} dot={{ r: 4, strokeWidth: 2, fill: '#fff' }} activeDot={{ r: 6 }} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Day-by-Day Logs */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-20">
+              {series.map((d) => (
+                <div key={d.date} className="bg-white rounded-3xl shadow-sm border border-slate-50 p-6 flex items-center justify-between hover:border-slate-200 transition-all">
+                  <div className="text-xs font-black text-slate-800 uppercase tracking-widest">{d.date}</div>
+                  <div className="flex gap-4">
+                    {[
+                      { label: 'AN', val: d.analyzer, color: 'text-blue-500' },
+                      { label: 'SEO', val: d.seo, color: 'text-emerald-500' },
+                      { label: 'WR', val: d.writer, color: 'text-purple-500' },
+                      { label: 'BR', val: d.brand, color: 'text-amber-500' },
+                    ].map(stat => (
+                      <div key={stat.label} className="flex items-center gap-1.5">
+                        <span className="text-[10px] font-black text-slate-400">{stat.label}:</span>
+                        <span className={`text-[10px] font-black ${stat.color}`}>{stat.val}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </main>
       </div>
     </div>
   );

@@ -77,7 +77,7 @@ const ConnectGmailModal = ({ open, onClose, onConnected, gmailEmail: initialGmai
     const timer = setInterval(async () => {
       if (popup.closed) {
         clearInterval(timer);
-        let email = '';
+        let isConnected = false;
         try {
           const authHeaders = await getAuthHeaders();
           const res = await fetch(`${BACKEND_URL}/api/user/gmail-status`, {
@@ -89,6 +89,7 @@ const ConnectGmailModal = ({ open, onClose, onConnected, gmailEmail: initialGmai
             email = data.email;
             setGmailEmail(email);
             setSuccess(true);
+            isConnected = true;
             // Update global GmailStatusContext so all pages refresh instantly
             refreshGmailStatus();
             if (onConnected) onConnected(email);
@@ -99,7 +100,7 @@ const ConnectGmailModal = ({ open, onClose, onConnected, gmailEmail: initialGmai
         }
         setIsConnecting(false);
         // Don't auto-close - let user see the success message and click "See Campaign"
-        if (!success) onClose();
+        if (!isConnected) onClose();
       }
     }, 500);
   };

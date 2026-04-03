@@ -8,7 +8,8 @@ import {
     CurrencyDollarIcon,
     UsersIcon,
     XMarkIcon,
-    FireIcon
+    FireIcon,
+    ArrowRightIcon
 } from '@heroicons/react/24/outline';
 
 const SmartSearchBar = ({ value, onChange, onSearch, onMagicRefine, isRefining }) => {
@@ -27,13 +28,12 @@ const SmartSearchBar = ({ value, onChange, onSearch, onMagicRefine, isRefining }
             <motion.div
                 animate={{
                     scale: isFocused ? 1.02 : 1,
-                    boxShadow: isFocused ? '0 20px 40px -15px rgba(59, 130, 246, 0.15)' : '0 10px 20px -10px rgba(0, 0, 0, 0.05)'
+                    boxShadow: isFocused ? '0 30px 60px -15px rgba(59, 130, 246, 0.15)' : '0 10px 40px -10px rgba(0, 0, 0, 0.05)'
                 }}
-                className={`relative flex items-center bg-white transition-all duration-500 rounded-3xl p-2 ${isFocused ? 'shadow-2xl shadow-blue-500/10' : 'shadow-lg shadow-slate-200/50'
-                    }`}
+                className={`relative flex items-center bg-white transition-all duration-500 rounded-[2rem] p-3 border ${isFocused ? 'border-blue-100' : 'border-slate-100'}`}
             >
-                <div className="flex-1 flex items-center px-4 gap-4">
-                    <MagnifyingGlassIcon className={`h-6 w-6 transition-colors ${isFocused ? 'text-blue-500' : 'text-slate-300'}`} />
+                <div className="flex-1 flex items-center px-6 gap-4">
+                    <MagnifyingGlassIcon className={`h-6 w-6 transition-colors ${isFocused ? 'text-blue-600' : 'text-slate-300'}`} />
                     <input
                         type="text"
                         value={value}
@@ -47,7 +47,7 @@ const SmartSearchBar = ({ value, onChange, onSearch, onMagicRefine, isRefining }
                             }, 200);
                         }}
                         placeholder="Search for your next high-value opportunity..."
-                        className="w-full py-4 text-xl font-medium text-slate-800 placeholder:text-slate-300 focus:outline-none border-none ring-0 focus:ring-0"
+                        className="w-full py-4 text-lg font-bold text-slate-800 placeholder:text-slate-300 focus:outline-none border-none ring-0 focus:ring-0 bg-transparent"
                         onKeyDown={(e) => e.key === 'Enter' && onSearch()}
                     />
                 </div>
@@ -68,26 +68,41 @@ const SmartSearchBar = ({ value, onChange, onSearch, onMagicRefine, isRefining }
                     </AnimatePresence>
 
                     <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
+                        whileHover={{ scale: value && !isRefining ? 1.02 : 1 }}
+                        whileTap={{ scale: value && !isRefining ? 0.98 : 1 }}
                         onClick={onMagicRefine}
                         disabled={isRefining || !value}
-                        className={`flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-sm uppercase tracking-widest transition-all ${isRefining
-                            ? 'bg-slate-50 text-slate-400'
-                            : 'bg-blue-600 text-white shadow-lg shadow-blue-200 hover:shadow-blue-300 active:bg-blue-700'
+                        title="Use AI to optimize your search query"
+                        className={`flex items-center gap-2 px-5 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all ${isRefining || !value
+                            ? 'bg-slate-50 text-slate-400 border border-slate-100 opacity-60 cursor-not-allowed'
+                            : 'bg-indigo-50 text-indigo-600 border border-indigo-100 hover:shadow-lg hover:shadow-indigo-500/10 hover:-translate-y-0.5 hover:bg-indigo-100'
                             }`}
                     >
                         {isRefining ? (
                             <div className="flex items-center gap-2">
-                                <div className="h-4 w-4 border-2 border-slate-300 border-t-white rounded-full animate-spin" />
+                                <div className="h-4 w-4 border-2 border-slate-300 border-t-indigo-400 rounded-full animate-spin" />
                                 <span>Brewing...</span>
                             </div>
                         ) : (
                             <>
                                 <SparklesIcon className="h-4 w-4" />
-                                <span>Optimize</span>
+                                <span className="hidden sm:inline">Optimize</span>
                             </>
                         )}
+                    </motion.button>
+
+                    <motion.button
+                        whileHover={{ scale: value ? 1.05 : 1 }}
+                        whileTap={{ scale: value ? 0.95 : 1 }}
+                        onClick={onSearch}
+                        disabled={!value}
+                        className={`flex items-center gap-2 px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all ${!value
+                            ? 'bg-slate-50 text-slate-400 border border-slate-100 opacity-60 cursor-not-allowed'
+                            : 'bg-blue-600 text-white shadow-xl shadow-blue-500/20 hover:shadow-blue-500/40 hover:bg-blue-700 hover:-translate-y-0.5'
+                            }`}
+                    >
+                        <span>Search</span>
+                        <ArrowRightIcon className="h-4 w-4 stroke-[2.5]" />
                     </motion.button>
                 </div>
             </motion.div>
@@ -96,10 +111,10 @@ const SmartSearchBar = ({ value, onChange, onSearch, onMagicRefine, isRefining }
             <AnimatePresence>
                 {showSuggestions && (
                     <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 10 }}
-                        className="absolute top-full left-0 right-0 mt-4 bg-white border border-slate-100 rounded-3xl shadow-2xl p-6 overflow-hidden z-[50]"
+                        initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 10, scale: 0.98 }}
+                        className="absolute top-full left-0 right-0 mt-6 bg-white border border-slate-100 rounded-[2rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] p-8 overflow-hidden z-[50]"
                     >
                         <div className="flex items-center gap-2 mb-6 ml-2">
                             <FireIcon className="h-4 w-4 text-amber-500" />
@@ -110,12 +125,12 @@ const SmartSearchBar = ({ value, onChange, onSearch, onMagicRefine, isRefining }
                             {suggestions.map((s, i) => (
                                 <motion.button
                                     key={i}
-                                    whileHover={{ scale: 1.02, backgroundColor: '#f8fafc' }}
+                                    whileHover={{ scale: 1.02, backgroundColor: '#f8fafc', y: -2 }}
                                     onClick={() => {
                                         onChange(s.query);
                                         onSearch();
                                     }}
-                                    className="flex items-center gap-4 p-4 rounded-2xl border border-slate-50 hover:border-slate-200 transition-all text-left group"
+                                    className="flex items-center gap-5 p-5 rounded-2xl border border-slate-50 hover:border-slate-200 transition-all text-left group shadow-sm hover:shadow-md"
                                 >
                                     <div className={`p-3 rounded-xl transition-colors ${s.bg}`}>
                                         <s.icon className={`h-5 w-5 ${s.color}`} />

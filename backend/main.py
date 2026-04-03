@@ -22,8 +22,19 @@ if __name__ == "__main__":
     print(" Scraper APIs: LOADED")
     print("")
     
+    import logging
+    # Configure logging for uvicorn and our app
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        handlers=[
+            logging.FileHandler("outreach.log", encoding='utf-8'),
+            logging.StreamHandler()
+        ]
+    )
+    
     uvicorn.run(
-        "main:app",
+        "api.main_api:app",
         host=host,
         port=port,
         reload=os.environ.get("ENV", "production") != "production",

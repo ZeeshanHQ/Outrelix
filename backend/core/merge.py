@@ -26,6 +26,7 @@ def normalize_and_assign_ids(records: List[Dict], dry_run: bool = False) -> List
             "website_url": website_url,
             "phone_raw": phone_raw,
             "phone_e164": phone_e164,
+            "phone_number": phone_e164, # Alias for frontend
             "phone_valid": phone_valid,
             "phone_type": phone_type,
             "company_id": company_id,

@@ -25,6 +25,7 @@ import Footer from './components/Footer';
 import Landing from './pages/Landing';
 import Dashboard from './pages/Dashboard';
 import Campaigns from './pages/Campaigns';
+import CampaignAnalytics from './pages/CampaignAnalytics';
 import Analytics from './pages/Analytics';
 import Settings from './pages/Settings';
 import About from './pages/About';
@@ -205,6 +206,7 @@ const App = () => {
                     <Route path="/seo-optimizer" element={<SEOOptimizerPage />} />
                     <Route path="/campaigns" element={<Campaigns />} />
                     <Route path="/campaigns/:jobId" element={<Campaigns />} />
+                    <Route path="/campaigns/:id/analytics" element={<CampaignAnalytics />} />
                     <Route path="/leads" element={<Leads />} />
                     <Route path="/analytics" element={<Analytics />} />
                     <Route path="/settings" element={<Settings />} />

@@ -101,14 +101,14 @@ export const isCampaignExpired = (campaign) => {
 export const getCampaignStatusInfo = (campaign) => {
   const remainingTime = getCampaignRemainingTime(campaign);
   const isExpired = remainingTime === 0;
-  const isActive = campaign.status === 'Running' || campaign.status === 'Paused';
+  const isActive = campaign.status === 'Running' || campaign.status === 'Paused' || campaign.status === 'ready' || campaign.status === 'processing';
 
   return {
     status: campaign.status,
     remainingTime,
     isExpired,
     isActive,
-    statusText: isExpired ? 'Expired' : campaign.status,
+    statusText: isExpired ? 'Expired' : (campaign.status ? campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1) : 'Ready'),
     timeText: remainingTime !== null && isActive
       ? remainingTime > 0
         ? `${remainingTime} day${remainingTime !== 1 ? 's' : ''} remaining`

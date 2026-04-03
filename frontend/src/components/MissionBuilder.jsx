@@ -70,7 +70,8 @@ const MissionBuilder = ({
     isLoading,
     formError,
     setFormError,
-    isGmailConnected
+    isGmailConnected,
+    initialData = null // New prop for edit mode
 }) => {
     const [step, setStep] = useState(1);
     const [campaignGoal, setCampaignGoal] = useState('');
@@ -87,26 +88,41 @@ const MissionBuilder = ({
     const [aiLocation, setAiLocation] = useState('');
     const [aiCompanySize, setAiCompanySize] = useState('11-50');
 
+    // Elite Scheduling State
+    const [schedulingMode, setSchedulingMode] = useState('intelligence'); // 'intelligence' or 'manual'
+    const [customTiming, setCustomTiming] = useState({ start: '08:00', end: '20:00' });
+
     // UI States for Voice/AI
     const [isListening, setIsListening] = useState(false);
     const [isRefining, setIsRefining] = useState(false);
     const recognitionRef = useRef(null);
 
-    const emailRegex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+    const emailRegex = /^[^@\s]+@[@\s]+\.[^@\s]+$/;
 
-    // Reset state when modal opens
+    // Reset state when modal opens or initialData changes
     useEffect(() => {
         if (open) {
             setStep(1);
-            setCampaignGoal('');
-            setCampaignName('');
-            setCsvFile(null);
-            setManualEmails('');
-            setValidEmails([]);
-            setInputMethod('');
+            if (initialData) {
+                setCampaignGoal(initialData.goal || initialData.description || '');
+                setCampaignName(initialData.name || '');
+                setSelectedIndustry(initialData.industry || 'Technology');
+                setInputMethod(initialData.emailSource || 'manual');
+                // For edit mode, we might not have the full email list or files readily available
+                // but we can pre-fill what we have.
+            } else {
+                setCampaignGoal('');
+                setCampaignName('');
+                setSelectedIndustry('Technology');
+                setCsvFile(null);
+                setValidEmails([]);
+                setInputMethod('');
+                setSchedulingMode('intelligence');
+                setCustomTiming({ start: '08:00', end: '20:00' });
+            }
             if (setFormError) setFormError('');
         }
-    }, [open, setFormError]);
+    }, [open, initialData, setFormError]);
 
     // Auto-generate a sleek campaign name if they don't provide one
     useEffect(() => {
@@ -324,6 +340,7 @@ const MissionBuilder = ({
     const handleLaunch = () => {
         if (validateStep(2)) { // Final check
             onStart && onStart({
+                id: initialData?.id, // Pass ID for editing
                 campaignName: campaignName || 'Alpha Node Outreach',
                 campaignGoal,
                 emails: inputMethod === 'manual' ? validEmails : [],
@@ -334,7 +351,11 @@ const MissionBuilder = ({
                     role: aiRole,
                     location: aiLocation,
                     companySize: aiCompanySize
-                } : null
+                } : null,
+                scheduling: {
+                    mode: schedulingMode,
+                    timing: customTiming
+                }
             });
         }
     };
@@ -770,9 +791,50 @@ const MissionBuilder = ({
                                             <div className="p-3 bg-indigo-500/20 rounded-full text-indigo-400">
                                                 <ShieldCheck className="w-6 h-6" />
                                             </div>
-                                            <div>
-                                                <p className="text-indigo-300 text-sm font-bold">Anti-Spam Shield Active</p>
-                                                <p className="text-indigo-400/60 text-xs mt-0.5">Mails will be dynamically paced via Google Workspace.</p>
+                                            <div className="flex-1">
+                                                <div className="flex items-center justify-between mb-2">
+                                                    <p className="text-indigo-300 text-sm font-bold">Launch Intelligence</p>
+                                                    <div className="flex bg-slate-800 p-1 rounded-lg border border-slate-700">
+                                                        <button
+                                                            onClick={() => setSchedulingMode('intelligence')}
+                                                            className={`px-3 py-1 rounded-md text-[9px] font-black uppercase transition-all ${schedulingMode === 'intelligence' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
+                                                        >
+                                                            AI Managed
+                                                        </button>
+                                                        <button
+                                                            onClick={() => setSchedulingMode('manual')}
+                                                            className={`px-3 py-1 rounded-md text-[9px] font-black uppercase transition-all ${schedulingMode === 'manual' ? 'bg-slate-700 text-white' : 'text-slate-500 hover:text-slate-300'}`}
+                                                        >
+                                                            Manual
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                {schedulingMode === 'intelligence' ? (
+                                                    <p className="text-indigo-400/60 text-[10px] leading-relaxed">
+                                                        Outrelix will analyze historical engagement gaps and dynamically pace your sequence for maximum clinical precision.
+                                                    </p>
+                                                ) : (
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="flex-1">
+                                                            <p className="text-[9px] text-slate-500 uppercase mb-1">Window Start</p>
+                                                            <input
+                                                                type="time"
+                                                                value={customTiming.start}
+                                                                onChange={(e) => setCustomTiming(prev => ({ ...prev, start: e.target.value }))}
+                                                                className="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                                                            />
+                                                        </div>
+                                                        <div className="flex-1">
+                                                            <p className="text-[9px] text-slate-500 uppercase mb-1">Window End</p>
+                                                            <input
+                                                                type="time"
+                                                                value={customTiming.end}
+                                                                onChange={(e) => setCustomTiming(prev => ({ ...prev, end: e.target.value }))}
+                                                                className="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                     </div>

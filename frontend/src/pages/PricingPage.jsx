@@ -24,91 +24,90 @@ const PricingPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white font-['Outfit'] relative overflow-hidden">
-      {/* Decorative background gradients */}
-      <div className="absolute top-0 left-0 w-full h-[600px] bg-gradient-to-b from-blue-50/50 to-transparent pointer-events-none" />
-      <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-purple-200/20 blur-[120px] rounded-full" />
-      <div className="absolute top-[20%] left-[-10%] w-[400px] h-[400px] bg-blue-200/20 blur-[100px] rounded-full" />
-
+    <div className="min-h-screen bg-white font-poppins selection:bg-blue-100">
       <DashboardHeader showGreeting={false} title="Intelligence Status" />
 
-      <main className="max-w-6xl mx-auto p-8 lg:p-12 pb-32 relative z-10">
+      <div className="flex-1 overflow-y-auto no-scrollbar">
+        <main className="p-4 md:p-8 2xl:p-12 transition-all duration-500">
+          <div className="max-w-[1400px] mx-auto space-y-20 lg:space-y-28 scale-[0.85] origin-top">
 
-        {/* Hero Section */}
-        <div className="text-center mb-16 space-y-4">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-50 text-blue-600 rounded-full border border-blue-100 shadow-sm mb-4"
-          >
-            <ShieldCheck className="w-4 h-4" />
-            <span className="text-[10px] font-black uppercase tracking-widest">Active License Verified</span>
-          </motion.div>
-          <h1 className="text-5xl md:text-6xl font-black text-slate-800 tracking-tight leading-tight">
-            Infinite Intelligence <span className="text-blue-600">Unlocked</span>.
-          </h1>
-          <p className="text-slate-500 text-lg font-medium max-w-2xl mx-auto">
-            Your account has been granted full access to the Outrelix Intelligence Suite. Experience unrestricted growth with no volume caps or feature locks.
-          </p>
-        </div>
-
-        {/* Premium Card */}
-        <div className="max-w-4xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white/70 backdrop-blur-xl border-4 border-white rounded-[48px] shadow-2xl shadow-blue-200/50 overflow-hidden"
-          >
-            <div className="p-10 md:p-16">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-10 mb-16">
-                <div>
-                  <h2 className="text-3xl font-black text-slate-800 mb-2 uppercase tracking-tight">Infinite Executive Plan</h2>
-                  <p className="text-blue-600 font-black text-sm uppercase tracking-widest">All System Limits Removed</p>
-                </div>
-                <div className="bg-slate-900 text-white px-8 py-4 rounded-3xl flex flex-col items-center">
-                  <span className="text-[10px] font-black uppercase tracking-widest opacity-60">Status</span>
-                  <span className="text-xl font-black">ACTIVE</span>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 mb-16">
-                {premiumFeatures.map((f, i) => (
-                  <div key={i} className="flex gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0">
-                      <f.icon className="w-5 h-5 text-blue-600" />
-                    </div>
-                    <div>
-                      <h4 className="font-black text-sm text-slate-800 uppercase tracking-tight">{f.title}</h4>
-                      <p className="text-xs text-slate-400 font-medium">{f.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="p-8 rounded-[32px] bg-slate-50 border border-slate-100 flex flex-col md:flex-row items-center justify-between gap-6">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center">
-                    <Star className="w-6 h-6 text-amber-400 fill-amber-400" />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-slate-800">Premium Partner Support</h4>
-                    <p className="text-xs text-slate-400">24/7 dedicated engineering queue enabled</p>
-                  </div>
-                </div>
-                <button className="px-8 py-4 bg-white border border-slate-200 text-slate-800 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-50 transition-all">
-                  Access Support
-                </button>
-              </div>
+            {/* Hero Section */}
+            <div className="text-center mb-16 space-y-4">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="inline-flex items-center gap-2 px-4 py-1.5 bg-slate-50 text-slate-800 rounded-full border border-slate-100 shadow-sm mb-4"
+              >
+                <ShieldCheck className="w-4 h-4" />
+                <span className="text-[10px] font-black uppercase tracking-widest">Active License Verified</span>
+              </motion.div>
+              <h1 className="text-5xl md:text-6xl font-black text-slate-800 tracking-tight leading-tight">
+                Infinite Intelligence <span className="text-blue-600">Unlocked</span>.
+              </h1>
+              <p className="text-slate-500 text-lg font-medium max-w-2xl mx-auto">
+                Your account has been granted full access to the Outrelix Intelligence Suite. Experience unrestricted growth with no volume caps or feature locks.
+              </p>
             </div>
-          </motion.div>
-        </div>
 
-        {/* Security / Compliance */}
-        <div className="mt-16 text-center text-slate-300">
-          <p className="text-[10px] font-black uppercase tracking-[0.2em]">Enforced with 256-bit AES Intelligence Encryption</p>
-        </div>
+            {/* Premium Card */}
+            <div className="max-w-4xl mx-auto">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-white/70 backdrop-blur-xl border-4 border-white rounded-[48px] shadow-2xl shadow-blue-200/50 overflow-hidden"
+              >
+                <div className="p-10 md:p-16">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-10 mb-16">
+                    <div>
+                      <h2 className="text-3xl font-black text-slate-800 mb-2 uppercase tracking-tight">Infinite Executive Plan</h2>
+                      <p className="text-blue-600 font-black text-sm uppercase tracking-widest">All System Limits Removed</p>
+                    </div>
+                    <div className="bg-slate-900 text-white px-8 py-4 rounded-3xl flex flex-col items-center">
+                      <span className="text-[10px] font-black uppercase tracking-widest opacity-60">Status</span>
+                      <span className="text-xl font-black">ACTIVE</span>
+                    </div>
+                  </div>
 
-      </main>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 mb-16">
+                    {premiumFeatures.map((f, i) => (
+                      <div key={i} className="flex gap-4">
+                        <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center flex-shrink-0">
+                          <f.icon className="w-5 h-5 text-blue-600" />
+                        </div>
+                        <div>
+                          <h4 className="font-black text-sm text-slate-800 uppercase tracking-tight">{f.title}</h4>
+                          <p className="text-xs text-slate-400 font-medium">{f.desc}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="p-8 rounded-[32px] bg-slate-50 border border-slate-100 flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center">
+                        <Star className="w-6 h-6 text-amber-400 fill-amber-400" />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-slate-800">Premium Partner Support</h4>
+                        <p className="text-xs text-slate-400">24/7 dedicated engineering queue enabled</p>
+                      </div>
+                    </div>
+                    <button className="px-8 py-4 bg-white border border-slate-200 text-slate-800 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-50 transition-all">
+                      Access Support
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Security / Compliance */}
+            <div className="mt-16 text-center text-slate-300">
+              <p className="text-[10px] font-black uppercase tracking-[0.2em]">Enforced with 256-bit AES Intelligence Encryption</p>
+            </div>
+
+          </div>
+        </main>
+      </div>
     </div>
   );
 };

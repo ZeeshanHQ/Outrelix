@@ -133,22 +133,28 @@ const EmailGenerator = ({ isOpen, onClose, analysisData }) => {
                     animate={{ scale: 1, opacity: 1 }}
                     exit={{ scale: 0.95, opacity: 0 }}
                     onClick={(e) => e.stopPropagation()}
-                    className="bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden border border-slate-100"
+                    className="bg-black w-full max-w-3xl rounded-[40px] shadow-[0_0_100px_rgba(0,0,0,0.8)] overflow-hidden border border-slate-800 relative"
                 >
+                    <div className="absolute top-0 right-10 w-px h-full bg-slate-900/50 hidden lg:block" />
                     {/* Header */}
-                    <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-                        <div>
-                            <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-                                <Wand2 className="w-5 h-5 text-purple-600" />
-                                AI Email Architect
-                            </h3>
-                            <p className="text-xs text-slate-500 font-medium mt-1">
-                                Drafting hyper-personalized outreach for <span className="text-slate-800 font-bold">{new URL(analysisData.url).hostname}</span>
-                            </p>
+                    <div className="px-10 py-8 border-b border-slate-900 flex items-center justify-between bg-black relative z-10">
+                        <div className="flex items-center gap-6">
+                            <div className="w-14 h-14 bg-purple-600 rounded-2xl flex items-center justify-center text-white shadow-2xl relative group">
+                                <div className="absolute inset-0 bg-purple-400 rounded-2xl animate-ping opacity-20" />
+                                <Wand2 className="w-7 h-7 relative z-10" />
+                            </div>
+                            <div>
+                                <span className="text-[10px] font-bold text-purple-400 uppercase tracking-[0.3em] mb-1 block">
+                                    Intelligence Architect
+                                </span>
+                                <h3 className="text-2xl font-black text-white uppercase tracking-tighter">
+                                    {new URL(analysisData.url).hostname}
+                                </h3>
+                            </div>
                         </div>
                         <button
                             onClick={onClose}
-                            className="p-2 hover:bg-slate-200/50 rounded-full transition-colors text-slate-400 hover:text-slate-600"
+                            className="p-3 bg-slate-900 border border-slate-800 rounded-xl text-slate-500 hover:text-white transition-all shadow-xl"
                         >
                             <X className="w-5 h-5" />
                         </button>
@@ -157,16 +163,19 @@ const EmailGenerator = ({ isOpen, onClose, analysisData }) => {
                     <div className="p-8">
                         {!generatedEmail ? (
                             <div className="space-y-8">
-                                <div className="space-y-3">
-                                    <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Select Tone Strategy</label>
-                                    <div className="grid grid-cols-3 gap-3">
+                                <div className="space-y-4">
+                                    <h4 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-3">
+                                        <div className="w-2 h-2 bg-blue-500 rounded-full shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
+                                        Select Tone Strategy
+                                    </h4>
+                                    <div className="grid grid-cols-3 gap-4">
                                         {['professional', 'casual', 'urgent'].map((tone) => (
                                             <button
                                                 key={tone}
                                                 onClick={() => setEmailTone(tone)}
-                                                className={`py-3 px-4 rounded-xl text-sm font-bold capitalize transition-all border ${emailTone === tone
-                                                    ? 'bg-slate-900 text-white border-slate-900 shadow-lg shadow-slate-200'
-                                                    : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300'
+                                                className={`py-4 px-4 rounded-2xl text-[10px] uppercase tracking-widest font-black transition-all border ${emailTone === tone
+                                                    ? 'bg-blue-600 text-white border-blue-500 shadow-xl shadow-blue-900/20'
+                                                    : 'bg-slate-900 text-slate-500 border-slate-800 hover:border-slate-700 hover:text-slate-300'
                                                     }`}
                                             >
                                                 {tone}
@@ -176,74 +185,80 @@ const EmailGenerator = ({ isOpen, onClose, analysisData }) => {
                                 </div>
 
                                 <motion.button
-                                    whileHover={{ scale: 1.02 }}
-                                    whileTap={{ scale: 0.98 }}
+                                    whileHover={{ scale: 1.01, y: -2 }}
+                                    whileTap={{ scale: 0.99 }}
                                     onClick={generateEmail}
                                     disabled={isGenerating}
-                                    className="w-full py-5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl font-bold text-lg shadow-xl shadow-blue-200 hover:shadow-2xl hover:shadow-blue-300 transition-all flex items-center justify-center gap-3"
+                                    className="w-full py-6 bg-blue-600 text-white rounded-[24px] font-black text-sm uppercase tracking-[0.2em] shadow-2xl shadow-blue-900/20 hover:bg-blue-500 transition-all flex items-center justify-center gap-4 border border-blue-400/20"
                                 >
                                     {isGenerating ? (
                                         <>
-                                            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                            <span>Crafting Perfect Pitch...</span>
+                                            <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                                            <span>Simulating Outreach Genius...</span>
                                         </>
                                     ) : (
                                         <>
-                                            <SparklesIcon className="w-5 h-5" />
-                                            <span>Generate Personalized Email</span>
+                                            <SparklesIcon className="w-5 h-5 text-blue-200" />
+                                            <span>Generate Elite Draft</span>
                                         </>
                                     )}
                                 </motion.button>
                             </div>
                         ) : (
                             <div className="space-y-6">
-                                <div className="space-y-4">
-                                    <div className="bg-slate-50 rounded-2xl p-5 border border-slate-100">
-                                        <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 select-none">Subject Line</div>
-                                        <div className="font-bold text-slate-800 text-lg select-all selection:bg-purple-100">
+                                <div className="space-y-6 relative z-10">
+                                    <div className="bg-slate-900/50 rounded-3xl p-8 border border-slate-800 group hover:border-purple-500/20 transition-all">
+                                        <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4 flex items-center justify-between">
+                                            Subject Line
+                                            <div className="w-8 h-px bg-slate-800" />
+                                        </div>
+                                        <div className="font-black text-white text-xl tracking-tight selection:bg-purple-500/30">
                                             {generatedEmail.subject}
                                         </div>
                                     </div>
 
-                                    <div className="bg-slate-50 rounded-2xl p-6 border border-slate-100">
-                                        <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 select-none">Email Body</div>
-                                        <div className="prose prose-sm text-slate-600 max-w-none whitespace-pre-wrap leading-relaxed select-all selection:bg-purple-100">
+                                    <div className="bg-slate-900/50 rounded-3xl p-8 border border-slate-800 group hover:border-blue-500/20 transition-all">
+                                        <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4 flex items-center justify-between">
+                                            Elite Body Intelligence
+                                            <div className="w-8 h-px bg-slate-800" />
+                                        </div>
+                                        <div className="prose prose-invert prose-sm text-slate-400 max-w-none whitespace-pre-wrap leading-relaxed font-medium selection:bg-blue-500/30">
                                             {generatedEmail.body}
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className="space-y-4">
+                                <div className="space-y-6 relative z-10">
                                     {/* Outreach Details (From/To) */}
-                                    <div className="bg-slate-50 border border-slate-100 rounded-2xl p-5 space-y-4">
+                                    <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 space-y-6">
                                         {/* From Field */}
-                                        <div className="flex items-center gap-4">
-                                            <div className="w-10 text-[10px] font-bold text-slate-400 uppercase tracking-widest">From</div>
-                                            <div className="flex-1 px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs font-medium text-slate-500 flex items-center gap-2">
-                                                <div className="w-2 h-2 bg-blue-500 rounded-full" />
-                                                Outrelix System (noreply@cavexa.online)
+                                        <div className="flex items-center gap-6">
+                                            <div className="w-12 text-[9px] font-black text-slate-500 uppercase tracking-widest">From</div>
+                                            <div className="flex-1 px-4 py-3 bg-black border border-slate-800 rounded-xl text-[10px] font-black text-slate-400 flex items-center gap-3">
+                                                <div className="w-2 h-2 bg-blue-500 rounded-full shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
+                                                Verified Uplink (noreply@outrelix.ai)
                                             </div>
                                         </div>
 
                                         {/* To Field */}
-                                        <div className="flex flex-col gap-2">
-                                            <div className="flex items-center gap-4">
-                                                <div className="w-10 text-[10px] font-bold text-slate-400 uppercase tracking-widest">To</div>
-                                                <div className="flex-1 flex gap-2">
+                                        <div className="flex flex-col gap-3">
+                                            <div className="flex items-center gap-6">
+                                                <div className="w-12 text-[9px] font-black text-slate-500 uppercase tracking-widest">Target</div>
+                                                <div className="flex-1 flex gap-3">
                                                     {showManualInput ? (
                                                         <input
                                                             type="email"
                                                             value={selectedEmail}
                                                             onChange={(e) => setSelectedEmail(e.target.value)}
-                                                            placeholder="Enter recipient email..."
-                                                            className="flex-1 px-3 py-2 bg-white border border-blue-200 focus:border-blue-400 outline-none rounded-lg text-xs font-bold text-slate-800"
+                                                            placeholder="Target Email Address..."
+                                                            className="flex-1 px-4 py-3 bg-black border border-blue-900/50 focus:border-blue-500 outline-none rounded-xl text-[11px] font-black text-white placeholder:text-slate-700 transition-all"
                                                             autoFocus
                                                         />
                                                     ) : (
                                                         <select
                                                             value={selectedEmail}
                                                             onChange={(e) => setSelectedEmail(e.target.value)}
-                                                            className="flex-1 px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-800 outline-none"
+                                                            className="flex-1 px-4 py-3 bg-black border border-slate-800 rounded-xl text-[11px] font-black text-white outline-none focus:border-blue-500/50 appearance-none cursor-pointer"
                                                         >
                                                             {availableEmails.map(email => (
                                                                 <option key={email} value={email}>{email}</option>
@@ -252,22 +267,22 @@ const EmailGenerator = ({ isOpen, onClose, analysisData }) => {
                                                     )}
                                                     <button
                                                         onClick={() => setShowManualInput(!showManualInput)}
-                                                        className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-[10px] font-bold uppercase transition-all"
+                                                        className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-400 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all"
                                                     >
-                                                        {showManualInput ? 'Saved List' : 'Edit Manually'}
+                                                        {showManualInput ? 'Direct List' : 'Bypass Selection'}
                                                     </button>
                                                 </div>
                                             </div>
 
                                             {!showManualInput && availableEmails.length > 0 && (
-                                                <div className="flex flex-wrap gap-1.5 ml-14">
+                                                <div className="flex flex-wrap gap-2 ml-14">
                                                     {availableEmails.slice(0, 5).map((email) => (
                                                         <button
                                                             key={email}
                                                             onClick={() => setSelectedEmail(email)}
-                                                            className={`px-2 py-1 rounded-md text-[10px] font-bold border transition-all ${selectedEmail === email
-                                                                ? 'bg-blue-600 text-white border-blue-600'
-                                                                : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
+                                                            className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest border transition-all ${selectedEmail === email
+                                                                ? 'bg-blue-600 text-white border-blue-500'
+                                                                : 'bg-black text-slate-600 border-slate-800 hover:border-slate-700'
                                                                 }`}
                                                         >
                                                             {email}
@@ -278,50 +293,50 @@ const EmailGenerator = ({ isOpen, onClose, analysisData }) => {
                                         </div>
                                     </div>
 
-                                    <div className="flex gap-3 pt-2">
+                                    <div className="flex gap-4 pt-4">
                                         <motion.button
-                                            whileHover={{ scale: 1.02 }}
-                                            whileTap={{ scale: 0.98 }}
+                                            whileHover={{ scale: 1.01, y: -2 }}
+                                            whileTap={{ scale: 0.99 }}
                                             onClick={handleSend}
                                             disabled={isSending || isSent}
-                                            className={`flex-1 py-4 rounded-xl font-bold flex items-center justify-center gap-2 shadow-xl transition-all ${isSent
-                                                ? 'bg-emerald-500 text-white shadow-emerald-100'
-                                                : 'bg-blue-600 text-white shadow-blue-100 hover:bg-blue-700'
+                                            className={`flex-1 py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-2xl transition-all border ${isSent
+                                                ? 'bg-emerald-600 text-white border-emerald-500'
+                                                : 'bg-blue-600 text-white border-blue-500 hover:bg-blue-500'
                                                 }`}
                                         >
                                             {isSending ? (
                                                 <>
                                                     <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                                    <span>Sending...</span>
+                                                    <span>Uplink Active...</span>
                                                 </>
                                             ) : isSent ? (
                                                 <>
                                                     <Check className="w-4 h-4" />
-                                                    <span>Message Sent!</span>
+                                                    <span>Mission Dispatched</span>
                                                 </>
                                             ) : (
                                                 <>
                                                     <Send className="w-4 h-4" />
-                                                    <span>Send One-Click Email</span>
+                                                    <span>Initiate Direct Send</span>
                                                 </>
                                             )}
                                         </motion.button>
                                         <motion.button
-                                            whileHover={{ scale: 1.02 }}
-                                            whileTap={{ scale: 0.98 }}
+                                            whileHover={{ scale: 1.01, y: -2 }}
+                                            whileTap={{ scale: 0.99 }}
                                             onClick={copyToClipboard}
-                                            className="px-6 py-4 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition-all flex items-center justify-center gap-2 shadow-lg shadow-slate-200"
+                                            className="px-8 py-5 bg-slate-900 border border-slate-800 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-800 transition-all flex items-center justify-center gap-3"
                                         >
-                                            <Copy className="w-4 h-4" />
+                                            <Copy className="w-4 h-4 text-blue-400" />
                                             Copy
                                         </motion.button>
                                         <motion.button
-                                            whileHover={{ scale: 1.02 }}
-                                            whileTap={{ scale: 0.98 }}
+                                            whileHover={{ scale: 1.01, y: -2 }}
+                                            whileTap={{ scale: 0.99 }}
                                             onClick={generateEmail}
-                                            className="p-4 bg-white text-slate-600 border border-slate-200 rounded-xl font-bold hover:bg-slate-50 transition-all flex items-center justify-center"
+                                            className="p-5 bg-black border border-slate-800 rounded-2xl text-slate-600 hover:text-white hover:border-blue-500/50 transition-all flex items-center justify-center"
                                         >
-                                            <RefreshCw className="w-4 h-4" />
+                                            <RefreshCw className="w-5 h-5" />
                                         </motion.button>
                                     </div>
                                 </div>

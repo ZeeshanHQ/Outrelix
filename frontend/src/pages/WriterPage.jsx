@@ -1,14 +1,22 @@
 'use client';
 import React from 'react';
 import Writer from '../components/Writer';
-import AppSidebar from '../components/AppSidebar';
+import DashboardHeader from '../components/dashboard/DashboardHeader';
+import { SparklesIcon } from '@heroicons/react/24/outline';
 
 const WriterPage = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#e3e9fa] via-[#c7d2fe] to-[#f3e8ff] dark:from-[#0a183d] dark:via-[#1a237e] dark:to-[#4b006e]">
-      <AppSidebar />
-      <div className="pt-24 pb-8">
-        <Writer />
+    <div className="min-h-screen bg-white font-poppins selection:bg-blue-100">
+      <DashboardHeader showGreeting={false} title="Outreach Writer" />
+
+      <div className="flex-1 overflow-y-auto no-scrollbar">
+        <main className="p-4 md:p-8 2xl:p-12 transition-all duration-500">
+          <div className="max-w-[1400px] mx-auto space-y-20 lg:space-y-28 scale-[0.90] origin-top">
+            <div className="pt-10">
+              <Writer />
+            </div>
+          </div>
+        </main>
       </div>
     </div>
   );
