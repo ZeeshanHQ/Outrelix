@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
@@ -68,9 +69,23 @@
   --input: 217.2 32.6% 17.5%;
   --ring: 212.7 26.8% 83.9%;
 
-  --clean-bg: #0F172A;
-  --clean-surface: #1E293B;
-  --clean-border: #334155;
+  --clean-bg: #070d1f;
+  --clean-surface: #0b1429;
+  --clean-border: #1e293b;
+}
+
+@layer utilities {
+  .glass-panel {
+    @apply bg-white/5 backdrop-blur-xl border border-white/10;
+  }
+  
+  .text-label-small {
+    @apply text-[10px] uppercase tracking-[0.2em] font-semibold opacity-60;
+  }
+
+  .obsidian-gradient {
+    background: radial-gradient(circle at top center, #1e1b4b 0%, #070d1f 100%);
+  }
 }
 
 @layer base {
@@ -128,7 +143,7 @@ html {
 
 body {
   margin: 0;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Inter', 'Outfit', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #ffffff;

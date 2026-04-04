@@ -13,7 +13,6 @@ const DashboardPreview = () => {
         { name: 'GrowthBase', email: 'founder@growthbase.co', industry: 'Marketing', status: 'Opened', score: 87 },
         { name: 'Apex Digital', email: 'sales@apexdigital.com', industry: 'Agency', status: 'Sent', score: 76 },
         { name: 'Vertex Labs', email: 'cto@vertexlabs.io', industry: 'Tech', status: 'Replied', score: 91 },
-        { name: 'Brandify HQ', email: 'hello@brandify.com', industry: 'Design', status: 'Opened', score: 83 },
     ];
 
     useEffect(() => {
@@ -24,149 +23,110 @@ const DashboardPreview = () => {
     }, []);
 
     const statusColors = {
-        Replied: 'bg-green-50 text-green-600',
-        Opened: 'bg-blue-50 text-blue-600',
-        Sent: 'bg-slate-50 text-slate-500',
+        Replied: 'bg-green-500/10 text-green-400 border-green-500/20',
+        Opened: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+        Sent: 'bg-slate-500/10 text-slate-400 border-slate-500/20',
     };
 
     return (
-        <div className="relative w-full max-w-2xl mx-auto">
+        <div className="relative w-full max-w-2xl mx-auto group">
+            {/* Ambient Shadow glow */}
+            <div className="absolute -inset-4 bg-blue-500/10 rounded-[2.5rem] blur-3xl opacity-20 group-hover:opacity-40 transition-opacity duration-1000" />
+            
             {/* Browser chrome */}
-            <div className="bg-slate-800 rounded-t-2xl px-4 py-3 flex items-center gap-2">
-                <div className="flex gap-1.5">
-                    <div className="w-3 h-3 rounded-full bg-red-400" />
-                    <div className="w-3 h-3 rounded-full bg-yellow-400" />
-                    <div className="w-3 h-3 rounded-full bg-green-400" />
+            <div className="bg-obsidian-800 rounded-t-2xl px-4 py-3 flex items-center gap-2 border-x border-t border-white/10">
+                <div className="flex gap-1.5 font-inter">
+                    <div className="w-2.5 h-2.5 rounded-full bg-white/5 border border-white/10" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-white/5 border border-white/10" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-white/5 border border-white/10" />
                 </div>
-                <div className="flex-1 mx-3 bg-slate-700 rounded-lg px-3 py-1 text-xs text-slate-400 font-mono">
-                    app.outrelix.com/dashboard
+                <div className="flex-1 mx-3 bg-obsidian-950/50 rounded-lg px-3 py-1 text-[10px] text-white/30 font-mono tracking-wider flex justify-center border border-white/5">
+                    OUTRELIX.ASTRAVENTA.ONLINE/DASHBOARD
                 </div>
             </div>
 
             {/* Dashboard body */}
-            <div className="bg-white border border-slate-200/60 rounded-b-2xl overflow-hidden shadow-[0_20px_50px_rgba(8,_112,_184,_0.12)]">
+            <div className="bg-obsidian-900/80 backdrop-blur-3xl border-x border-b border-white/10 rounded-b-2xl overflow-hidden shadow-2xl relative">
                 {/* Top stats row */}
-                <div className="grid grid-cols-3 divide-x divide-slate-100 border-b border-slate-100">
+                <div className="grid grid-cols-3 divide-x divide-white/5 border-b border-white/5">
                     {[
-                        { label: 'Leads Found', value: '12,847', delta: '+2.4k', icon: Users, color: 'text-blue-600' },
-                        { label: 'Emails Sent', value: '5,291', delta: 'today', icon: Mail, color: 'text-indigo-600' },
-                        { label: 'Reply Rate', value: '23.6%', delta: '↑ 4.1%', icon: TrendingUp, color: 'text-green-600' },
+                        { label: 'LEADS FOUND', value: '12,847', delta: '+2.4k', icon: Users, color: 'text-blue-400' },
+                        { label: 'EMAILS SENT', value: '5,291', delta: 'REAL-TIME', icon: Mail, color: 'text-indigo-400' },
+                        { label: 'REPLY RATE', value: '23.6%', delta: '↑ 4.1%', icon: TrendingUp, color: 'text-green-400' },
                     ].map((stat, i) => (
-                        <div key={i} className="p-4 flex items-start gap-3">
-                            <div className={`p-1.5 rounded-lg bg-slate-50 ${stat.color}`}>
-                                <stat.icon className="w-4 h-4" />
-                            </div>
-                            <div>
-                                <p className="text-xs text-slate-400 font-medium">{stat.label}</p>
-                                <p className="text-base font-bold text-slate-900">{stat.value}</p>
-                                <p className="text-xs text-green-500 font-semibold">{stat.delta}</p>
-                            </div>
+                        <div key={i} className="p-5 flex flex-col items-start gap-1">
+                             <div className="flex items-center gap-2 mb-1">
+                                <stat.icon className={`w-3.5 h-3.5 ${stat.color} opacity-80`} />
+                                <span className="text-label-small !opacity-40">{stat.label}</span>
+                             </div>
+                             <p className="text-xl font-bold text-white tracking-tight leading-none">{stat.value}</p>
+                             <span className="text-[9px] font-bold text-green-500 tracking-widest mt-1 opacity-80">{stat.delta}</span>
                         </div>
                     ))}
                 </div>
 
                 {/* Leads table */}
-                <div className="p-4">
-                    <div className="flex items-center justify-between mb-3">
-                        <span className="text-xs font-bold text-slate-900 uppercase tracking-wider">Latest Extracted Leads</span>
-                        <span className="flex items-center gap-1 text-xs text-green-500 font-semibold">
-                            <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                            Live
-                        </span>
+                <div className="p-5">
+                    <div className="flex items-center justify-between mb-4">
+                        <span className="text-label-small !opacity-60">NETWORK_FEED: LIVE_EXTRACTION</span>
+                        <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-green-500/10 border border-green-500/20">
+                            <span className="w-1 h-1 rounded-full bg-green-500 animate-pulse" />
+                            <span className="text-[9px] text-green-400 font-bold tracking-tighter">ACTIVE</span>
+                        </div>
                     </div>
-                    <div className="space-y-1.5">
+                    <div className="space-y-1">
                         {leads.map((lead, i) => (
                             <motion.div
                                 key={i}
-                                animate={{ backgroundColor: i === activeRow ? '#eff6ff' : '#ffffff' }}
+                                animate={{ 
+                                    backgroundColor: i === activeRow ? 'rgba(255,255,255,0.03)' : 'rgba(255,255,255,0)',
+                                    borderColor: i === activeRow ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0)'
+                                }}
                                 transition={{ duration: 0.4 }}
-                                className="flex items-center justify-between px-3 py-2.5 rounded-xl border border-transparent hover:border-blue-100 transition-all"
+                                className="flex items-center justify-between px-3 py-2 rounded-xl border transition-all"
                             >
-                                <div className="flex items-center gap-2.5 min-w-0">
-                                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-400 to-indigo-600 text-white text-xs font-bold flex items-center justify-center flex-shrink-0">
+                                <div className="flex items-center gap-3 min-w-0">
+                                    <div className="w-8 h-8 rounded-lg bg-obsidian-700/50 border border-white/10 text-white text-[10px] font-bold flex items-center justify-center flex-shrink-0">
                                         {lead.name[0]}
                                     </div>
                                     <div className="min-w-0">
-                                        <p className="text-xs font-semibold text-slate-900 truncate">{lead.name}</p>
-                                        <p className="text-xs text-slate-400 truncate">{lead.email}</p>
+                                        <p className="text-[11px] font-semibold text-white/90 truncate tracking-tight">{lead.name}</p>
+                                        <p className="text-[9px] text-white/30 truncate tracking-wide">{lead.email.toUpperCase()}</p>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-2 flex-shrink-0">
-                                    <span className="hidden sm:block text-xs text-slate-400">{lead.industry}</span>
-                                    <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${statusColors[lead.status]}`}>
-                                        {lead.status}
+                                <div className="flex items-center gap-3 flex-shrink-0">
+                                    <span className={`text-[9px] font-bold px-2 py-0.5 rounded border ${statusColors[lead.status]}`}>
+                                        {lead.status.toUpperCase()}
                                     </span>
-                                    <span className="text-xs font-bold text-slate-700 w-6 text-right">{lead.score}</span>
+                                    <span className="text-[11px] font-mono font-bold text-white/70 w-6 text-right leading-none">{lead.score}</span>
                                 </div>
                             </motion.div>
                         ))}
                     </div>
                 </div>
 
-                {/* Mini chart bar at bottom */}
-                <div className="border-t border-slate-100 px-4 py-3 flex items-end gap-1 bg-slate-50/50">
-                    {[40, 65, 52, 78, 61, 85, 72, 90, 68, 95, 74, 88].map((h, i) => (
-                        <motion.div
-                            key={i}
-                            initial={{ height: 0 }}
-                            animate={{ height: `${h * 0.4}px` }}
-                            transition={{ delay: i * 0.05, duration: 0.6, ease: 'easeOut' }}
-                            className="flex-1 bg-blue-200 rounded-sm"
-                            style={{ minHeight: 4 }}
-                        />
-                    ))}
+                {/* Technical metadata footer */}
+                <div className="border-t border-white/5 px-5 py-3 flex items-center justify-between bg-obsidian-950/20">
+                    <div className="flex gap-4">
+                        <div className="flex flex-col">
+                            <span className="text-[8px] text-white/20 font-bold tracking-tighter">LATENCY</span>
+                            <span className="text-[10px] text-white/60 font-mono">12ms</span>
+                        </div>
+                        <div className="flex flex-col">
+                            <span className="text-[8px] text-white/20 font-bold tracking-tighter">SUCCESS_RATE</span>
+                            <span className="text-[10px] text-white/60 font-mono">99.8%</span>
+                        </div>
+                    </div>
+                    <div className="flex items-end gap-1 h-6">
+                        {[40, 65, 52, 78, 61, 85, 72, 90, 68, 95, 74, 88].map((h, i) => (
+                            <div key={i} className="flex-1 w-1 bg-white/10 rounded-t-[1px]" style={{ height: `${h * 0.25}px` }} />
+                        ))}
+                    </div>
                 </div>
             </div>
-
-            {/* Floating stat bubbles */}
-            <motion.div
-                animate={{ y: [0, -8, 0] }}
-                transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
-                className="absolute -left-16 top-8 bg-white rounded-2xl px-4 py-3 shadow-xl border border-slate-100 hidden lg:block"
-            >
-                <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 bg-green-50 rounded-xl flex items-center justify-center">
-                        <CheckCircle className="w-4 h-4 text-green-500" />
-                    </div>
-                    <div>
-                        <p className="text-xs text-slate-400">Accuracy</p>
-                        <p className="text-sm font-bold text-slate-900">99.8%</p>
-                    </div>
-                </div>
-            </motion.div>
-
-            <motion.div
-                animate={{ y: [0, 8, 0] }}
-                transition={{ repeat: Infinity, duration: 3.5, ease: 'easeInOut', delay: 0.5 }}
-                className="absolute -right-16 top-16 bg-white rounded-2xl px-4 py-3 shadow-xl border border-slate-100 hidden lg:block"
-            >
-                <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 bg-blue-50 rounded-xl flex items-center justify-center">
-                        <Zap className="w-4 h-4 text-blue-600" />
-                    </div>
-                    <div>
-                        <p className="text-xs text-slate-400">Speed</p>
-                        <p className="text-sm font-bold text-slate-900">1k leads/min</p>
-                    </div>
-                </div>
-            </motion.div>
-
-            <motion.div
-                animate={{ y: [0, -6, 0] }}
-                transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut', delay: 1 }}
-                className="absolute -right-14 bottom-20 bg-white rounded-2xl px-4 py-3 shadow-xl border border-slate-100 hidden lg:block"
-            >
-                <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 bg-indigo-50 rounded-xl flex items-center justify-center">
-                        <BarChart2 className="w-4 h-4 text-indigo-600" />
-                    </div>
-                    <div>
-                        <p className="text-xs text-slate-400">Reply Rate</p>
-                        <p className="text-sm font-bold text-slate-900">4.2x Higher</p>
-                    </div>
-                </div>
-            </motion.div>
         </div>
+    );
+};
     );
 };
 
@@ -203,120 +163,118 @@ const TypingRotator = ({ words }) => {
     );
 };
 
-// — Main Hero Section Export —
 export function HeroSection({ setIsSignupOpen }) {
     const industries = ['Real Estate', 'SaaS', 'E-commerce', 'Healthcare', 'Technology', 'Finance', 'Marketing', 'Agencies'];
 
     return (
-        <section className="relative min-h-[90vh] flex items-center overflow-hidden bg-white z-0">
-            {/* Ambient background blobs */}
-            <div className="absolute inset-0 bg-[#F8FAFC]/50" />
+        <section className="relative min-h-[95vh] flex items-center overflow-hidden bg-obsidian-900 z-0 py-32 sm:py-48">
+            {/* Elite Radial Glow */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full obsidian-gradient pointer-events-none" />
+            
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                <div className="absolute -top-32 -left-32 w-[600px] h-[600px] bg-blue-50 rounded-full blur-[120px] opacity-60" />
-                <div className="absolute -bottom-32 -right-32 w-[500px] h-[500px] bg-indigo-50 rounded-full blur-[100px] opacity-50" />
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[radial-gradient(circle,rgba(59,130,246,0.04)_0%,transparent_70%)]" />
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-blue-500/10 rounded-full blur-[120px] opacity-20" />
+                <div className="absolute -bottom-48 -right-48 w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-[100px] opacity-10" />
             </div>
 
-            <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-8 pt-16 pb-20 sm:pt-24 sm:pb-32">
-                <div className="grid lg:grid-cols-2 gap-16 lg:gap-20 items-center">
+            <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-8">
+                <div className="grid lg:grid-cols-2 gap-20 lg:gap-32 items-center">
                     {/* Left: Copy */}
-                    <div>
-                        {/* Badge */}
+                    <div className="text-center lg:text-left">
+                        {/* Elite Badge */}
                         <motion.div
                             initial={{ opacity: 0, y: -16 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.6 }}
-                            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100 mb-8"
+                            transition={{ duration: 0.8 }}
+                            className="inline-flex items-center gap-3 px-3 py-1 rounded-full bg-white/5 border border-white/10 mb-10 backdrop-blur-md"
                         >
-                            <Sparkles className="w-3.5 h-3.5 text-blue-600 animate-pulse" />
-                            <span className="text-blue-700 text-xs font-bold uppercase tracking-widest">
-                                AI Lead Engine · v1.0 · 99.8% Accuracy
+                            <Sparkles className="w-3 h-3 text-blue-400 animate-pulse" />
+                            <span className="text-label-small !opacity-80">
+                                AI LEAD_V1.2 · ENTERPRISE_GRADE_ACCURACY
                             </span>
                         </motion.div>
 
-                        {/* Headline */}
+                        {/* Editorial Headline */}
                         <motion.h1
-                            initial={{ opacity: 0, y: 24 }}
+                            initial={{ opacity: 0, y: 30 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.15, duration: 0.7 }}
-                            className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 leading-[1.08] mb-6"
+                            transition={{ delay: 0.15, duration: 0.8 }}
+                            className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.05] mb-8 font-inter"
                         >
-                            Find Leads for{' '}
-                            <div className="inline-block min-w-[200px] sm:min-w-[270px] lg:min-w-[320px] text-left">
-                                <TypingRotator words={industries} />
-                            </div>
-                            <br />
-                            <span className="text-slate-900">at Lightning Speed.</span>
+                            The Silent Authority <br/>
+                            <span className="text-white/40">in Outreach.</span>
                         </motion.h1>
 
-                        {/* Sub-headline */}
+                        {/* Premium Sub-headline */}
                         <motion.p
-                            initial={{ opacity: 0, y: 16 }}
+                            initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.3, duration: 0.7 }}
-                            className="text-lg text-slate-500 leading-relaxed mb-10 max-w-lg"
+                            transition={{ delay: 0.3, duration: 0.8 }}
+                            className="text-lg text-white/50 leading-relaxed mb-12 max-w-xl mx-auto lg:mx-0 font-inter"
                         >
-                            Outrelix reveals verified leads from Google Maps, LinkedIn, and 10+ sources — then sends
-                            personalized cold emails via your Gmail. <strong className="text-slate-700">Fully automated.</strong>
+                            Reveal verified leads from every corner of the web. Fully automated lead generation and AI cold outreach — designed for those who demand <span className="text-white/80 font-semibold">absolute precision.</span>
                         </motion.p>
 
                         {/* CTA Buttons */}
                         <motion.div
-                            initial={{ opacity: 0, y: 16 }}
+                            initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.45, duration: 0.7 }}
-                            className="flex flex-col sm:flex-row gap-3 mb-10"
+                            transition={{ delay: 0.45, duration: 0.8 }}
+                            className="flex flex-col sm:flex-row gap-4 mb-14 justify-center lg:justify-start"
                         >
-                            <GradientButton
+                            <button
                                 onClick={() => setIsSignupOpen(true)}
-                                className="group shadow-lg shadow-blue-200/50 hover:shadow-blue-300 hover:-translate-y-0.5 active:translate-y-0"
+                                className="group relative flex items-center justify-center gap-3 px-8 py-4 bg-white text-obsidian-950 font-bold rounded-xl text-base hover:bg-white/90 transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.1)]"
                             >
-                                Start Generating Leads
-                                <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                            </GradientButton>
-                            <button className="flex items-center justify-center gap-2 px-7 py-3.5 bg-white border border-slate-200 text-slate-700 font-bold rounded-xl text-base hover:bg-slate-50 transition-all">
-                                <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center">
-                                    <svg className="w-3 h-3 text-blue-600 fill-current" viewBox="0 0 24 24">
-                                        <path d="M8 5v14l11-7z" />
-                                    </svg>
-                                </div>
-                                Watch 2-min Demo
+                                Generate Leads Now
+                                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                            </button>
+                            <button className="flex items-center justify-center gap-3 px-8 py-4 bg-obsidian-800 border border-white/10 text-white font-bold rounded-xl text-base hover:bg-obsidian-700 transition-all border-b-2">
+                                <PlayCircleIcon className="w-5 h-5 text-white/50" />
+                                Watch System Demo
                             </button>
                         </motion.div>
 
-                        {/* Social proof row */}
+                        {/* Social proof - Minimalized */}
                         <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            transition={{ delay: 0.7, duration: 0.8 }}
-                            className="flex items-center gap-4"
+                            transition={{ delay: 0.7, duration: 1 }}
+                            className="flex items-center gap-4 justify-center lg:justify-start"
                         >
-                            <div className="flex -space-x-2">
-                                {['https://i.pravatar.cc/32?u=1', 'https://i.pravatar.cc/32?u=2', 'https://i.pravatar.cc/32?u=3', 'https://i.pravatar.cc/32?u=4'].map((src, i) => (
-                                    <img key={i} src={src} alt="" className="w-8 h-8 rounded-full border-2 border-white shadow-sm" />
+                            <div className="flex -space-x-3">
+                                {[1, 2, 3, 4].map((i) => (
+                                    <div key={i} className="w-9 h-9 rounded-full border border-obsidian-900 bg-obsidian-800 flex items-center justify-center overflow-hidden">
+                                        <img src={`https://i.pravatar.cc/100?u=${i}`} alt="" className="w-full h-full object-cover grayscale opacity-80" />
+                                    </div>
                                 ))}
                             </div>
-                            <div>
-                                <div className="flex gap-0.5">
+                            <div className="text-left">
+                                <p className="text-label-small !opacity-40 !tracking-widest">ENDORSED_BY 2.5K+ TEAMS</p>
+                                <div className="flex gap-0.5 mt-0.5">
                                     {[...Array(5)].map((_, i) => (
-                                        <svg key={i} className="w-3.5 h-3.5 text-yellow-400 fill-current" viewBox="0 0 24 24">
-                                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                                        </svg>
+                                        <div key={i} className="w-1 h-1 rounded-full bg-blue-400" />
                                     ))}
                                 </div>
-                                <p className="text-xs text-slate-500 font-medium">2,500+ teams trust Outrelix</p>
                             </div>
                         </motion.div>
                     </div>
 
                     {/* Right: Dashboard Preview */}
                     <motion.div
-                        initial={{ opacity: 0, x: 40 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.3, duration: 0.8, ease: 'easeOut' }}
-                        className="hidden lg:block"
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.3, duration: 1, ease: [0.16, 1, 0.3, 1] }}
+                        className="hidden lg:block relative"
                     >
                         <DashboardPreview />
+                        
+                        {/* Technical Floating Meta */}
+                        <div className="absolute -bottom-10 -right-10 bg-obsidian-950/80 backdrop-blur-xl p-4 rounded-2xl border border-white/10 shadow-2xl z-20">
+                           <div className="flex flex-col gap-1">
+                               <span className="text-[10px] text-white/40 font-mono">ENCRYPTION: AES-256</span>
+                               <span className="text-[10px] text-green-400 font-mono">STATUS: OPTIMIZED</span>
+                           </div>
+                        </div>
                     </motion.div>
                 </div>
             </div>

@@ -14,21 +14,28 @@ export const TestimonialsColumn = (props) => {
                     ease: "linear",
                     repeatType: "loop",
                 }}
-                className="flex flex-col gap-6 pb-6 bg-transparent"
+                className="flex flex-col gap-8 pb-8 bg-transparent"
             >
                 {[
                     ...new Array(2).fill(0).map((_, index) => (
                         <React.Fragment key={index}>
                             {props.testimonials.map(({ title, description, icon: Icon }, i) => (
                                 <div
-                                    className="p-8 rounded-3xl border border-slate-200/60 bg-white shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] hover:border-slate-300 transition-all duration-300 max-w-xs w-full group"
+                                    className="p-10 rounded-[2.5rem] border border-white/5 bg-obsidian-800/10 backdrop-blur-xl hover:bg-obsidian-800/20 hover:border-white/10 transition-all duration-500 max-w-xs w-full group overflow-hidden relative shadow-2xl"
                                     key={i}
                                 >
-                                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center mb-6 shadow-sm border border-slate-200/50 group-hover:scale-110 transition-transform duration-500 group-hover:bg-blue-50 group-hover:border-blue-100">
-                                        <Icon className="w-6 h-6 text-slate-700 group-hover:text-blue-600 transition-colors duration-300" />
+                                    <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 blur-[60px] pointer-events-none group-hover:bg-blue-500/10 transition-colors duration-500" />
+                                    
+                                    <div className="w-16 h-16 rounded-2xl bg-obsidian-950 border border-white/5 flex items-center justify-center mb-8 shadow-2xl group-hover:scale-110 transition-transform duration-700 group-hover:border-blue-500/30">
+                                        <Icon className="w-8 h-8 text-white/40 group-hover:text-blue-400 transition-colors duration-500" />
                                     </div>
-                                    <div className="font-bold text-lg text-slate-900 tracking-tight leading-6 mb-2">{title}</div>
-                                    <div className="text-sm text-slate-500 leading-relaxed font-medium">{description}</div>
+                                    <div className="font-bold text-xl text-white tracking-tight leading-7 mb-4 group-hover:text-blue-400 transition-colors duration-500">{title}</div>
+                                    <div className="text-base text-white/30 leading-relaxed font-medium transition-colors duration-500 group-hover:text-white/40">{description}</div>
+                                    
+                                    {/* Subtle Status Orb */}
+                                    <div className="absolute bottom-10 right-10 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse shadow-[0_0_8px_rgba(59,130,246,0.6)]" />
+                                    </div>
                                 </div>
                             ))}
                         </React.Fragment>

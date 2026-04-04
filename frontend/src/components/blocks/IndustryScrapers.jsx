@@ -97,38 +97,38 @@ const thirdColumn = industries.slice(11, 16);
 
 export default function IndustryScrapers() {
     return (
-        <section className="bg-[#F8FAFC] py-32 relative overflow-hidden" id="industries">
+        <section className="bg-obsidian-950 py-48 relative overflow-hidden" id="industries">
             {/* Background aesthetics */}
             <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute left-1/2 top-0 -translate-x-1/2 w-[800px] h-[400px] bg-blue-100/50 rounded-full blur-[100px] opacity-70" />
+                <div className="absolute left-1/2 top-0 -translate-x-1/2 w-[1200px] h-[600px] bg-blue-500/5 rounded-full blur-[140px] opacity-40" />
             </div>
 
             <div className="max-w-7xl relative z-10 mx-auto px-6 sm:px-8">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, ease: "easeOut" }}
+                    transition={{ duration: 0.8 }}
                     viewport={{ once: true }}
-                    className="flex flex-col flex-wrap items-center justify-center max-w-2xl mx-auto text-center"
+                    className="flex flex-col items-center justify-center max-w-4xl mx-auto text-center mb-32"
                 >
-                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50/80 border border-blue-100/80 text-blue-600 text-[10px] font-bold uppercase tracking-[0.2em] mb-6 shadow-sm">
-                        <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />
-                        Industry Specialized Scrapers
+                    <div className="text-label-small mb-6 block text-blue-400/80 tracking-[0.3em]">
+                        SCALABILITY — 03
                     </div>
 
-                    <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-[1.1] mb-6">
-                        Optimized for <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Every Sector</span>
+                    <h2 className="text-5xl md:text-6xl font-bold text-white tracking-tighter leading-[1.1] mb-8">
+                        Optimized for <br className="md:hidden" />
+                        <span className="text-white/40 italic">Every Sector.</span>
                     </h2>
-                    <p className="text-lg md:text-xl text-slate-500 font-medium leading-relaxed">
-                        Our platform provides tailored data extraction tools optimized for specific sectors to ensure maximum quality and relevance.
+                    <p className="text-xl text-white/40 font-medium leading-relaxed max-w-2xl">
+                        Our platform provides specialized extraction protocols optimized for specific industries, doubling down on data relevance.
                     </p>
                 </motion.div>
 
                 {/* The Animated Columns */}
-                <div className="flex justify-center gap-6 mt-16 [mask-image:linear-gradient(to_bottom,transparent,black_20%,black_80%,transparent)] max-h-[800px] overflow-hidden relative">
-                    <TestimonialsColumn testimonials={firstColumn} duration={25} />
-                    <TestimonialsColumn testimonials={secondColumn} className="hidden md:block" duration={35} />
-                    <TestimonialsColumn testimonials={thirdColumn} className="hidden lg:block" duration={30} />
+                <div className="flex justify-center gap-8 lg:gap-12 mt-16 [mask-image:linear-gradient(to_bottom,transparent,black_15%,black_85%,transparent)] max-h-[850px] overflow-hidden relative">
+                    <TestimonialsColumn testimonials={firstColumn} duration={35} />
+                    <TestimonialsColumn testimonials={secondColumn} className="hidden md:block" duration={45} />
+                    <TestimonialsColumn testimonials={thirdColumn} className="hidden lg:block" duration={40} />
                 </div>
             </div>
         </section>

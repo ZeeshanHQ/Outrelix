@@ -5,6 +5,7 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from "../ui/accordion";
+import { motion } from 'framer-motion';
 
 const faqs = [
     {
@@ -31,29 +32,41 @@ const faqs = [
 
 export default function FAQSection() {
     return (
-        <section className="py-32 bg-white" id="faq">
-            <div className="max-w-4xl mx-auto px-6 sm:px-8">
-                <div className="text-center mb-24">
-                    <span className="inline-block px-4 py-1.5 rounded-full bg-slate-50 border border-slate-100 text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-6">
-                        Support
+        <section className="py-48 bg-obsidian-950 relative overflow-hidden" id="faq">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_100%,rgba(59,130,246,0.03),transparent_50%)]" />
+            
+            <div className="max-w-4xl mx-auto px-6 sm:px-8 relative z-10">
+                <div className="text-center mb-32">
+                    <span className="text-label-small mb-6 block text-blue-400/80 tracking-[0.3em]">
+                        RESOURCES — 04
                     </span>
-                    <h2 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-6">
-                        Frequently Asked Questions
+                    <h2 className="text-5xl md:text-6xl font-bold text-white tracking-tighter mb-8 leading-tight">
+                        Platform <br/>
+                        <span className="text-white/40 text-4xl md:text-5xl italic">Knowledge Base.</span>
                     </h2>
-                    <p className="text-slate-500 text-lg max-w-2xl mx-auto leading-relaxed">
-                        Everything you need to know about Outrelix and how it can help your business grow on autopilot.
-                    </p>
                 </div>
-                <Accordion type="single" collapsible className="w-full space-y-4">
+
+                <Accordion type="single" collapsible className="w-full space-y-6">
                     {faqs.map((faq, index) => (
-                        <AccordionItem key={index} value={`item-${index}`} className="border border-slate-200/60 rounded-2xl px-6 bg-slate-50/30">
-                            <AccordionTrigger className="text-left text-base font-bold text-slate-800 hover:no-underline hover:text-blue-600 transition-colors py-5">
-                                {faq.question}
-                            </AccordionTrigger>
-                            <AccordionContent className="text-slate-500 text-sm leading-relaxed pb-5 font-medium">
-                                {faq.answer}
-                            </AccordionContent>
-                        </AccordionItem>
+                        <motion.div
+                            key={index}
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ delay: index * 0.1, duration: 0.8 }}
+                            viewport={{ once: true }}
+                        >
+                            <AccordionItem 
+                                value={`item-${index}`} 
+                                className="border border-white/5 rounded-[2rem] px-10 bg-obsidian-800/10 hover:bg-obsidian-800/20 hover:border-white/10 transition-all duration-500 overflow-hidden group"
+                            >
+                                <AccordionTrigger className="text-left text-lg font-bold text-white hover:no-underline transition-colors py-8 group-data-[state=open]:text-blue-400 tracking-tight">
+                                    {faq.question}
+                                </AccordionTrigger>
+                                <AccordionContent className="text-white/40 text-base leading-relaxed pb-8 font-medium">
+                                    {faq.answer}
+                                </AccordionContent>
+                            </AccordionItem>
+                        </motion.div>
                     ))}
                 </Accordion>
             </div>

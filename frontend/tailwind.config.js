@@ -60,6 +60,17 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        obsidian: {
+          950: "#020617",
+          900: "#070d1f",
+          800: "#0b1429",
+          700: "#121b33",
+        },
+        metallic: {
+          silver: "#94a3b8",
+          slate: "#475569",
+          dim: "#1e293b",
+        },
         "color-1": "hsl(var(--rainbow-1))",
         "color-2": "hsl(var(--rainbow-2))",
         "color-3": "hsl(var(--rainbow-3))",
