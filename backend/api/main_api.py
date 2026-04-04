@@ -115,16 +115,13 @@ logger = logging.getLogger(__name__)
 logger = logging.getLogger(__name__)
 
 app = FastAPI()
+
+# Configure CORS dynamically for production
+ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000,http://localhost:3001,http://127.0.0.1:3001").split(",")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "http://localhost:3001",
-        "http://127.0.0.1:3001",
-        "http://[::1]:3000",
-        "http://[::1]:3001"
-    ],
+    allow_origins=[origin.strip() for origin in ALLOWED_ORIGINS if origin.strip()],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -356,10 +353,13 @@ async def auth_gmail(request: Request, user_id: str = None, port: str = "3000"):
         # Store port in session to remember where to redirect back
         request.session['frontend_port'] = port
         
+        # Use dynamic backend URL for OAuth redirect
+        BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000").rstrip("/")
+        
         flow = Flow.from_client_secrets_file(
             CLIENT_SECRETS_FILE,
             scopes=SCOPES,
-            redirect_uri='http://localhost:8000/auth/gmail/callback'
+            redirect_uri=f'{BACKEND_URL}/auth/gmail/callback'
         )
         authorization_url, state = flow.authorization_url(
             access_type='offline',
@@ -413,11 +413,14 @@ async def auth_gmail_callback(request: Request):
         os.environ['OAUTHLIB_RELAX_TOKEN_SCOPE'] = '1'
         os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
         
+        # Use dynamic backend URL for OAuth callback redirect
+        BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000").rstrip("/")
+        
         flow = Flow.from_client_secrets_file(
             CLIENT_SECRETS_FILE,
             scopes=SCOPES,
             state=saved_state,
-            redirect_uri='http://localhost:8000/auth/gmail/callback'
+            redirect_uri=f'{BACKEND_URL}/auth/gmail/callback'
         )
         
         # 4. Exchange auth code for tokens MANUALLY to bypass oauthlib's CSRF state strictness 
@@ -434,7 +437,7 @@ async def auth_gmail_callback(request: Request):
                         "code": code,
                         "client_id": flow.client_config["client_id"],
                         "client_secret": flow.client_config["client_secret"],
-                        "redirect_uri": 'http://localhost:8000/auth/gmail/callback',
+                        "redirect_uri": f'{BACKEND_URL}/auth/gmail/callback',
                         "grant_type": "authorization_code"
                     }
                 )
@@ -494,8 +497,10 @@ async def auth_gmail_callback(request: Request):
         supabase_request("POST", "profiles", data=profile_data, upsert=True)
         print(f"[DEBUG] /auth/gmail/callback: Gmail connected successfully for {email} (user: {user_id})")
         # Redirect back to the frontend
+        # Redirect back to the frontend dynamically
         frontend_port = request.session.get('frontend_port', '3000')
-        frontend_url = f"http://localhost:{frontend_port}"
+        DEFAULT_FRONTEND = f"http://localhost:{frontend_port}"
+        frontend_url = os.getenv("FRONTEND_URL", DEFAULT_FRONTEND).rstrip("/")
             
         print(f"[DEBUG] Redirecting back to {frontend_url}")
         return HTMLResponse(f"""

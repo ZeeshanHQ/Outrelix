@@ -1,4 +1,5 @@
 // src/pages/api/campaign/start.js
+import BACKEND_URL from '../../../config/backend';
 
 // This route now acts as a proxy to your Python backend.
 export default async function handler(req, res) {
@@ -8,7 +9,7 @@ export default async function handler(req, res) {
 
   try {
     // Forward the request to the Python backend
-    const backendResponse = await fetch('http://localhost:5000/api/campaign/start', {
+    const backendResponse = await fetch(`${BACKEND_URL}/api/campaign/start`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -31,4 +32,4 @@ export default async function handler(req, res) {
     console.error('Error proxying to backend:', error);
     res.status(500).json({ message: 'Error starting campaign' });
   }
-} 
+}

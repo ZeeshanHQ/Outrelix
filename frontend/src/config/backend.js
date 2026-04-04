@@ -1,4 +1,4 @@
 // Backend configuration
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_API_URL || 'http://localhost:8000';
+const BACKEND_URL = process.env.REACT_APP_BACKEND_API_URL || process.env.REACT_APP_BACKEND_URL || 'http://localhost:8000';
 
 export default BACKEND_URL;
