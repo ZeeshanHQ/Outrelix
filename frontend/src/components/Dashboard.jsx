@@ -1,7 +1,8 @@
+import { BACKEND_URL } from '../config/backend';
+
 const loadIndustries = async () => {
     try {
-      const apiUrl = process.env.REACT_APP_API_URL || '';
-      const response = await fetch(`${apiUrl}/api/industries`);
+      const response = await fetch(`${BACKEND_URL}/api/industries`);
 
       // Check if the response status is OK (status in the range 200-299)
       if (!response.ok) {
