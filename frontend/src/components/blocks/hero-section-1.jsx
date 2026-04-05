@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowRight, Sparkles, Zap, Target, Mail, Users, TrendingUp, CheckCircle, BarChart2 } from 'lucide-react'
+import { ArrowRight, Sparkles, Zap, Target, Mail, Users, TrendingUp, CheckCircle, BarChart2, PlayCircle } from 'lucide-react'
 import { GradientButton } from '../ui/gradient-button'
 
 // — Animated Dashboard Preview Component —
@@ -165,7 +165,17 @@ export function HeroSection({ setIsSignupOpen }) {
     const industries = ['Real Estate', 'SaaS', 'E-commerce', 'Healthcare', 'Technology', 'Finance', 'Marketing', 'Agencies'];
 
     return (
-        <section className="relative min-h-[95vh] flex items-center overflow-hidden bg-obsidian-900 z-0 py-32 sm:py-48">
+        <section className="relative min-h-[95vh] flex items-center overflow-hidden bg-obsidian-900 z-0 py-48 sm:py-64 lg:py-80 uppercase">
+            {/* Background HUD Elements */}
+            <div className="absolute top-32 left-8 hidden lg:flex flex-col gap-1 items-start opacity-20 pointer-events-none rotate-90 origin-left">
+                <span className="text-[10px] font-mono tracking-[0.5em] text-blue-400">STATUS.ACTIVE // 0x4FF2</span>
+                <div className="h-px w-32 bg-blue-500/20" />
+            </div>
+
+            <div className="absolute top-32 right-8 hidden lg:flex flex-col gap-1 items-end opacity-20 pointer-events-none -rotate-90 origin-right">
+                <span className="text-[10px] font-mono tracking-[0.5em] text-indigo-400 uppercase">protocol.auth.v2.4</span>
+                <div className="h-px w-32 bg-indigo-500/20" />
+            </div>
             {/* Elite Radial Glow */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full obsidian-gradient pointer-events-none" />
             
@@ -183,11 +193,11 @@ export function HeroSection({ setIsSignupOpen }) {
                             initial={{ opacity: 0, y: -16 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.8 }}
-                            className="inline-flex items-center gap-3 px-3 py-1 rounded-full bg-white/5 border border-white/10 mb-10 backdrop-blur-md"
+                            className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 mb-12 backdrop-blur-md"
                         >
-                            <Sparkles className="w-3 h-3 text-blue-400 animate-pulse" />
-                            <span className="text-label-small !opacity-80">
-                                AI LEAD_V1.2 · ENTERPRISE_GRADE_ACCURACY
+                            <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+                            <span className="text-[11px] font-bold tracking-[0.2em] text-white/60 font-mono uppercase">
+                                SYSTEM_NODE: NOMINAL // CORE_ACCESS
                             </span>
                         </motion.div>
 
@@ -196,10 +206,10 @@ export function HeroSection({ setIsSignupOpen }) {
                             initial={{ opacity: 0, y: 30 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.15, duration: 0.8 }}
-                            className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.05] mb-8 font-inter"
+                            className="text-6xl sm:text-7xl lg:text-[7.5rem] font-black tracking-tight text-white leading-[0.85] mb-10 uppercase italic"
                         >
-                            The Silent Authority <br/>
-                            <span className="text-white/40">in Outreach.</span>
+                            Outreach <br/>
+                            <span className="text-white/20 not-italic">Infrastructure.</span>
                         </motion.h1>
 
                         {/* Premium Sub-headline */}
@@ -227,7 +237,7 @@ export function HeroSection({ setIsSignupOpen }) {
                                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                             </button>
                             <button className="flex items-center justify-center gap-3 px-8 py-4 bg-obsidian-800 border border-white/10 text-white font-bold rounded-xl text-base hover:bg-obsidian-700 transition-all border-b-2">
-                                <PlayCircleIcon className="w-5 h-5 text-white/50" />
+                                <PlayCircle className="w-5 h-5 text-white/50" />
                                 Watch System Demo
                             </button>
                         </motion.div>

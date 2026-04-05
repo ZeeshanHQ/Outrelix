@@ -97,7 +97,7 @@ const thirdColumn = industries.slice(11, 16);
 
 export default function IndustryScrapers() {
     return (
-        <section className="bg-obsidian-950 py-48 relative overflow-hidden" id="industries">
+        <section className="bg-obsidian-950 py-64 relative overflow-hidden" id="industries">
             {/* Background aesthetics */}
             <div className="absolute inset-0 pointer-events-none">
                 <div className="absolute left-1/2 top-0 -translate-x-1/2 w-[1200px] h-[600px] bg-blue-500/5 rounded-full blur-[140px] opacity-40" />
@@ -111,13 +111,15 @@ export default function IndustryScrapers() {
                     viewport={{ once: true }}
                     className="flex flex-col items-center justify-center max-w-4xl mx-auto text-center mb-32"
                 >
-                    <div className="text-label-small mb-6 block text-blue-400/80 tracking-[0.3em]">
-                        SCALABILITY — 03
+                    <div className="text-[10px] font-mono tracking-[0.4em] text-blue-400 uppercase mb-6 flex items-center gap-4">
+                        <div className="h-px w-8 bg-blue-500/30" />
+                        SCALABILITY LAYER — 03
+                        <div className="h-px w-8 bg-blue-500/30" />
                     </div>
 
-                    <h2 className="text-5xl md:text-6xl font-bold text-white tracking-tighter leading-[1.1] mb-8">
-                        Optimized for <br className="md:hidden" />
-                        <span className="text-white/40 italic">Every Sector.</span>
+                    <h2 className="text-5xl md:text-7xl font-black text-white tracking-tighter leading-[0.95] mb-10 uppercase italic">
+                        Sector Specific <br className="md:hidden" />
+                        <span className="text-white/20 not-italic">Intelligence.</span>
                     </h2>
                     <p className="text-xl text-white/40 font-medium leading-relaxed max-w-2xl">
                         Our platform provides specialized extraction protocols optimized for specific industries, doubling down on data relevance.

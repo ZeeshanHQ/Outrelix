@@ -7,7 +7,7 @@ import {
   ShieldCheck, 
   Clock, 
   Sparkles,
-  ArrowRightIcon 
+  ArrowRight 
 } from 'lucide-react';
 
 const FeatureCard = ({ icon: Icon, title, description, delay, index }) => (
@@ -32,7 +32,7 @@ const FeatureCard = ({ icon: Icon, title, description, delay, index }) => (
       <div className="mt-12 flex items-center gap-3 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-700">
         <div className="h-[1px] w-8 bg-blue-400/40" />
         <span className="text-[10px] font-black text-blue-400 tracking-[0.3em] uppercase">Initialize Node</span>
-        <ArrowRightIcon className="w-3 h-3 text-blue-400" />
+        <ArrowRight className="w-3 h-3 text-blue-400" />
       </div>
     </div>
   </motion.div>

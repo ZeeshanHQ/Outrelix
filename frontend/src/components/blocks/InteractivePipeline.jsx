@@ -64,7 +64,7 @@ const PipelineCard = ({ stage, index }) => {
                         <div className="w-20 h-20 rounded-3xl bg-obsidian-950 border border-white/5 flex items-center justify-center text-white shadow-2xl group-hover:scale-110 transition-transform duration-700">
                             {stage.icon}
                         </div>
-                        <span className="px-4 py-1.5 rounded-full bg-white/5 border border-white/5 text-[10px] font-bold text-white/40 uppercase tracking-widest leading-none">
+                        <span className="px-4 py-1.5 rounded-full bg-white/5 border border-white/5 text-[10px] font-mono font-bold text-white/40 uppercase tracking-[0.3em] leading-none">
                             {stage.pill}
                         </span>
                     </div>
@@ -106,7 +106,8 @@ const PipelineCard = ({ stage, index }) => {
 
             {/* Content Side */}
             <div className="flex-1 w-full max-w-lg text-left">
-                <div className="text-label-small mb-6 block text-blue-400/80 tracking-[0.3em]">
+                <div className="text-[10px] font-mono tracking-[0.4em] text-blue-400 uppercase mb-6 flex items-center gap-4">
+                    <div className="h-px w-8 bg-blue-500/30" />
                     PROTOCOL — 0{index + 1}
                 </div>
                 <h3 className="text-4xl md:text-5xl font-black text-white mb-8 leading-[1.1] tracking-tight">
@@ -130,7 +131,7 @@ const PipelineCard = ({ stage, index }) => {
 
 export default function InteractivePipeline() {
     return (
-        <section id="features" className="relative py-48 bg-obsidian-950 overflow-hidden">
+        <section id="features" className="relative py-64 sm:py-80 bg-obsidian-950 overflow-hidden">
             {/* Background elements */}
             <div className="absolute inset-0 pointer-events-none">
                 <div className="absolute top-1/4 -left-1/4 w-1/2 h-1/2 bg-blue-500/5 rounded-full blur-[200px] opacity-40" />
@@ -139,7 +140,7 @@ export default function InteractivePipeline() {
 
             <div className="max-w-7xl mx-auto px-6 relative z-10">
                 {/* Header */}
-                <div className="text-center max-w-4xl mx-auto mb-48">
+                <div className="text-center max-w-4xl mx-auto mb-64 sm:mb-80">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
