@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Zap, Target, BarChart3 } from 'lucide-react';
+import { Sparkles, Zap, Target, BarChart3, ArrowRight } from 'lucide-react';
 
 const WelcomeModal = ({ isOpen, userName = '', onComplete }) => {
   if (!isOpen) return null;
@@ -10,12 +10,12 @@ const WelcomeModal = ({ isOpen, userName = '', onComplete }) => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[9999] flex items-center justify-center bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-blue-950 dark:to-purple-950"
+        className="fixed inset-0 z-[9999] flex items-center justify-center bg-obsidian-950/90 backdrop-blur-3xl px-4"
       >
         {/* Premium Background Effects */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-0 w-[800px] h-[800px] bg-gradient-to-br from-blue-400/10 via-purple-400/5 to-pink-400/5 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-gradient-to-tr from-purple-500/10 via-blue-400/5 to-transparent rounded-full blur-2xl animate-pulse"></div>
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-[radial-gradient(circle_at_50%_0%,rgba(59,130,246,0.05),transparent_70%)]"></div>
+          <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-500/5 rounded-full blur-[120px] animate-pulse"></div>
         </div>
 
         <motion.div
@@ -23,68 +23,68 @@ const WelcomeModal = ({ isOpen, userName = '', onComplete }) => {
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.95, opacity: 0, y: 20 }}
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-          className="relative flex flex-col items-center w-full max-w-2xl mx-4 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 overflow-hidden"
+          className="relative flex flex-col items-center w-full max-w-2xl bg-obsidian-900 border border-white/5 rounded-[3rem] shadow-2xl overflow-hidden"
         >
-          {/* Top Accent Bar */}
-          <div className="w-full h-2 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
+          {/* Top Metallic Accent */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/3 h-[1px] bg-gradient-to-r from-transparent via-blue-500/50 to-transparent"></div>
 
           {/* Welcome Content */}
-          <div className="flex flex-col items-center text-center px-8 py-10">
-            {/* Emoji */}
-            <div className="mb-6 w-16 h-16 bg-blue-50 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center border border-blue-100 dark:border-blue-800">
-              <Sparkles className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+          <div className="flex flex-col items-center text-center px-12 py-16">
+            {/* Tech Icon */}
+            <div className="mb-10 w-20 h-20 bg-white/5 border border-white/10 rounded-3xl flex items-center justify-center relative group">
+              <div className="absolute inset-0 bg-blue-500/20 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
+              <Sparkles className="w-10 h-10 text-blue-400 relative z-10" />
             </div>
 
             {/* Welcome Text */}
-            <h2
-              className="text-5xl md:text-6xl font-extrabold mb-4 bg-gradient-to-r from-blue-600 via-purple-500 to-pink-500 bg-clip-text text-transparent drop-shadow-sm font-poppins"
-              title={userName || 'User'}
-            >
-              Welcome{userName ? `, ${userName}` : ''}!
+            <span className="text-[10px] font-black text-blue-400/60 uppercase tracking-[0.5em] mb-6 block">SYSTEM INITIALIZED // AUTH_SUCCESS</span>
+            <h2 className="text-5xl md:text-7xl font-black mb-8 text-white tracking-tighter leading-none italic">
+              Welcome, <br/>
+              <span className="text-white/30 not-italic">{userName || 'OPERATIVE'}</span>
             </h2>
 
             {/* Premium Subtitle */}
-            <p className="text-xl text-gray-600 dark:text-gray-300 font-poppins max-w-xl mb-8">
-              Get ready to transform your email outreach with AI-powered automation
+            <p className="text-xl text-white/40 font-medium max-w-lg mb-12 leading-relaxed italic border-l border-white/10 pl-8 text-left">
+              Operational access granted. The outreach engine is ready for deployment across all target nodes.
             </p>
 
-            {/* Feature Pills */}
-            <div className="flex flex-wrap justify-center gap-3 mb-10">
-              <span className="px-4 py-2 rounded-full bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 text-sm font-medium border border-blue-100 dark:border-blue-800 flex items-center gap-2">
-                <Zap className="w-4 h-4" /> Smart Automation
-              </span>
-              <span className="px-4 py-2 rounded-full bg-purple-50 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 text-sm font-medium border border-purple-100 dark:border-purple-800 flex items-center gap-2">
-                <Target className="w-4 h-4" /> Personalized Outreach
-              </span>
-              <span className="px-4 py-2 rounded-full bg-pink-50 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300 text-sm font-medium border border-pink-100 dark:border-pink-800 flex items-center gap-2">
-                <BarChart3 className="w-4 h-4" /> Real-time Analytics
-              </span>
+            {/* Feature Pills - Technical Style */}
+            <div className="flex flex-wrap justify-center gap-4 mb-16">
+              <div className="px-5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-[10px] font-black text-white/40 tracking-widest uppercase flex items-center gap-3">
+                <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+                Smart Automation
+              </div>
+              <div className="px-5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-[10px] font-black text-white/40 tracking-widest uppercase flex items-center gap-3">
+                <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+                Personalized Outreach
+              </div>
+              <div className="px-5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-[10px] font-black text-white/40 tracking-widest uppercase flex items-center gap-3">
+                <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+                Real-time Hive Analytics
+              </div>
             </div>
 
             {/* Continue Button */}
             <motion.button
               onClick={() => onComplete && onComplete({ userName })}
-              className="w-64 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-lg font-bold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] font-poppins flex items-center justify-center gap-2"
+              className="group relative w-full sm:w-72 py-6 bg-white text-obsidian-950 text-xs font-black rounded-2xl shadow-[0_0_50px_rgba(255,255,255,0.1)] transition-all duration-700 hover:scale-105 active:scale-95 flex items-center justify-center gap-4 uppercase tracking-[0.2em]"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              Continue
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-              </svg>
+              Enter Dashboard
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-transparent to-transparent -translate-x-full group-hover:translate-x-0 transition-transform duration-700" />
             </motion.button>
           </div>
 
-          {/* Bottom Accent Line */}
-          <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-gray-200 dark:via-gray-700 to-transparent"></div>
-
-          {/* Premium Footer */}
-          <div className="w-full px-8 py-4 text-center bg-gray-50 dark:bg-gray-800/50">
-            <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center justify-center gap-2">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-              </svg>
-              Your data is secure and protected
+          {/* Technical Status Bar */}
+          <div className="w-full px-12 py-5 bg-white/5 border-t border-white/5 flex items-center justify-between">
+            <p className="text-[9px] font-black text-white/20 uppercase tracking-[0.3em] flex items-center gap-3">
+              <div className="w-1 h-1 rounded-full bg-green-500" />
+              Secure Link Established
+            </p>
+            <p className="text-[9px] font-black text-white/20 uppercase tracking-[0.3em]">
+              V.1.0 // OUTRELIX_ELITE
             </p>
           </div>
         </motion.div>
@@ -93,4 +93,4 @@ const WelcomeModal = ({ isOpen, userName = '', onComplete }) => {
   );
 };
 
-export default WelcomeModal; 
+export default WelcomeModal;
