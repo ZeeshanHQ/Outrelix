@@ -850,7 +850,7 @@ const MissionBuilder = ({
                                         <div className="relative w-40 h-40 mb-8 flex items-center justify-center">
                                             <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
                                                 <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(59,130,246,0.1)" strokeWidth="8" />
-                                                <circle cx="50" cy="50" r="45" fill="none" stroke="#3b82f6" strokeWidth="8" strokeDasharray="283" strokeDashoffset={isLoading ? "0" : "283"} className="transition-all duration-[3000ms] ease-out" />
+                                                <circle cx="50" cy="50" r="45" fill="none" stroke="#3b82f6" strokeWidth="8" strokeDasharray="283" strokeDashoffset={isLoading ? "0" : "283"} className="transition-all ease-out" style={{ transitionDuration: '3000ms' }} />
                                             </svg>
                                             <div className="absolute inset-0 flex items-center justify-center flex-col">
                                                 <span className="text-3xl font-black text-white">100<span className="text-lg text-slate-500">%</span></span>

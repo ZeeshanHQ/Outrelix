@@ -127,8 +127,6 @@ const DashboardPreview = () => {
         </div>
     );
 };
-    );
-};
 
 // — Typing Rotator for industry names —
 const TypingRotator = ({ words }) => {
